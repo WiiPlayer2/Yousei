@@ -21,7 +21,7 @@ namespace Yousei
 
             public override object ReadMemberValue(ref ObjectContext objectContext, IMemberDescriptor memberDescriptor, object memberValue, Type memberType)
             {
-                if(memberType == typeof(JToken))
+                if (memberType == typeof(JToken))
                 {
                     return JToken.FromObject(base.ReadMemberValue(ref objectContext, memberDescriptor, memberValue, typeof(object)));
                 }
@@ -29,37 +29,94 @@ namespace Yousei
             }
         }
 
-        private readonly List<Job> jobs = new List<Job>();
+        public event EventHandler<Job> JobRemoved;
+
+        public event EventHandler<Job> JobAdded;
+
+        private readonly Dictionary<string, Job> jobs = new Dictionary<string, Job>();
         private readonly ILogger<JobRegistry> logger;
         private readonly Serializer yamlSerializer = new Serializer(new SerializerSettings { ObjectSerializerBackend = SerializerBackend.Instance });
+        private readonly FileSystemWatcher folderWatcher;
+        private readonly DirectoryInfo folderInfo;
 
         public JobRegistry(IConfiguration configuration, ILogger<JobRegistry> logger)
         {
             this.logger = logger;
 
             var folderPath = configuration.GetValue<string>("Jobs");
-            var directoryInfo = new DirectoryInfo(folderPath);
-            if(directoryInfo.Exists)
+            folderInfo = new DirectoryInfo(folderPath);
+            if (folderInfo.Exists)
             {
-                foreach(var file in directoryInfo.EnumerateFiles("*.yaml"))
-                {
-                    using (var stream = File.OpenRead(file.FullName))
-                    {
-                        try
-                        {
-                            var job = yamlSerializer.Deserialize<Job>(stream);
-                        }
-                        catch(Exception e)
-                        {
-                            logger.LogError($"Could not deserialize {file.FullName}. {e}");
-                        }
-                    }
-                }
+                folderWatcher = new FileSystemWatcher(folderInfo.FullName, "*.yaml");
+                folderWatcher.Changed += FolderWatcher_Changed;
             }
         }
 
-        public IReadOnlyCollection<Job> Jobs => jobs;
+        public void Initialize()
+        {
+            if (folderInfo.Exists)
+            {
+                foreach (var file in folderInfo.EnumerateFiles("*.yaml"))
+                {
+                    TryRegister(file.FullName);
+                }
 
-        public void Register(Job job) => jobs.Add(job);
+                folderWatcher.EnableRaisingEvents = true;
+            }
+        }
+
+        private void FolderWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            if (!File.Exists(e.FullPath))
+                return;
+
+            switch (e.ChangeType)
+            {
+                case WatcherChangeTypes.Created:
+                    TryRegister(e.FullPath);
+                    break;
+
+                case WatcherChangeTypes.Changed:
+                    Remove(e.FullPath);
+                    TryRegister(e.FullPath);
+                    break;
+
+                case WatcherChangeTypes.Deleted:
+                    Remove(e.FullPath);
+                    break;
+
+                case WatcherChangeTypes.Renamed:
+                    var renamedEventArgs = e as RenamedEventArgs;
+                    Remove(renamedEventArgs.OldFullPath);
+                    TryRegister(renamedEventArgs.FullPath);
+                    break;
+            }
+        }
+
+        private void Remove(string path)
+        {
+            if (jobs.Remove(Path.GetFullPath(path), out var job))
+                JobRemoved?.Invoke(this, job);
+        }
+
+        private void TryRegister(string path)
+        {
+            try
+            {
+                using (var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    var job = yamlSerializer.Deserialize<Job>(stream);
+                    if (job == null)
+                        return;
+
+                    jobs.Add(Path.GetFullPath(path), job);
+                    JobAdded?.Invoke(this, job);
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"Could not deserialize {path}. {e}");
+            }
+        }
     }
 }

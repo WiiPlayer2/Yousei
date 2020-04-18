@@ -18,34 +18,50 @@ namespace Yousei
         private readonly JobRegistry jobRegistry;
         private readonly ModuleRegistry moduleRegistry;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-        private readonly ISet<Task> runningJobs = new HashSet<Task>();
+        private readonly IDictionary<Job, (CancellationTokenSource, Task)> runningJobs = new Dictionary<Job, (CancellationTokenSource, Task)>();
 
         public JobService(ILogger<JobService> logger, JobRegistry jobRegistry, ModuleRegistry moduleRegistry)
         {
             this.logger = logger;
             this.jobRegistry = jobRegistry;
             this.moduleRegistry = moduleRegistry;
+
+            jobRegistry.JobAdded += JobRegistry_JobAdded;
+            jobRegistry.JobRemoved += JobRegistry_JobRemoved;
+        }
+
+        private async void JobRegistry_JobRemoved(object sender, Job job)
+        {
+            if (runningJobs.TryGetValue(job, out var pair))
+            {
+                pair.Item1.Cancel();
+                await pair.Item2.ConfigureAwait(false);
+            }
+        }
+
+        private async void JobRegistry_JobAdded(object sender, Job job)
+        {
+            var cts = new CancellationTokenSource();
+            var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cts.Token, cancellationTokenSource.Token);
+            var task = RunJob(job, linkedCts.Token);
+            runningJobs.Add(job, (cts, task));
+            await task.ContinueWith(_ => runningJobs.Remove(job));
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            foreach(var job in jobRegistry.Jobs)
-            {
-                RunJob(job, cancellationTokenSource.Token);
-            }
-
+            jobRegistry.Initialize();
             return Task.CompletedTask;
         }
 
-        private async void RunJob(Job job, CancellationToken cancellationToken)
+        private Task RunJob(Job job, CancellationToken cancellationToken)
         {
             logger.LogInformation($"Run job {job.Name}");
             if (!job.Actions.Any())
-                return;
+                return Task.CompletedTask;
 
             var task = Task.Run(() => RunJobAction(job.Actions.First(), JValue.CreateNull(), job.Actions.Skip(1).ToList(), cancellationToken));
-            runningJobs.Add(task);
-            await task.ContinueWith(_ => runningJobs.Remove(task));
+            return task;
         }
 
         private Task RunJobAction(JobAction jobAction, JToken data, IReadOnlyCollection<JobAction> followingJobActions, CancellationToken cancellationToken)
@@ -88,7 +104,7 @@ namespace Yousei
         {
             var runningTasks = runningJobs.ToList();
             cancellationTokenSource.Cancel();
-            await Task.WhenAll(runningTasks);
+            await Task.WhenAll(runningTasks.Select(o => o.Value.Item2));
         }
     }
 }
