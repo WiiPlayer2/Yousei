@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Yousei": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

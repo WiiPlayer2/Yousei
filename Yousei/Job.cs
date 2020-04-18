@@ -16,6 +16,6 @@ namespace Yousei
     {
         public string Name { get; set; }
 
-        public IReadOnlyCollection<JobAction> Actions { get; set; }
+        public List<JobAction> Actions { get; set; }
     }
 }

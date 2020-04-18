@@ -1,31 +1,61 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
+using SharpYaml;
+using SharpYaml.Serialization;
+using SharpYaml.Serialization.Serializers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Yousei
 {
     class JobRegistry
     {
-        private readonly List<Job> jobs = new List<Job>();
-
-        public JobRegistry()
+        public class SerializerBackend : DefaultObjectSerializerBackend
         {
-            Register(new Job
+            public static SerializerBackend Instance { get; } = new SerializerBackend();
+
+            private SerializerBackend() { }
+
+            public override object ReadMemberValue(ref ObjectContext objectContext, IMemberDescriptor memberDescriptor, object memberValue, Type memberType)
             {
-                Name = "testing",
-                Actions = new List<JobAction>
+                if(memberType == typeof(JToken))
                 {
-                    new JobAction
+                    return JToken.FromObject(base.ReadMemberValue(ref objectContext, memberDescriptor, memberValue, typeof(object)));
+                }
+                return base.ReadMemberValue(ref objectContext, memberDescriptor, memberValue, memberType);
+            }
+        }
+
+        private readonly List<Job> jobs = new List<Job>();
+        private readonly ILogger<JobRegistry> logger;
+        private readonly Serializer yamlSerializer = new Serializer(new SerializerSettings { ObjectSerializerBackend = SerializerBackend.Instance });
+
+        public JobRegistry(IConfiguration configuration, ILogger<JobRegistry> logger)
+        {
+            this.logger = logger;
+
+            var folderPath = configuration.GetValue<string>("Jobs");
+            var directoryInfo = new DirectoryInfo(folderPath);
+            if(directoryInfo.Exists)
+            {
+                foreach(var file in directoryInfo.EnumerateFiles("*.yaml"))
+                {
+                    using (var stream = File.OpenRead(file.FullName))
                     {
-                        ModuleID = "shell",
-                        Arguments = JToken.FromObject(new
+                        try
                         {
-                            Command = "echo hi",
-                        }),
-                    },
-                },
-            });
+                            var job = yamlSerializer.Deserialize<Job>(stream);
+                        }
+                        catch(Exception e)
+                        {
+                            logger.LogError($"Could not deserialize {file.FullName}. {e}");
+                        }
+                    }
+                }
+            }
         }
 
         public IReadOnlyCollection<Job> Jobs => jobs;

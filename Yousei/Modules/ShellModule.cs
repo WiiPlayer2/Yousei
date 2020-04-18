@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -56,13 +57,9 @@ namespace Yousei.Modules
                 var resultData = JToken.Parse(output);
                 return resultData.YieldAsync();
             }
-            catch(JsonException)
-            {
-                return JValue.CreateString(output).YieldAsync();
-            }
             catch
             {
-                return Enumerable.Empty<JToken>().ToAsyncEnumerable();
+                return JValue.CreateString(output).YieldAsync();
             }
         }
     }
