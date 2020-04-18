@@ -20,7 +20,7 @@ namespace Yousei
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ISet<Task> runningJobs = new HashSet<Task>();
 
-        public JobService(ILogger logger, JobRegistry jobRegistry, ModuleRegistry moduleRegistry)
+        public JobService(ILogger<JobService> logger, JobRegistry jobRegistry, ModuleRegistry moduleRegistry)
         {
             this.logger = logger;
             this.jobRegistry = jobRegistry;

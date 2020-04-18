@@ -7,15 +7,15 @@ namespace Yousei
 {
     class JobAction
     {
-        public string ModuleID { get; }
+        public string ModuleID { get; set; }
 
-        public JToken Arguments { get; }
+        public JToken Arguments { get; set; }
     }
 
     class Job
     {
-        public string Name { get; }
+        public string Name { get; set; }
 
-        public IReadOnlyCollection<JobAction> Actions { get; }
+        public IReadOnlyCollection<JobAction> Actions { get; set; }
     }
 }
