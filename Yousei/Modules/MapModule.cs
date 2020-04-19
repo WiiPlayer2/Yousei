@@ -19,16 +19,10 @@ namespace Yousei.Modules
 
         private JToken Map(JToken value, JToken data) => value.Type switch
         {
-            JTokenType.String => Get(data, value.Value<string>()),
+            JTokenType.String => data.Get(value.Value<string>()),
             JTokenType.Object => GetObject(value as JObject, data),
             _ => value,
         };
-
-        private JToken Get(JToken data, string path)
-        {
-            var parts = path.Split('.');
-            return parts.Aggregate(data, (value, path) => value[path]);
-        }
 
         private JObject GetObject(JObject obj, JToken data)
         {

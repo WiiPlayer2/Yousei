@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -65,6 +66,12 @@ namespace Yousei
                 list.Add(item);
             }
             return list;
+        }
+
+        public static JToken Get(this JToken token, string path)
+        {
+            var parts = path.Split('.');
+            return parts.Aggregate(token, (value, path) => value[path]);
         }
     }
 }
