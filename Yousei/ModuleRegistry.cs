@@ -11,9 +11,10 @@ namespace Yousei
     {
         private readonly IDictionary<string, IModule> modules = new Dictionary<string, IModule>();
 
-        public ModuleRegistry()
+        public ModuleRegistry(ILoggerFactory loggerFactory)
         {
             Register(new ShellModule());
+            Register(new GraphQLModule(loggerFactory.CreateLogger<GraphQLModule>()));
         }
 
         public void Register(IModule module) => modules[module.ID] = module;

@@ -38,8 +38,12 @@ namespace Yousei
 
         public static IAsyncEnumerable<T> YieldAsync<T>(this T item) => item.Yield().ToAsyncEnumerable();
 
+        public static async Task<IAsyncEnumerable<T>> YieldAsync<T>(this Task<T> item) => (await item.ConfigureAwait(false)).YieldAsync();
+
         public static IEnumerable<T> Yield<T>(this T item) => new[] { item };
 
         public static IAsyncEnumerable<T> ToAsyncEnumerable<T>(this IEnumerable<T> enumerable) => new DummyAsyncEnumerable<T>(enumerable);
+
+        public static async Task<IAsyncEnumerable<T>> ToAsyncEnumerable<T>(this Task<IEnumerable<T>> enumerable) => (await enumerable.ConfigureAwait(false)).ToAsyncEnumerable();
     }
 }
