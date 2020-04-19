@@ -15,6 +15,9 @@ namespace Yousei
         {
             Register(new ShellModule());
             Register(new GraphQLModule(loggerFactory.CreateLogger<GraphQLModule>()));
+            Register(new MapModule());
+            Register(new InitModule());
+            Register(new TransmissionModule());
         }
 
         public void Register(IModule module) => modules[module.ID] = module;

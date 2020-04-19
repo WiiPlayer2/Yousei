@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Yousei
 {
+    [DebuggerStepThrough]
     static class Helper
     {
         private class DummyAsyncEnumerable<T> : IAsyncEnumerable<T>
@@ -45,5 +47,13 @@ namespace Yousei
         public static IAsyncEnumerable<T> ToAsyncEnumerable<T>(this IEnumerable<T> enumerable) => new DummyAsyncEnumerable<T>(enumerable);
 
         public static async Task<IAsyncEnumerable<T>> ToAsyncEnumerable<T>(this Task<IEnumerable<T>> enumerable) => (await enumerable.ConfigureAwait(false)).ToAsyncEnumerable();
+
+        public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
+        {
+            foreach(var item in enumerable)
+            {
+                action(item);
+            }
+        }
     }
 }

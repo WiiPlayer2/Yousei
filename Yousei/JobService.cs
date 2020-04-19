@@ -61,12 +61,12 @@ namespace Yousei
                 return Task.CompletedTask;
 
             var task = Task.Run(() => RunJobAction(job.Actions.First(), JValue.CreateNull(), job.Actions.Skip(1).ToList(), cancellationToken));
+            task.ContinueWith(task => logger.LogError(task.Exception, $"Error while running job {job.Name}"), TaskContinuationOptions.OnlyOnFaulted);
             return task;
         }
 
         private Task RunJobAction(JobAction jobAction, JToken data, IReadOnlyCollection<JobAction> followingJobActions, CancellationToken cancellationToken)
-        {
-            return moduleRegistry.GetModule(jobAction.ModuleID).MatchAsync(
+            => moduleRegistry.GetModule(jobAction.ModuleID).MatchAsync(
                 async module =>
                 {
                     var results = await module.Process(jobAction.Arguments, data, cancellationToken);
@@ -83,9 +83,9 @@ namespace Yousei
                     }
                     else
                     {
-                        await foreach(var result in results.WithCancellation(cancellationToken))
+                        await foreach (var result in results.WithCancellation(cancellationToken))
                         {
-                            if(result.Type != JTokenType.Null)
+                            if (result.Type != JTokenType.Null)
                             {
                                 logger.LogDebug(result.ToString());
                             }
@@ -98,7 +98,6 @@ namespace Yousei
                     logger.LogError($"Module {jobAction.ModuleID} not found.");
                     return unit;
                 });
-        }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
