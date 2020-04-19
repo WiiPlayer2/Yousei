@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -54,6 +55,16 @@ namespace Yousei
             {
                 action(item);
             }
+        }
+
+        public static async Task<List<T>> ToList<T>(this IAsyncEnumerable<T> asyncEnumerable)
+        {
+            var list = new List<T>();
+            await foreach(var item in asyncEnumerable)
+            {
+                list.Add(item);
+            }
+            return list;
         }
     }
 }

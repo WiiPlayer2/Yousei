@@ -60,12 +60,12 @@ namespace Yousei
             if (!job.Actions.Any())
                 return Task.CompletedTask;
 
-            var task = Task.Run(() => RunJobAction(job.Actions.First(), JValue.CreateNull(), job.Actions.Skip(1).ToList(), cancellationToken));
+            var task = Task.Run(() => RunJobAction(job, job.Actions.First(), JValue.CreateNull(), job.Actions.Skip(1).ToList(), cancellationToken));
             task.ContinueWith(task => logger.LogError(task.Exception, $"Error while running job {job.Name}"), TaskContinuationOptions.OnlyOnFaulted);
             return task;
         }
 
-        private Task RunJobAction(JobAction jobAction, JToken data, IReadOnlyCollection<JobAction> followingJobActions, CancellationToken cancellationToken)
+        private Task RunJobAction(Job job, JobAction jobAction, JToken data, IReadOnlyCollection<JobAction> followingJobActions, CancellationToken cancellationToken)
             => moduleRegistry.GetModule(jobAction.ModuleID).MatchAsync(
                 async module =>
                 {
@@ -77,7 +77,7 @@ namespace Yousei
                         var nextFollowingJobActions = followingJobActions.Skip(1).ToList();
                         await foreach (var result in results.WithCancellation(cancellationToken))
                         {
-                            followingTasks.Add(RunJobAction(nextJobAction, result, nextFollowingJobActions, cancellationToken));
+                            followingTasks.Add(RunJobAction(job, nextJobAction, result, nextFollowingJobActions, cancellationToken));
                         }
                         await Task.WhenAll(followingTasks);
                     }
@@ -87,7 +87,7 @@ namespace Yousei
                         {
                             if (result.Type != JTokenType.Null)
                             {
-                                logger.LogDebug(result.ToString());
+                                logger.LogDebug($"Result from {job.Name}: {result}");
                             }
                         }
                     }
