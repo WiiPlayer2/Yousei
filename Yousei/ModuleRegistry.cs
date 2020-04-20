@@ -19,6 +19,7 @@ namespace Yousei
             Register(new InitModule());
             Register(new TransmissionModule());
             Register(new FilterModule());
+            Register(new ForeachModule());
         }
 
         public void Register(IModule module) => modules[module.ID] = module;
