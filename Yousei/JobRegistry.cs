@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Yousei.Tools;
 
 namespace Yousei
 {
@@ -36,7 +37,7 @@ namespace Yousei
         private readonly Dictionary<string, Job> jobs = new Dictionary<string, Job>();
         private readonly ILogger<JobRegistry> logger;
         private readonly Serializer yamlSerializer = new Serializer(new SerializerSettings { ObjectSerializerBackend = SerializerBackend.Instance });
-        private readonly FileSystemWatcher folderWatcher;
+        private readonly IFileSystemWatcher folderWatcher;
         private readonly DirectoryInfo folderInfo;
 
         public JobRegistry(IConfiguration configuration, ILogger<JobRegistry> logger)
@@ -47,7 +48,7 @@ namespace Yousei
             folderInfo = new DirectoryInfo(folderPath);
             if (folderInfo.Exists)
             {
-                folderWatcher = new FileSystemWatcher(folderInfo.FullName, "*.yaml");
+                folderWatcher = new DelayFileSystemWatcher(new DefaultFileSystemWatcher(folderInfo.FullName, "*.yaml"), TimeSpan.FromSeconds(2));
                 folderWatcher.Changed += FolderWatcher_Changed;
             }
         }
