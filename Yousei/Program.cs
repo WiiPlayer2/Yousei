@@ -17,7 +17,7 @@ namespace Yousei
                 .ConfigureServices(services =>
                 {
                     services.AddLogging();
-                    services.AddSingleton<ModuleRegistry>();
+                    ModuleRegistry.RegisterModules(services);
                     services.AddSingleton<JobRegistry>();
                     services.AddHostedService<JobService>();
                 });
