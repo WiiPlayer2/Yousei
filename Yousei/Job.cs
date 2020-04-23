@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Yousei
 {
-    class JobAction
+    public class JobAction
     {
         public string ModuleID { get; set; }
 

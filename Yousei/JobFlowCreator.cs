@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Yousei
 {
-    class JobFlowCreator
+    public class JobFlowCreator
     {
         private readonly ModuleRegistry moduleRegistry;
 

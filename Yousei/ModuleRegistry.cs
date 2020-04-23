@@ -20,7 +20,7 @@ namespace Yousei
         public string Id { get; }
     }
 
-    class ModuleRegistry
+    public class ModuleRegistry
     {
         private static readonly IDictionary<string, Type> moduleTypes = new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase);
 
@@ -44,6 +44,7 @@ namespace Yousei
             Register<ScriptModule>(services);
             Register<LogModule>(services);
             Register<SinkModule>(services);
+            Register<FlowModule>(services);
         }
 
         private static void Register<TModule>(IServiceCollection services) where TModule : IModule

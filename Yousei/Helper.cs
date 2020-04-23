@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Yousei
 {
-    [DebuggerStepThrough]
+    //[DebuggerStepThrough]
     public static class Helper
     {
         public static IAsyncEnumerable<T> YieldAsync<T>(this T item) => item.Yield().ToAsyncEnumerable();
@@ -38,10 +38,53 @@ namespace Yousei
             return list;
         }
 
-        public static JToken Get(this JToken token, string path)
+        public static JToken Get(this JToken token, string str)
         {
-            var parts = path.Split('.');
-            return parts.Aggregate(token, (value, path) => value[path]);
+            if (str.StartsWith('\\'))
+                return str.Substring(1);
+
+            if (str.StartsWith('$'))
+                return ResolvePath();
+
+            return str;
+
+            JToken ResolvePath()
+            {
+                if (str == "$")
+                    return token;
+
+                var pathParts = str.Substring(1).Split('.');
+                return pathParts.Aggregate(token, (acc, curr) => acc[curr]);
+            }
+        }
+
+        public static JToken Map(this JToken map, JToken data)
+        {
+            return map switch
+            {
+                JValue mapValue => mapValue.Type switch
+                {
+                    JTokenType.String => data.Get(mapValue.Value<string>()),
+                    _ => mapValue,
+                },
+                JObject mapObject => GetObject(mapObject, data),
+                JArray mapArray => GetArray(mapArray, data),
+                _ => map,
+            };
+
+            JObject GetObject(JObject mapObject, JToken data)
+            {
+                var newObj = new JObject();
+                mapObject.Properties().ForEach(prop => newObj.Add(prop.Name, prop.Value.Map(data)));
+                return newObj;
+            }
+
+            JArray GetArray(JArray mapArray, JToken data)
+            {
+                var newArr = new JArray();
+                mapArray.ForEach(value => newArr.Add(value.Map(data)));
+                return newArr;
+            }
         }
 
         public static TService GetService<TService>(this IServiceProvider serviceProvider) where TService : class
