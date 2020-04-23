@@ -45,6 +45,7 @@ namespace Yousei
             Register<LogModule>(services);
             Register<SinkModule>(services);
             Register<FlowModule>(services);
+            Register<ArgumentsMapModule>(services);
         }
 
         private static void Register<TModule>(IServiceCollection services) where TModule : IModule
