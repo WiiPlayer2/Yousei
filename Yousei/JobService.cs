@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Reactive;
 using static LanguageExt.Prelude;
+using System.Reactive.Linq;
 
 namespace Yousei
 {
@@ -55,57 +56,38 @@ namespace Yousei
             return Task.CompletedTask;
         }
 
-        private Task RunJob(Job job, CancellationToken cancellationToken)
+        private async Task RunJob(Job job, CancellationToken cancellationToken)
         {
             logger.LogInformation($"Run job {job.Name}");
-            if (!job.Actions.Any())
-                return Task.CompletedTask;
-
-            var task = Task.Run(() => RunJobAction(job, job.Actions.First(), JValue.CreateNull(), job.Actions.Skip(1).ToList(), cancellationToken));
-            return task.ContinueWith(task =>
-            {
-                if(task.IsFaulted)
-                    logger.LogError(task.Exception, $"Error while running job {job.Name}");
-            });
+            var tcs = new TaskCompletionSource<bool>();
+            cancellationToken.Register(tcs.SetCanceled);
+            var jobObservable = CreateJobFlow(job.Actions);
+            jobObservable.Subscribe(
+                data => logger.LogDebug($"Result from {job.Name}: {data}"),
+                exception =>
+                {
+                    logger.LogError(exception, $"Error while running job {job.Name}");
+                    tcs.SetResult(false);
+                },
+                () => tcs.SetResult(true),
+                cancellationToken);
+            await tcs.Task;
+            logger.LogInformation($"Job {job.Name} finished.");
         }
 
-        private Task RunJobAction(Job job, JobAction jobAction, JToken data, IReadOnlyCollection<JobAction> followingJobActions, CancellationToken cancellationToken)
-            => moduleRegistry.GetModule(jobAction.ModuleID).MatchAsync(
-                async module =>
-                {
-                    var tcs = new TaskCompletionSource<bool>();
-                    var result = await module.Process(jobAction.Arguments, data, cancellationToken);
-                    var nextJobAction = followingJobActions.FirstOrDefault();
-                    result.Subscribe(
-                        async data =>
-                        {
-                            if (nextJobAction != null)
-                            {
-                                try
-                                {
-                                    await RunJobAction(job, nextJobAction, data, followingJobActions.Skip(1).ToList(), cancellationToken);
-                                }
-                                catch(Exception e)
-                                {
-                                    logger.LogError(e, $"Exception while executing module {nextJobAction.ModuleID} in job {job.Name}");
-                                }
-                            }
-                            else
-                            {
-                                logger.LogDebug($"Result from {job.Name}: {result}");
-                            }
-                        },
-                        exception => logger.LogError(exception, $"Exception while executing module {jobAction.ModuleID} in job {job.Name}"),
-                        () => tcs.SetResult(true),
-                        cancellationToken);
-                    await tcs.Task;
-                    return unit;
-                },
-                () =>
-                {
-                    logger.LogError($"Module {jobAction.ModuleID} not found.");
-                    return unit;
-                });
+        private IObservable<JToken> CreateJobFlow(IEnumerable<JobAction> jobActions)
+        {
+            var seed = Observable.Return<JToken>(JValue.CreateNull());
+            return jobActions.Aggregate(seed, Aggregate);
+
+            IObservable<JToken> Aggregate(IObservable<JToken> acc, JobAction jobAction) => acc.SelectMany((data, token)
+                => MergeAsync(jobAction, data, token)).SelectMany(o => o);
+
+            Task<IObservable<JToken>> MergeAsync(JobAction jobAction, JToken data, CancellationToken cancellationToken) =>
+                moduleRegistry.GetModule(jobAction.ModuleID).MatchAsync(
+                    module => module.Process(jobAction.Arguments, data, cancellationToken),
+                    () => Observable.Throw<JToken>(new Exception($"Module {jobAction.ModuleID} not found.")));
+        }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
