@@ -11,18 +11,23 @@ using System.Threading.Tasks;
 
 namespace Yousei.Modules
 {
-    public class Globals
+    public class ScriptModuleGlobals
     {
-        public Globals(JToken data)
+        public ScriptModuleGlobals(object data, IServiceProvider serviceProvider)
         {
             Data = data;
+            Services = serviceProvider;
         }
 
-        public JToken Data { get; }
+        public dynamic Data { get; }
+
+        public IServiceProvider Services { get; }
     }
 
-    internal class ScriptModule : BaseOldModule
+    public class ScriptModule : BaseOldModule
     {
+        private readonly IServiceProvider serviceProvider;
+
         internal enum ScriptType
         {
             CSharp,
@@ -33,6 +38,13 @@ namespace Yousei.Modules
             public ScriptType Type { get; set; }
 
             public string Code { get; set; }
+
+            public bool EmitNull { get; set; } = false;
+        }
+
+        public ScriptModule(IServiceProvider serviceProvider)
+        {
+            this.serviceProvider = serviceProvider;
         }
 
         public string ID => "script";
@@ -62,7 +74,12 @@ namespace Yousei.Modules
             }
 
             if (result is null)
-                return JValue.CreateNull().YieldAsync();
+            {
+                if (args.EmitNull)
+                    return JValue.CreateNull().YieldAsync();
+                else
+                    return AsyncEnumerable.Empty<JToken>();
+            }
 
             if (result is IEnumerable resultEnumerable)
                 return resultEnumerable.Cast<object>().Select(JToken.FromObject).ToAsyncEnumerable();
@@ -74,11 +91,24 @@ namespace Yousei.Modules
         {
             var script = CSharpScript.Create(
                 code,
-                globalsType: typeof(Globals),
+                globalsType: typeof(ScriptModuleGlobals),
                 options: ScriptOptions.Default
-                    .WithImports("System"));
+                    .WithReferences(
+                        GetType().Assembly,
+                        typeof(Microsoft.CSharp.RuntimeBinder.Binder).Assembly,
+                        typeof(JToken).Assembly)
+                    .WithImports(
+                        "System",
+                        "System.Collections",
+                        "System.Collections.Generic",
+                        "System.Linq",
+                        "Yousei",
+                        "Yousei.Modules",
+                        "Newtonsoft.Json.Linq"));
 
-            var state = await script.RunAsync(globals: new Globals(data), cancellationToken: cancellationToken).ConfigureAwait(false);
+            var state = await script.RunAsync(
+                globals: new ScriptModuleGlobals(data, serviceProvider),
+                cancellationToken: cancellationToken).ConfigureAwait(false);
             return state.ReturnValue;
         }
     }
