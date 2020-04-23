@@ -43,6 +43,7 @@ namespace Yousei
             Register<ForeachModule>(services);
             Register<ScriptModule>(services);
             Register<LogModule>(services);
+            Register<SinkModule>(services);
         }
 
         private static void Register<TModule>(IServiceCollection services) where TModule : IModule
