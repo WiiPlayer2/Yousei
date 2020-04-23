@@ -74,6 +74,7 @@ namespace Yousei.Tools
                 removed.ForEach(o => Changed?.Invoke(this, new FileSystemEventArgs(WatcherChangeTypes.Deleted, o.DirectoryName, o.Name)));
                 created.ForEach(o => Changed?.Invoke(this, new FileSystemEventArgs(WatcherChangeTypes.Created, o.DirectoryName, o.Name)));
                 updated.ForEach(o => Changed?.Invoke(this, new FileSystemEventArgs(WatcherChangeTypes.Changed, o.DirectoryName, o.Name)));
+                lastSnapshot = currentSnapshot;
             }
         }
 
