@@ -9,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ using static LanguageExt.Prelude;
 
 namespace Yousei.Modules
 {
-    class GraphQLModule : BaseOldModule
+    class GraphQLModule : IModule
     {
         private readonly ILogger<GraphQLModule> logger;
 
@@ -117,16 +118,19 @@ namespace Yousei.Modules
 
         public string ID => "graphql";
 
-        public override async Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public async Task<IObservable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
             var client = new GraphQLHttpClient(args.EndPoint, new NewtonsoftJsonSerializer());
 
             return args.Type switch
             {
-                QueryType.Query => (await SendQuery(client, args.Query, cancellationToken)).ToAsyncEnumerable(),
-                QueryType.Subscription => await Subscribe(client, args.Query, cancellationToken),
-                _ => Enumerable.Empty<JToken>().ToAsyncEnumerable(),
+                QueryType.Query => (await SendQuery(client, args.Query, cancellationToken))
+                    .Match(
+                        data => Observable.Return(data),
+                        () => Observable.Empty<JToken>()),
+                QueryType.Subscription => Subscribe(client, args.Query, cancellationToken),
+                _ => Observable.Empty<JToken>(),
             };
         }
 
@@ -150,13 +154,20 @@ namespace Yousei.Modules
             }
         }
 
-        private Task<IAsyncEnumerable<JToken>> Subscribe(IGraphQLClient client, string query, CancellationToken cancellationToken)
+        private IObservable<JToken> Subscribe(IGraphQLClient client, string query, CancellationToken cancellationToken)
         {
             var request = new GraphQLRequest(query);
             var observable = client.CreateSubscriptionStream<JToken>(request);
-            var observer = new Observer(logger);
-            observable.Subscribe(observer, cancellationToken);
-            return Task.FromResult<IAsyncEnumerable<JToken>>(observer);
+            var filteredObservable = observable.Where(o =>
+            {
+                if (o.Errors?.Any() ?? false)
+                {
+                    o.Errors.ForEach(error => logger.LogError(error.Message));
+                    return false;
+                }
+                return true;
+            }).Select(o => o.Data);
+            return filteredObservable;
         }
     }
 }
