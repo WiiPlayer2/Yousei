@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Yousei.Modules
 {
-    class ShellModule : IModule
+    class ShellModule : BaseOldModule
     {
         private class Arguments
         {
@@ -29,7 +29,7 @@ namespace Yousei.Modules
             ? $"-c \"{Regex.Escape(arguments)}\""
             : $"/C \"{Regex.Escape(arguments)}\"";
 
-        public async Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public override async Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
             var dataStr = data.ToString();

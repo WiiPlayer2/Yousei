@@ -8,11 +8,11 @@ using System.Linq;
 
 namespace Yousei.Modules
 {
-    class MapModule : IModule
+    class MapModule : BaseOldModule
     {
         public string ID => "map";
 
-        public Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public override Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             return Task.FromResult(Map(arguments, data).YieldAsync());
         }

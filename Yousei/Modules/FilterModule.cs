@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Yousei.Modules
 {
-    class FilterModule : IModule
+    class FilterModule : BaseOldModule
     {
         private enum FilterType
         {
@@ -40,7 +40,7 @@ namespace Yousei.Modules
 
         public string ID => "filter";
 
-        public Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public override Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
             var value = data.Get(args.Path);

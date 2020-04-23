@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Reactive;
 using static LanguageExt.Prelude;
 
 namespace Yousei
@@ -61,36 +62,28 @@ namespace Yousei
                 return Task.CompletedTask;
 
             var task = Task.Run(() => RunJobAction(job, job.Actions.First(), JValue.CreateNull(), job.Actions.Skip(1).ToList(), cancellationToken));
-            task.ContinueWith(task => logger.LogError(task.Exception, $"Error while running job {job.Name}"), TaskContinuationOptions.OnlyOnFaulted);
-            return task;
+            return task.ContinueWith(task => logger.LogError(task.Exception, $"Error while running job {job.Name}"), TaskContinuationOptions.OnlyOnFaulted);
         }
 
         private Task RunJobAction(Job job, JobAction jobAction, JToken data, IReadOnlyCollection<JobAction> followingJobActions, CancellationToken cancellationToken)
             => moduleRegistry.GetModule(jobAction.ModuleID).MatchAsync(
                 async module =>
                 {
-                    var results = await module.Process(jobAction.Arguments, data, cancellationToken);
-                    var followingTasks = new List<Task>();
+                    var tcs = new TaskCompletionSource<bool>();
+                    var result = await module.Process(jobAction.Arguments, data, cancellationToken);
                     var nextJobAction = followingJobActions.FirstOrDefault();
-                    if (nextJobAction != null)
-                    {
-                        var nextFollowingJobActions = followingJobActions.Skip(1).ToList();
-                        await foreach (var result in results.WithCancellation(cancellationToken))
+                    result.Subscribe(
+                        async data =>
                         {
-                            followingTasks.Add(RunJobAction(job, nextJobAction, result, nextFollowingJobActions, cancellationToken));
-                        }
-                        await Task.WhenAll(followingTasks);
-                    }
-                    else
-                    {
-                        await foreach (var result in results.WithCancellation(cancellationToken))
-                        {
-                            if (result.Type != JTokenType.Null)
-                            {
+                            if (nextJobAction != null)
+                                await RunJobAction(job, nextJobAction, data, followingJobActions.Skip(1).ToList(), cancellationToken);
+                            else
                                 logger.LogDebug($"Result from {job.Name}: {result}");
-                            }
-                        }
-                    }
+                        },
+                        exception => logger.LogError(exception, $"Exception while executing {jobAction.ModuleID} in job {job.Name}"),
+                        () => tcs.SetResult(true),
+                        cancellationToken);
+                    await tcs.Task;
                     return unit;
                 },
                 () =>

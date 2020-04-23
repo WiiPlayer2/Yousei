@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Yousei.Modules
 {
-    class ForeachModule : IModule
+    class ForeachModule : BaseOldModule
     {
         public string ID => "foreach";
 
-        public Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public override Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var path = arguments.ToObject<string>();
             return Task.FromResult(data.Get(path).ToAsyncEnumerable());

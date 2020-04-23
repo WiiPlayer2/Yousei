@@ -16,7 +16,7 @@ using static LanguageExt.Prelude;
 
 namespace Yousei.Modules
 {
-    class GraphQLModule : IModule
+    class GraphQLModule : BaseOldModule
     {
         private readonly ILogger<GraphQLModule> logger;
 
@@ -117,7 +117,7 @@ namespace Yousei.Modules
 
         public string ID => "graphql";
 
-        public async Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public override async Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
             var client = new GraphQLHttpClient(args.EndPoint, new NewtonsoftJsonSerializer());

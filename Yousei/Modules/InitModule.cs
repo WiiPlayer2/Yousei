@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Yousei.Modules
 {
-    class InitModule : IModule
+    class InitModule : BaseOldModule
     {
         public string ID => "init";
 
-        public Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken) => Task.FromResult(arguments.YieldAsync());
+        public override Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken) => Task.FromResult(arguments.YieldAsync());
     }
 }

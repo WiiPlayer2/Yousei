@@ -21,7 +21,7 @@ namespace Yousei.Modules
         public JToken Data { get; }
     }
 
-    internal class ScriptModule : IModule
+    internal class ScriptModule : BaseOldModule
     {
         internal enum ScriptType
         {
@@ -37,7 +37,7 @@ namespace Yousei.Modules
 
         public string ID => "script";
 
-        public async Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public override async Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
             var result = args.Type switch
