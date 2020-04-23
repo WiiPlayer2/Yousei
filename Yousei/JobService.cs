@@ -62,7 +62,11 @@ namespace Yousei
                 return Task.CompletedTask;
 
             var task = Task.Run(() => RunJobAction(job, job.Actions.First(), JValue.CreateNull(), job.Actions.Skip(1).ToList(), cancellationToken));
-            return task.ContinueWith(task => logger.LogError(task.Exception, $"Error while running job {job.Name}"), TaskContinuationOptions.OnlyOnFaulted);
+            return task.ContinueWith(task =>
+            {
+                if(task.IsFaulted)
+                    logger.LogError(task.Exception, $"Error while running job {job.Name}");
+            });
         }
 
         private Task RunJobAction(Job job, JobAction jobAction, JToken data, IReadOnlyCollection<JobAction> followingJobActions, CancellationToken cancellationToken)
@@ -76,11 +80,22 @@ namespace Yousei
                         async data =>
                         {
                             if (nextJobAction != null)
-                                await RunJobAction(job, nextJobAction, data, followingJobActions.Skip(1).ToList(), cancellationToken);
+                            {
+                                try
+                                {
+                                    await RunJobAction(job, nextJobAction, data, followingJobActions.Skip(1).ToList(), cancellationToken);
+                                }
+                                catch(Exception e)
+                                {
+                                    logger.LogError(e, $"Exception while executing module {nextJobAction.ModuleID} in job {job.Name}");
+                                }
+                            }
                             else
+                            {
                                 logger.LogDebug($"Result from {job.Name}: {result}");
+                            }
                         },
-                        exception => logger.LogError(exception, $"Exception while executing {jobAction.ModuleID} in job {job.Name}"),
+                        exception => logger.LogError(exception, $"Exception while executing module {jobAction.ModuleID} in job {job.Name}"),
                         () => tcs.SetResult(true),
                         cancellationToken);
                     await tcs.Task;
