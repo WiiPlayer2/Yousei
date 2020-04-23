@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace Yousei.Modules
         public IServiceProvider Services { get; }
     }
 
-    public class ScriptModule : BaseOldModule
+    public class ScriptModule : IModule
     {
         private readonly IServiceProvider serviceProvider;
 
@@ -49,7 +50,7 @@ namespace Yousei.Modules
 
         public string ID => "script";
 
-        public override async Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public async Task<IObservable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
             var result = args.Type switch
@@ -76,15 +77,15 @@ namespace Yousei.Modules
             if (result is null)
             {
                 if (args.EmitNull)
-                    return JValue.CreateNull().YieldAsync();
+                    return Observable.Return<JToken>(JValue.CreateNull());
                 else
-                    return AsyncEnumerable.Empty<JToken>();
+                    return Observable.Empty<JToken>();
             }
 
             if (result is IEnumerable resultEnumerable)
-                return resultEnumerable.Cast<object>().Select(JToken.FromObject).ToAsyncEnumerable();
+                return resultEnumerable.Cast<object>().Select(JToken.FromObject).ToObservable();
 
-            return JToken.FromObject(result).YieldAsync();
+            return Observable.Return(JToken.FromObject(result));
         }
 
         private async Task<object> RunCSharp(string code, JToken data, CancellationToken cancellationToken)
@@ -96,7 +97,8 @@ namespace Yousei.Modules
                     .WithReferences(
                         GetType().Assembly,
                         typeof(Microsoft.CSharp.RuntimeBinder.Binder).Assembly,
-                        typeof(JToken).Assembly)
+                        typeof(JToken).Assembly,
+                        typeof(Microsoft.Extensions.Logging.ILogger<>).Assembly)
                     .WithImports(
                         "System",
                         "System.Collections",
@@ -104,6 +106,7 @@ namespace Yousei.Modules
                         "System.Linq",
                         "Yousei",
                         "Yousei.Modules",
+                        "Microsoft.Extensions.Logging",
                         "Newtonsoft.Json.Linq"));
 
             var state = await script.RunAsync(
