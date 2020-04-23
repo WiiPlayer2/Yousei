@@ -42,6 +42,7 @@ namespace Yousei
             Register<FilterModule>(services);
             Register<ForeachModule>(services);
             Register<ScriptModule>(services);
+            Register<LogModule>(services);
         }
 
         private static void Register<TModule>(IServiceCollection services) where TModule : IModule
