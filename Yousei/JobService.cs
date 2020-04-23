@@ -18,15 +18,15 @@ namespace Yousei
     {
         private readonly ILogger logger;
         private readonly JobRegistry jobRegistry;
-        private readonly ModuleRegistry moduleRegistry;
+        private readonly JobFlowCreator jobFlowCreator;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly IDictionary<Job, (CancellationTokenSource, Task)> runningJobs = new Dictionary<Job, (CancellationTokenSource, Task)>();
 
-        public JobService(ILogger<JobService> logger, JobRegistry jobRegistry, ModuleRegistry moduleRegistry)
+        public JobService(ILogger<JobService> logger, JobRegistry jobRegistry, JobFlowCreator jobFlowCreator)
         {
             this.logger = logger;
             this.jobRegistry = jobRegistry;
-            this.moduleRegistry = moduleRegistry;
+            this.jobFlowCreator = jobFlowCreator;
 
             jobRegistry.JobAdded += JobRegistry_JobAdded;
             jobRegistry.JobRemoved += JobRegistry_JobRemoved;
@@ -61,7 +61,7 @@ namespace Yousei
             logger.LogInformation($"Run job {job.Name}");
             var tcs = new TaskCompletionSource<bool>();
             cancellationToken.Register(tcs.SetCanceled);
-            var jobObservable = CreateJobFlow(job.Actions);
+            var jobObservable = jobFlowCreator.CreateJobFlow(job.Actions);
             jobObservable.Subscribe(
                 data => logger.LogDebug($"Result from {job.Name}: {data}"),
                 exception =>
@@ -73,20 +73,6 @@ namespace Yousei
                 cancellationToken);
             await tcs.Task;
             logger.LogInformation($"Job {job.Name} finished.");
-        }
-
-        private IObservable<JToken> CreateJobFlow(IEnumerable<JobAction> jobActions)
-        {
-            var seed = Observable.Return<JToken>(JValue.CreateNull());
-            return jobActions.Aggregate(seed, Aggregate);
-
-            IObservable<JToken> Aggregate(IObservable<JToken> acc, JobAction jobAction) => acc.SelectMany((data, token)
-                => MergeAsync(jobAction, data, token)).SelectMany(o => o);
-
-            Task<IObservable<JToken>> MergeAsync(JobAction jobAction, JToken data, CancellationToken cancellationToken) =>
-                moduleRegistry.GetModule(jobAction.ModuleID).MatchAsync(
-                    module => module.Process(jobAction.Arguments, data, cancellationToken),
-                    () => Observable.Throw<JToken>(new Exception($"Module {jobAction.ModuleID} not found.")));
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
