@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -46,6 +48,9 @@ namespace Yousei
             if (str.StartsWith('$'))
                 return ResolvePath();
 
+            if (str.StartsWith('@'))
+                return Interpolate();
+
             return str;
 
             JToken ResolvePath()
@@ -55,6 +60,19 @@ namespace Yousei
 
                 var pathParts = str.Substring(1).Split('.');
                 return pathParts.Aggregate(token, (acc, curr) => acc[curr]);
+            }
+
+            string Interpolate()
+            {
+                var regex = new Regex(@"\${(?<substitute>\w+(\.\w+)*)}");
+                var input = str.Substring(1);
+                var interpolatedString = regex.Replace(input, match =>
+                {
+                    var substitute = match.Groups["substitute"].Value;
+                    var substituteValue = token.Get($"${substitute}").ToString();
+                    return substituteValue;
+                });
+                return interpolatedString;
             }
         }
 
