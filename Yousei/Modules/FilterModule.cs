@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Yousei.Modules
 {
-    class FilterModule : BaseOldModule
+    public class FilterModule : BaseOldModule
     {
         private enum FilterType
         {

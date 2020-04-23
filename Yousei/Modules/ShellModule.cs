@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Yousei.Modules
 {
-    class ShellModule : BaseOldModule
+    public class ShellModule : BaseOldModule
     {
         private class Arguments
         {

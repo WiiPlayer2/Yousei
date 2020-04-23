@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Yousei.Modules
 {
-    abstract class BaseOldModule : IOldModule
+    public abstract class BaseOldModule : IOldModule
     {
         public abstract Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken);
 

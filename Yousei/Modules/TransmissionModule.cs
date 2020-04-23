@@ -9,7 +9,7 @@ using Transmission.API.RPC.Entity;
 
 namespace Yousei.Modules
 {
-    class TransmissionModule : BaseOldModule
+    public class TransmissionModule : BaseOldModule
     {
         private class Data
         {

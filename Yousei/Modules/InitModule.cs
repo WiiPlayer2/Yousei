@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Yousei.Modules
 {
-    class InitModule : BaseOldModule
+    public class InitModule : BaseOldModule
     {
         public string ID => "init";
 

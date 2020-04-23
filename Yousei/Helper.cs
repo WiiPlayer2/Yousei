@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Yousei
 {
     [DebuggerStepThrough]
-    static class Helper
+    public static class Helper
     {
         public static IAsyncEnumerable<T> YieldAsync<T>(this T item) => item.Yield().ToAsyncEnumerable();
 
@@ -43,5 +43,8 @@ namespace Yousei
             var parts = path.Split('.');
             return parts.Aggregate(token, (value, path) => value[path]);
         }
+
+        public static TService GetService<TService>(this IServiceProvider serviceProvider) where TService : class
+            => serviceProvider.GetService(typeof(TService)) as TService;
     }
 }

@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Yousei
 {
-    interface IModule
+    public interface IModule
     {
         Task<IObservable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken);
     }
 
-    interface IOldModule : IModule
+    public interface IOldModule : IModule
     {
         new Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken);
     }

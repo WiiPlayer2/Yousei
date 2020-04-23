@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Yousei.Modules
 {
-    class MapModule : BaseOldModule
+    public class MapModule : BaseOldModule
     {
         public string ID => "map";
 

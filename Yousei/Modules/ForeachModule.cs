@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Yousei.Modules
 {
-    class ForeachModule : BaseOldModule
+    public class ForeachModule : BaseOldModule
     {
         public string ID => "foreach";
 

@@ -17,7 +17,7 @@ using static LanguageExt.Prelude;
 
 namespace Yousei.Modules
 {
-    class GraphQLModule : IModule
+    public class GraphQLModule : IModule
     {
         private readonly ILogger<GraphQLModule> logger;
 
