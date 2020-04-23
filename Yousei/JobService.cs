@@ -60,18 +60,18 @@ namespace Yousei
         {
             logger.LogInformation($"Run job {job.Name}");
             var tcs = new TaskCompletionSource<bool>();
-            cancellationToken.Register(tcs.SetCanceled);
+            cancellationToken.Register(() => tcs.TrySetCanceled());
             var jobObservable = jobFlowCreator.CreateJobFlow(job.Actions);
             jobObservable.Subscribe(
                 data => logger.LogDebug($"Result from {job.Name}: {data}"),
                 exception =>
                 {
                     logger.LogError(exception, $"Error while running job {job.Name}");
-                    tcs.SetResult(false);
+                    tcs.TrySetResult(false);
                 },
-                () => tcs.SetResult(true),
+                () => tcs.TrySetResult(true),
                 cancellationToken);
-            await tcs.Task;
+            await tcs.Task.ContinueWith(_ => { });
             logger.LogInformation($"Job {job.Name} finished.");
         }
 
