@@ -48,8 +48,6 @@ namespace Yousei.Modules
             this.serviceProvider = serviceProvider;
         }
 
-        public string ID => "script";
-
         public async Task<IObservable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();

@@ -1,21 +1,21 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using LanguageExt;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Yousei.Modules.Templates;
 
 namespace Yousei.Modules
 {
-    public class ForeachModule : BaseOldModule
+    public class ForeachModule : EnumerableTemplate
     {
-        public string ID => "foreach";
-
-        public override Task<IAsyncEnumerable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public override Task<IEnumerable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var path = arguments.ToObject<string>();
-            return Task.FromResult(data.Get(path).ToAsyncEnumerable());
+            return data.Get(path).AsTask<IEnumerable<JToken>>();
         }
     }
 }

@@ -5,17 +5,15 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using Yousei.Modules.Templates;
+using LanguageExt;
 
 namespace Yousei.Modules
 {
-    public class MapModule : BaseOldModule
+    public class MapModule : SingleTemplate
     {
-        public string ID => "map";
-
-        public override Task<IAsyncEnumerable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(Map(arguments, data).YieldAsync());
-        }
+        public override Task<JToken> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
+            => Map(arguments, data).AsTask();
 
         private JToken Map(JToken value, JToken data) => value.Type switch
         {

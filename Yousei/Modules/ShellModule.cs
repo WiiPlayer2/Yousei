@@ -9,17 +9,16 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Yousei.Modules.Templates;
 
 namespace Yousei.Modules
 {
-    public class ShellModule : BaseOldModule
+    public class ShellModule : SingleTemplate
     {
         private class Arguments
         {
             public string Command { get; set; }
         }
-
-        public string ID => "shell";
 
         private bool IsUnix => Environment.OSVersion.Platform == PlatformID.Unix;
 
@@ -29,7 +28,7 @@ namespace Yousei.Modules
             ? $"-c \"{Regex.Escape(arguments)}\""
             : $"/C \"{Regex.Escape(arguments)}\"";
 
-        public override async Task<IAsyncEnumerable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public override async Task<JToken> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
             var dataStr = data.ToString();
@@ -55,11 +54,11 @@ namespace Yousei.Modules
             try
             {
                 var resultData = JToken.Parse(output);
-                return resultData.YieldAsync();
+                return resultData;
             }
             catch
             {
-                return JValue.CreateString(output).YieldAsync();
+                return JValue.CreateString(output);
             }
         }
     }

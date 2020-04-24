@@ -6,10 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Transmission.API.RPC;
 using Transmission.API.RPC.Entity;
+using Yousei.Modules.Templates;
 
 namespace Yousei.Modules
 {
-    public class TransmissionModule : BaseOldModule
+    public class TransmissionModule : SingleTemplate
     {
         private class Data
         {
@@ -27,9 +28,7 @@ namespace Yousei.Modules
             public string DownloadDirectory { get; set; }
         }
 
-        public string ID => "transmission";
-
-        public override async Task<IAsyncEnumerable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public override async Task<JToken> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
             var request = data.ToObject<Data>();
@@ -41,7 +40,7 @@ namespace Yousei.Modules
                 DownloadDirectory = args.DownloadDirectory,
             }).ConfigureAwait(false);
 
-            return JToken.FromObject(newTorrentInfo).YieldAsync();
+            return JToken.FromObject(newTorrentInfo);
         }
     }
 }

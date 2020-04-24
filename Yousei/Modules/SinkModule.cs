@@ -5,12 +5,13 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Yousei.Modules.Templates;
 
 namespace Yousei.Modules
 {
-    public class SinkModule : IModule
+    public class SinkModule : VoidTemplate
     {
-        public Task<IObservable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
-            => Task.FromResult(Observable.Empty<JToken>());
+        public override Task ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
+            => Task.CompletedTask;
     }
 }

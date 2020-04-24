@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using LanguageExt;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -7,10 +8,11 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Yousei.Modules.Templates;
 
 namespace Yousei.Modules
 {
-    public class LogModule : IModule
+    public class LogModule : SingleTemplate
     {
         private readonly ILogger<LogModule> logger;
 
@@ -28,13 +30,13 @@ namespace Yousei.Modules
             this.logger = logger;
         }
 
-        public Task<IObservable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public override Task<JToken> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
             var values = args.Values.Select(path => data.Get(path)).Cast<object>().ToArray();
             var message = string.Format(args.Format, values);
             logger.Log(args.Level, message);
-            return Task.FromResult(Observable.Return(data));
+            return data.AsTask();
         }
     }
 }

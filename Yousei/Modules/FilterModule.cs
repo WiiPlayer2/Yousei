@@ -1,15 +1,19 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using LanguageExt;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Yousei.Modules.Templates;
+using static LanguageExt.Prelude;
 
 namespace Yousei.Modules
 {
-    public class FilterModule : BaseOldModule
+    public class FilterModule : OptionTemplate
     {
         private enum FilterType
         {
@@ -38,13 +42,10 @@ namespace Yousei.Modules
             }
         }
 
-        public string ID => "filter";
-
-        public override Task<IAsyncEnumerable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public override OptionAsync<JToken> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
-            var value = data.Get(args.Path);
-
+            var value = data.Get(args.Path).ToObject<string>();
             var regex = args.Type switch
             {
                 FilterType.Regex => new Regex(args.Pattern),
@@ -52,11 +53,9 @@ namespace Yousei.Modules
                 _ => throw new NotSupportedException(),
             };
 
-            var valueStr = value.ToObject<string>();
-            if (!regex.IsMatch(valueStr))
-                return Task.FromResult(Enumerable.Empty<JToken>().ToAsyncEnumerable());
-
-            return Task.FromResult(data.YieldAsync());
+            if (regex.IsMatch(value))
+                return SomeAsync(data);
+            return None;
         }
     }
 }

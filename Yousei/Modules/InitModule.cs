@@ -1,16 +1,17 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using LanguageExt;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Yousei.Modules.Templates;
 
 namespace Yousei.Modules
 {
-    public class InitModule : BaseOldModule
+    public class InitModule : SingleTemplate
     {
-        public string ID => "init";
-
-        public override Task<IAsyncEnumerable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken) => Task.FromResult(arguments.YieldAsync());
+        public override Task<JToken> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
+            => arguments.AsTask();
     }
 }
