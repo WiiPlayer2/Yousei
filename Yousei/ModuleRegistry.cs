@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Yousei.Modules;
@@ -34,23 +35,22 @@ namespace Yousei
         public static void RegisterModules(IServiceCollection services)
         {
             services.AddSingleton<ModuleRegistry>();
-            Register<ShellModule>(services);
-            Register<GraphQLModule>(services);
-            Register<MapModule>(services);
-            Register<InitModule>(services);
-            Register<TransmissionModule>(services);
-            Register<FilterModule>(services);
-            Register<ForeachModule>(services);
-            Register<ScriptModule>(services);
-            Register<LogModule>(services);
-            Register<SinkModule>(services);
-            Register<FlowModule>(services);
-            Register<ArgumentsMapModule>(services);
+            FindModuleTypes().ForEach(o => Register(services, o));
         }
 
-        private static void Register<TModule>(IServiceCollection services) where TModule : IModule
+        private static IEnumerable<Type> FindModuleTypes()
         {
-            var moduleType = typeof(TModule);
+            var moduleTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(o => o.GetTypes())
+                .Where(o => o.GetInterface(nameof(IModule)) == typeof(IModule)
+                    && !o.IsAbstract
+                    && !o.IsGenericTypeDefinition
+                    && !o.IsInterface);
+            return moduleTypes;
+        }
+
+        private static void Register(IServiceCollection services, Type moduleType)
+        {
             var id = GetId(moduleType);
             services.AddSingleton(moduleType);
             moduleTypes[id] = moduleType;
