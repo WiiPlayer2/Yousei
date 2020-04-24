@@ -20,7 +20,7 @@ namespace Yousei
         private readonly JobRegistry jobRegistry;
         private readonly JobFlowCreator jobFlowCreator;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-        private readonly IDictionary<Job, (CancellationTokenSource, Task)> runningJobs = new Dictionary<Job, (CancellationTokenSource, Task)>();
+        private readonly IDictionary<Job, (CancellationTokenSource, Task)> runningJobs = new ConcurrentDictionary<Job, (CancellationTokenSource, Task)>();
 
         public JobService(ILogger<JobService> logger, JobRegistry jobRegistry, JobFlowCreator jobFlowCreator)
         {

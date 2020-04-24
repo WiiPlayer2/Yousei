@@ -64,8 +64,8 @@ namespace Yousei.Modules
             if (!directoryInfo.Exists)
                 return None;
 
-            var flows = directoryInfo.EnumerateFiles("*.yaml");
-            var flowFile = Optional(flows.FirstOrDefault(o => Path.GetFileNameWithoutExtension(o.Name).Equals(flow, StringComparison.InvariantCultureIgnoreCase)));
+            var flowFileInfo = new FileInfo(Path.Combine(directoryInfo.FullName, $"{flow}.yaml"));
+            var flowFile = flowFileInfo.Exists ? Some(flowFileInfo) : None;
             return flowFile.Bind(
                 fileInfo =>
                 {
