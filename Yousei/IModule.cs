@@ -11,9 +11,4 @@ namespace Yousei
     {
         Task<IObservable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken);
     }
-
-    public interface IOldModule : IModule
-    {
-        new Task<IAsyncEnumerable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken);
-    }
 }
