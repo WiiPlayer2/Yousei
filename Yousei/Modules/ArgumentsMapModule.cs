@@ -17,12 +17,12 @@ namespace Yousei.Modules
             this.moduleRegistry = moduleRegistry;
         }
 
-        public Task<IObservable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public Task<IObservable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var jobAction = arguments.ToObject<JobAction>();
             var mappedArgs = jobAction.Arguments.Map(data);
             return moduleRegistry.GetModule(jobAction.ModuleID).MatchAsync(
-                module => module.Process(mappedArgs, data, cancellationToken),
+                module => module.ProcessAsync(mappedArgs, data, cancellationToken),
                 () => Observable.Throw<JToken>(new Exception($"Module {jobAction.ModuleID} not found.")));
         }
     }

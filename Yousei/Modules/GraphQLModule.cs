@@ -118,7 +118,7 @@ namespace Yousei.Modules
 
         public string ID => "graphql";
 
-        public async Task<IObservable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public async Task<IObservable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
             var client = new GraphQLHttpClient(args.EndPoint, new NewtonsoftJsonSerializer());

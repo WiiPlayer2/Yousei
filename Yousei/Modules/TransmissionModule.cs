@@ -29,7 +29,7 @@ namespace Yousei.Modules
 
         public string ID => "transmission";
 
-        public override async Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public override async Task<IAsyncEnumerable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
             var request = data.ToObject<Data>();

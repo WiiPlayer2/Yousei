@@ -41,7 +41,7 @@ namespace Yousei.Modules
             flowsPath = configuration.GetValue<string>("Flows");
         }
 
-        public Task<IObservable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public Task<IObservable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<FlowArguments>();
             return GetFlow(args.Flow).Match(

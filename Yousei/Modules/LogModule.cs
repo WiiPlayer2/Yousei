@@ -28,7 +28,7 @@ namespace Yousei.Modules
             this.logger = logger;
         }
 
-        public Task<IObservable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public Task<IObservable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
             var values = args.Values.Select(path => data.Get(path)).Cast<object>().ToArray();

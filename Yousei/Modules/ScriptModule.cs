@@ -50,7 +50,7 @@ namespace Yousei.Modules
 
         public string ID => "script";
 
-        public async Task<IObservable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public async Task<IObservable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
             var result = args.Type switch

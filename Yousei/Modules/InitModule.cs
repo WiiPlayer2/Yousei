@@ -11,6 +11,6 @@ namespace Yousei.Modules
     {
         public string ID => "init";
 
-        public override Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken) => Task.FromResult(arguments.YieldAsync());
+        public override Task<IAsyncEnumerable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken) => Task.FromResult(arguments.YieldAsync());
     }
 }

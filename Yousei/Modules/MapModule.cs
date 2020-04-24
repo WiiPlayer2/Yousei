@@ -12,7 +12,7 @@ namespace Yousei.Modules
     {
         public string ID => "map";
 
-        public override Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public override Task<IAsyncEnumerable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             return Task.FromResult(Map(arguments, data).YieldAsync());
         }

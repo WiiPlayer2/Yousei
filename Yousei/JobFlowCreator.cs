@@ -28,7 +28,7 @@ namespace Yousei
 
             Task<IObservable<JToken>> MergeAsync(JobAction jobAction, JToken data, CancellationToken cancellationToken) =>
                 moduleRegistry.GetModule(jobAction.ModuleID).MatchAsync(
-                    module => module.Process(jobAction.Arguments, data, cancellationToken),
+                    module => module.ProcessAsync(jobAction.Arguments, data, cancellationToken),
                     () => Observable.Throw<JToken>(new Exception($"Module {jobAction.ModuleID} not found.")));
         }
     }

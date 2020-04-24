@@ -9,11 +9,11 @@ namespace Yousei
 {
     public interface IModule
     {
-        Task<IObservable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken);
+        Task<IObservable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken);
     }
 
     public interface IOldModule : IModule
     {
-        new Task<IAsyncEnumerable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken);
+        new Task<IAsyncEnumerable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken);
     }
 }

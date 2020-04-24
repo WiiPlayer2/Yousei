@@ -10,7 +10,7 @@ namespace Yousei.Modules
 {
     public class SinkModule : IModule
     {
-        public Task<IObservable<JToken>> Process(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public Task<IObservable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
             => Task.FromResult(Observable.Empty<JToken>());
     }
 }
