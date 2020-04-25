@@ -98,7 +98,10 @@ namespace Yousei
         private void Remove(string path)
         {
             if (jobs.Remove(Path.GetFullPath(path), out var job))
+            {
                 JobRemoved?.Invoke(this, job);
+                logger.LogInformation($"Removed {job} from {path}");
+            }
         }
 
         private void TryRegister(string path)
@@ -113,6 +116,7 @@ namespace Yousei
 
                     jobs.Add(Path.GetFullPath(path), job);
                     JobAdded?.Invoke(this, job);
+                    logger.LogInformation($"Added {job} from {path}");
                 }
             }
             catch (Exception e)

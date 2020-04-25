@@ -16,6 +16,8 @@ namespace Yousei
     {
         public string Name { get; set; }
 
+        public bool Enabled { get; set; } = true;
+
         public List<JobAction> Actions { get; set; }
 
         public override string ToString() => $"{Name} ({GetHashCode():X8})";

@@ -43,6 +43,9 @@ namespace Yousei
 
         private async void JobRegistry_JobAdded(object sender, Job job)
         {
+            if (!job.Enabled)
+                return;
+
             var cts = new CancellationTokenSource();
             var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cts.Token, cancellationTokenSource.Token);
             var task = RunJob(job, linkedCts.Token);
