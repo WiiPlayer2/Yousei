@@ -99,8 +99,8 @@ namespace Yousei
         {
             if (jobs.Remove(Path.GetFullPath(path), out var job))
             {
-                JobRemoved?.Invoke(this, job);
                 logger.LogInformation($"Removed {job} from {path}");
+                JobRemoved?.Invoke(this, job);
             }
         }
 
@@ -115,8 +115,8 @@ namespace Yousei
                         return;
 
                     jobs.Add(Path.GetFullPath(path), job);
-                    JobAdded?.Invoke(this, job);
                     logger.LogInformation($"Added {job} from {path}");
+                    JobAdded?.Invoke(this, job);
                 }
             }
             catch (Exception e)
