@@ -46,8 +46,19 @@ namespace Yousei
             var cts = new CancellationTokenSource();
             var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cts.Token, cancellationTokenSource.Token);
             var task = RunJob(job, linkedCts.Token);
-            runningJobs.Add(job, (cts, task));
-            await task.ContinueWith(_ => runningJobs.Remove(job));
+            runningJobs[job] = (cts, task);
+
+            await task.ContinueWith(t =>
+            {
+                if (!t.IsFaulted)
+                {
+                    runningJobs.Remove(job);
+                    return;
+                }
+
+                logger.LogError($"Job {job} failed. Restarting.");
+                JobRegistry_JobAdded(default, job);
+            });
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -58,21 +69,21 @@ namespace Yousei
 
         private async Task RunJob(Job job, CancellationToken cancellationToken)
         {
-            logger.LogInformation($"Run job {job.Name}");
+            logger.LogInformation($"Run job {job}");
             var tcs = new TaskCompletionSource<bool>();
             cancellationToken.Register(() => tcs.TrySetCanceled());
             var jobObservable = jobFlowCreator.CreateJobFlow(job.Actions);
             jobObservable.Subscribe(
-                data => logger.LogDebug($"Result from {job.Name}: {data}"),
+                data => logger.LogDebug($"Result from {job}: {data}"),
                 exception =>
                 {
-                    logger.LogError(exception, $"Error while running job {job.Name}");
-                    tcs.TrySetResult(false);
+                    logger.LogError(exception, $"Error while running job {job}");
+                    tcs.TrySetException(exception);
                 },
                 () => tcs.TrySetResult(true),
                 cancellationToken);
-            await tcs.Task.ContinueWith(_ => { });
-            logger.LogInformation($"Job {job.Name} finished.");
+            await tcs.Task.IgnoreCancellation().ConfigureAwait(false);
+            logger.LogInformation($"Job {job} finished.");
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)

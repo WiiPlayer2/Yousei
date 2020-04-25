@@ -30,6 +30,15 @@ namespace Yousei
             }
         }
 
+        public static async Task IgnoreCancellation(this Task task)
+        {
+            try
+            {
+                await task.ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) { }
+        }
+
         public static async Task<List<T>> ToList<T>(this IAsyncEnumerable<T> asyncEnumerable)
         {
             var list = new List<T>();
