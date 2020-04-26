@@ -39,6 +39,8 @@ namespace Yousei
             catch (OperationCanceledException) { }
         }
 
+        public static async void FireAndForget(this Task task) => await task.ConfigureAwait(false);
+
         public static async Task<List<T>> ToList<T>(this IAsyncEnumerable<T> asyncEnumerable)
         {
             var list = new List<T>();

@@ -37,7 +37,7 @@ namespace Yousei
             if (runningJobs.TryGetValue(job, out var pair))
             {
                 pair.Item1.Cancel();
-                await pair.Item2.ConfigureAwait(false);
+                await pair.Item2.ContinueWith(_ => { }).ConfigureAwait(false);
             }
         }
 
@@ -48,20 +48,32 @@ namespace Yousei
 
             var cts = new CancellationTokenSource();
             var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cts.Token, cancellationTokenSource.Token);
-            var task = RunJob(job, linkedCts.Token);
-            runningJobs[job] = (cts, task);
 
-            await task.ContinueWith(t =>
+            await Execute();
+
+            async Task Execute()
             {
-                if (!t.IsFaulted)
-                {
-                    runningJobs.Remove(job);
-                    return;
-                }
+                var task = RunJob(job, linkedCts.Token);
+                runningJobs[job] = (cts, task);
 
-                logger.LogError($"Job {job} failed. Restarting.");
-                JobRegistry_JobAdded(default, job);
-            });
+                await task.ContinueWith(t =>
+                {
+                    if (t.IsCanceled
+                        || linkedCts.IsCancellationRequested
+                        || job.Restart == RestartPolicy.Never
+                        || (job.Restart == RestartPolicy.OnlyOnFailed && !t.IsFaulted))
+                    {
+                        runningJobs.Remove(job);
+                        return;
+                    }
+
+                    if (t.IsFaulted)
+                        logger.LogError($"Job {job} failed. Restarting.");
+                    else
+                        logger.LogInformation($"Job {job} finished. Restarting.");
+                    Execute().FireAndForget();
+                });
+            }
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
