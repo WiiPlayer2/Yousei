@@ -14,13 +14,16 @@ namespace Yousei.Modules
 {
     public class ScriptModuleGlobals
     {
-        public ScriptModuleGlobals(object data, IServiceProvider serviceProvider)
+        public ScriptModuleGlobals(JToken data, IServiceProvider serviceProvider)
         {
             Data = data;
+            JData = data;
             Services = serviceProvider;
         }
 
         public dynamic Data { get; }
+
+        public JToken JData { get; }
 
         public IServiceProvider Services { get; }
     }
