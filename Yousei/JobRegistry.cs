@@ -48,7 +48,9 @@ namespace Yousei
             folderInfo = new DirectoryInfo(folderPath);
             if (folderInfo.Exists)
             {
-                var baseFileSystemWatcher = new PeriodicFileSystemWatcher(folderInfo.FullName, "*.yaml", TimeSpan.FromSeconds(10));
+                var baseFileSystemWatcher = Environment.OSVersion.Platform == PlatformID.Unix
+                    ? (IFileSystemWatcher)new PeriodicFileSystemWatcher(folderInfo.FullName, "*.yaml", TimeSpan.FromSeconds(10))
+                    : new DefaultFileSystemWatcher(folderInfo.FullName, "*.yaml");
                 folderWatcher = new DelayFileSystemWatcher(baseFileSystemWatcher, TimeSpan.FromSeconds(2));
                 folderWatcher.Changed += FolderWatcher_Changed;
             }
