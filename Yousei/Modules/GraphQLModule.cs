@@ -66,10 +66,10 @@ namespace Yousei.Modules
             {
                 foreach(var error in response.Errors)
                 {
-                    logger.LogError(error.Message);
+                    logger.LogError($"{error.Message} | {JToken.FromObject(error)}");
                 }
 
-                return None;
+                throw new Exception("GraphQL errors.");
             }
             else
             {
@@ -85,8 +85,8 @@ namespace Yousei.Modules
             {
                 if (o.Errors?.Any() ?? false)
                 {
-                    o.Errors.ForEach(error => logger.LogError(error.Message));
-                    return false;
+                    o.Errors.ForEach(error => logger.LogError($"{error.Message} | {JToken.FromObject(error)}"));
+                    throw new Exception("GraphQL errors.");
                 }
                 return true;
             }).Select(o => o.Data);
