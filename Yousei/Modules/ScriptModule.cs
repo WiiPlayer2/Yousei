@@ -1,14 +1,18 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
+﻿using LanguageExt;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static LanguageExt.Prelude;
 
 namespace Yousei.Modules
 {
@@ -31,6 +35,7 @@ namespace Yousei.Modules
     public class ScriptModule : IModule
     {
         private readonly IServiceProvider serviceProvider;
+        private readonly string scriptsPath;
 
         internal enum ScriptType
         {
@@ -43,20 +48,31 @@ namespace Yousei.Modules
 
             public string Code { get; set; }
 
+            public string CodeFile { get; set; }
+
             public bool EmitNull { get; set; } = false;
         }
 
-        public ScriptModule(IServiceProvider serviceProvider)
+        public ScriptModule(IServiceProvider serviceProvider, IConfiguration configuration)
         {
             this.serviceProvider = serviceProvider;
+            scriptsPath = configuration.GetValue<string>("Scripts");
+        }
+
+        private (string Code, Option<string> CodeFile) GetCode(Arguments args)
+        {
+            if (!string.IsNullOrWhiteSpace(args.CodeFile))
+                return (File.ReadAllText(Path.Combine(scriptsPath, args.CodeFile)), args.CodeFile);
+            return (args.Code, None);
         }
 
         public async Task<IObservable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
+            var (code, codeFile) = GetCode(args);
             var result = args.Type switch
             {
-                ScriptType.CSharp => await RunCSharp(args.Code, data, cancellationToken),
+                ScriptType.CSharp => await RunCSharp(code, codeFile, data, cancellationToken),
                 _ => throw new NotSupportedException(),
             };
 
@@ -89,12 +105,9 @@ namespace Yousei.Modules
             return Observable.Return(JToken.FromObject(result));
         }
 
-        private async Task<object> RunCSharp(string code, JToken data, CancellationToken cancellationToken)
+        private async Task<object> RunCSharp(string code, Option<string> codeFile, JToken data, CancellationToken cancellationToken)
         {
-            var script = CSharpScript.Create(
-                code,
-                globalsType: typeof(ScriptModuleGlobals),
-                options: ScriptOptions.Default
+            var options = ScriptOptions.Default
                     .WithReferences(
                         GetType().Assembly,
                         typeof(Microsoft.CSharp.RuntimeBinder.Binder).Assembly,
@@ -108,7 +121,12 @@ namespace Yousei.Modules
                         "Yousei",
                         "Yousei.Modules",
                         "Microsoft.Extensions.Logging",
-                        "Newtonsoft.Json.Linq"));
+                        "Newtonsoft.Json.Linq");
+            codeFile.Match(file => options.WithFilePath(file), () => { });
+            var script = CSharpScript.Create(
+                code,
+                globalsType: typeof(ScriptModuleGlobals),
+                options: options);
 
             var state = await script.RunAsync(
                 globals: new ScriptModuleGlobals(data, serviceProvider),
