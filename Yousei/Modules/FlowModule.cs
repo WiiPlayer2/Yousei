@@ -24,7 +24,9 @@ namespace Yousei.Modules
 
         private class FlowArguments
         {
-            public string Flow { get; set; } = string.Empty;
+            public string FlowFile { get; set; } = string.Empty;
+
+            public Flow Flow { get; set; }
 
             public JToken Arguments { get; set; }
         }
@@ -44,7 +46,7 @@ namespace Yousei.Modules
         public Task<IObservable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<FlowArguments>();
-            return GetFlow(args.Flow).Match(
+            return GetFlow(args).Match(
                 flow =>
                 {
                     var actions = flow.Actions.Select(o => new JobAction
@@ -58,12 +60,16 @@ namespace Yousei.Modules
                 () => Observable.Empty<JToken>()).AsTask();
         }
 
-        private Option<Flow> GetFlow(string flow)
+        private Option<Flow> GetFlow(FlowArguments args)
         {
             var directoryInfo = new DirectoryInfo(flowsPath);
             if (!directoryInfo.Exists)
                 return None;
 
+            if (args.Flow != null)
+                return args.Flow;
+
+            var flow = args.FlowFile;
             var flowFileInfo = new FileInfo(Path.Combine(directoryInfo.FullName, $"{flow}.yaml"));
             var flowFile = flowFileInfo.Exists ? Some(flowFileInfo) : None;
             return flowFile.Bind(
