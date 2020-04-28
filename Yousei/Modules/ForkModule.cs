@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using LanguageExt;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
@@ -15,23 +16,23 @@ namespace Yousei.Modules
         {
             public JToken Data { get; set; } = "$";
 
-            public JobAction Action { get; set; }
+            public List<JobAction> Actions { get; set; }
         }
 
-        private readonly ModuleRegistry moduleRegistry;
+        private readonly JobFlowCreator jobFlowCreator;
 
-        public ForkModule(ModuleRegistry moduleRegistry)
+        public ForkModule(JobFlowCreator jobFlowCreator)
         {
-            this.moduleRegistry = moduleRegistry;
+            this.jobFlowCreator = jobFlowCreator;
         }
 
-        public override async Task<JToken> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
+        public override Task<JToken> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
             var args = arguments.ToObject<Arguments>();
             var mappedData = args.Data.Map(data);
-            var moduleObservable = await moduleRegistry.RunAsync(args.Action.ModuleID, args.Action.Arguments, mappedData, cancellationToken);
-            moduleObservable.Wait();
-            return data;
+            var flowObservable = jobFlowCreator.CreateJobFlow(args.Actions, mappedData);
+            flowObservable.Wait();
+            return data.AsTask();
         }
     }
 }
