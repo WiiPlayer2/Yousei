@@ -54,7 +54,7 @@ namespace Yousei.Modules
                         ModuleID = o.ModuleID,
                         Arguments = o.Arguments.Map(args.Arguments),
                     });
-                    var observable = jobFlowCreator.CreateJobFlow(actions);
+                    var observable = jobFlowCreator.CreateJobFlow(actions, data);
                     return observable;
                 },
                 () => Observable.Empty<JToken>()).AsTask();

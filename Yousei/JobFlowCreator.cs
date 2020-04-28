@@ -18,9 +18,9 @@ namespace Yousei
             this.moduleRegistry = moduleRegistry;
         }
 
-        public IObservable<JToken> CreateJobFlow(IEnumerable<JobAction> jobActions)
+        public IObservable<JToken> CreateJobFlow(IEnumerable<JobAction> jobActions, JToken initialData)
         {
-            var seed = Observable.Return<JToken>(JValue.CreateNull());
+            var seed = Observable.Return(initialData);
             return jobActions.Aggregate(seed, Aggregate);
 
             IObservable<JToken> Aggregate(IObservable<JToken> acc, JobAction jobAction) => acc.SelectMany((data, token)

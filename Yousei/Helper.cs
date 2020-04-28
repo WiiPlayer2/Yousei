@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -38,6 +39,8 @@ namespace Yousei
             }
             catch (OperationCanceledException) { }
         }
+
+        public static bool IsCancellation(this Exception exception) => exception is OperationCanceledException;
 
         public static async void FireAndForget(this Task task) => await task.ConfigureAwait(false);
 
@@ -118,5 +121,10 @@ namespace Yousei
 
         public static TService GetService<TService>(this IServiceProvider serviceProvider) where TService : class
             => serviceProvider.GetService(typeof(TService)) as TService;
+
+        public static Task<IObservable<JToken>> RunAsync(this ModuleRegistry moduleRegistry, string moduleId, JToken arguments, JToken data, CancellationToken cancellationToken)
+            => moduleRegistry.GetModule(moduleId).MatchAsync(
+                module => module.ProcessAsync(arguments, data, cancellationToken),
+                () => Observable.Throw<JToken>(new Exception($"Module {moduleId} not found.")));
     }
 }

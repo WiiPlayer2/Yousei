@@ -49,7 +49,7 @@ namespace Yousei
             var cts = new CancellationTokenSource();
             var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cts.Token, cancellationTokenSource.Token);
 
-            await Execute();
+            await Task.Run(Execute, linkedCts.Token);
 
             async Task Execute()
             {
@@ -87,11 +87,17 @@ namespace Yousei
             logger.LogInformation($"Run job {job}");
             var tcs = new TaskCompletionSource<bool>();
             cancellationToken.Register(() => tcs.TrySetCanceled());
-            var jobObservable = jobFlowCreator.CreateJobFlow(job.Actions);
+            var jobObservable = jobFlowCreator.CreateJobFlow(job.Actions, JValue.CreateNull());
             jobObservable.Subscribe(
                 data => logger.LogDebug($"Result from {job}: {data}"),
                 exception =>
                 {
+                    if (exception.IsCancellation())
+                    {
+                        tcs.TrySetResult(false);
+                        return;
+                    }
+
                     logger.LogError(exception, $"Error while running job {job}");
                     tcs.TrySetException(exception);
                 },
