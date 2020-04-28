@@ -51,6 +51,8 @@ namespace Yousei.Modules
             public string CodeFile { get; set; }
 
             public bool EmitNull { get; set; } = false;
+
+            public bool EmitExact { get; set; } = false;
         }
 
         public ScriptModule(IServiceProvider serviceProvider, IConfiguration configuration)
@@ -90,6 +92,9 @@ namespace Yousei.Modules
                     result = null;
                 }
             }
+
+            if (args.EmitExact)
+                return Observable.Return(JToken.FromObject(result));
 
             if (result is null)
             {

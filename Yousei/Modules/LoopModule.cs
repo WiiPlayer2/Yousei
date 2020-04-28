@@ -27,7 +27,6 @@ namespace Yousei.Modules
 
         public async Task<IObservable<JToken>> ProcessAsync(JToken arguments, JToken data, CancellationToken cancellationToken)
         {
-            cancellationToken.Register(() => { });
             cancellationToken.ThrowIfCancellationRequested();
             var args = arguments.ToObject<Arguments>();
 
@@ -36,7 +35,7 @@ namespace Yousei.Modules
             {
                 token.ThrowIfCancellationRequested();
                 if (prevData.Get(args.Until).ToObject<bool>())
-                    return Observable.Return(prevData);
+                    return Observable.Return(data);
                 return await ProcessAsync(arguments, data, token);
             }).SelectMany(o => o);
         }

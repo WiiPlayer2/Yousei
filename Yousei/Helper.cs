@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Yousei
 {
-    [DebuggerStepThrough]
+    //[DebuggerStepThrough]
     public static class Helper
     {
         public static IAsyncEnumerable<T> YieldAsync<T>(this T item) => item.Yield().ToAsyncEnumerable();

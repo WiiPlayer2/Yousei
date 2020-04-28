@@ -53,7 +53,7 @@ namespace Yousei.Modules
                     {
                         ModuleID = o.ModuleID,
                         Arguments = o.Arguments.Map(args.Arguments),
-                    });
+                    }).ToList();
                     var observable = jobFlowCreator.CreateJobFlow(actions, data);
                     return observable;
                 },
