@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
@@ -23,6 +24,7 @@ namespace Yousei.Modules
             Data = data;
             JData = data;
             Services = serviceProvider;
+            Logger = serviceProvider.GetService<ILogger<ScriptModule>>();
         }
 
         public dynamic Data { get; }
@@ -30,6 +32,14 @@ namespace Yousei.Modules
         public JToken JData { get; }
 
         public IServiceProvider Services { get; }
+
+        public ILogger Logger { get; }
+
+        public Task<IObservable<JToken>> RunAsync(string moduleId, object arguments, object data)
+            => Services.GetService<ModuleRegistry>().RunAsync(moduleId, arguments, data, CancellationToken.None);
+
+        public async Task<JToken> RunSingleAsync(string moduleId, object arguments, object data)
+            => await (await RunAsync(moduleId, arguments, data)).GetAwaiter();
     }
 
     public class ScriptModule : IModule
@@ -64,7 +74,10 @@ namespace Yousei.Modules
         private (string Code, Option<string> CodeFile) GetCode(Arguments args)
         {
             if (!string.IsNullOrWhiteSpace(args.CodeFile))
-                return (File.ReadAllText(Path.Combine(scriptsPath, args.CodeFile)), args.CodeFile);
+            {
+                var path = Path.Combine(scriptsPath, args.CodeFile);
+                return (File.ReadAllText(path), Path.GetFullPath(path));
+            }
             return (args.Code, None);
         }
 
@@ -107,6 +120,9 @@ namespace Yousei.Modules
             if (result is IEnumerable resultEnumerable)
                 return resultEnumerable.Cast<object>().Select(JToken.FromObject).ToObservable();
 
+            if (result is IObservable<JToken> jtokenObservable)
+                return jtokenObservable;
+
             return Observable.Return(JToken.FromObject(result));
         }
 
@@ -123,11 +139,19 @@ namespace Yousei.Modules
                         "System.Collections",
                         "System.Collections.Generic",
                         "System.Linq",
+                        "System.Reactive.Linq",
+                        "System.Threading",
+                        "System.Threading.Tasks",
                         "Yousei",
                         "Yousei.Modules",
                         "Microsoft.Extensions.Logging",
-                        "Newtonsoft.Json.Linq");
-            codeFile.Match(file => options.WithFilePath(file), () => { });
+                        "Newtonsoft.Json.Linq")
+                    .WithEmitDebugInformation(true);
+            options = codeFile.Match(
+                file => options
+                    .WithFilePath(file)
+                    .WithFileEncoding(Encoding.Default),
+                () => options);
             var script = CSharpScript.Create(
                 code,
                 globalsType: typeof(ScriptModuleGlobals),

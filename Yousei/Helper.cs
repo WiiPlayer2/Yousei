@@ -119,8 +119,20 @@ namespace Yousei
             }
         }
 
+        public static JToken ToJToken(this object v)
+            => v == null
+                ? JValue.CreateNull()
+                : JToken.FromObject(v);
+
         public static TService GetService<TService>(this IServiceProvider serviceProvider) where TService : class
             => serviceProvider.GetService(typeof(TService)) as TService;
+
+        public static Task<IObservable<JToken>> RunAsync(this ModuleRegistry moduleRegistry, string moduleId, object arguments, object data, CancellationToken cancellationToken)
+            => moduleRegistry.RunAsync(
+                moduleId,
+                arguments.ToJToken(),
+                data.ToJToken(),
+                cancellationToken);
 
         public static Task<IObservable<JToken>> RunAsync(this ModuleRegistry moduleRegistry, string moduleId, JToken arguments, JToken data, CancellationToken cancellationToken)
             => moduleRegistry.GetModule(moduleId).MatchAsync(
