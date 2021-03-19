@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace YouseiReloaded
+namespace Yousei.Shared
 {
-    internal static class Helper
+    public static class Helper
     {
         public static TTarget Map<TTarget>(this object source)
             => (TTarget)source.Map(typeof(TTarget));

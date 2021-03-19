@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Yousei.Contracts;
+using Yousei.Shared;
 
 namespace YouseiReloaded
 {

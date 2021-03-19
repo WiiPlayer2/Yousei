@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 
-namespace Yousei.Contracts
+namespace Yousei.Shared
 {
     public interface IFlowTrigger
     {

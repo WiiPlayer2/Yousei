@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Yousei.Contracts
+namespace Yousei.Shared
 {
     public interface IFlowAction
     {

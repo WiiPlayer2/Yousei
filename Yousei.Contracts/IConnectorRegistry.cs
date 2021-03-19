@@ -1,4 +1,4 @@
-﻿namespace Yousei.Contracts
+﻿namespace Yousei.Shared
 {
     public interface IConnectorRegistry
     {

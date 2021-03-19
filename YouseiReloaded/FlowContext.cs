@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Threading.Tasks;
-using Yousei.Contracts;
+using Yousei.Shared;
 
 namespace YouseiReloaded
 {

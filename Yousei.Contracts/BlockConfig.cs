@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Yousei.Contracts
+namespace Yousei.Shared
 {
     public class BlockConfig
     {

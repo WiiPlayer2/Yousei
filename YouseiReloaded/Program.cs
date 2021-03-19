@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Yousei.Contracts;
+using Yousei.Shared;
 
 namespace YouseiReloaded
 {
@@ -95,7 +95,7 @@ namespace YouseiReloaded
                     Type = "console.out",
                     Arguments = new Dictionary<string, object>
                     {
-                        { "text", new VariableParameter("http.webhook") },
+                        { "text", new ExpressionParameter(@"$""asdf: {Context.http.webhook}""") },
                     },
                 }
             };

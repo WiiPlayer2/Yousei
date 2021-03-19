@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Yousei.Contracts
+namespace Yousei.Shared
 {
     public class VariableParameter : IParameter
     {
@@ -13,6 +13,6 @@ namespace Yousei.Contracts
         public string Path { get; }
 
         public async Task<T> Resolve<T>(IFlowContext context)
-            => (await context.GetData(Path)).ToObject<T>();
+            => (await context.GetData(Path)).Map<T>();
     }
 }

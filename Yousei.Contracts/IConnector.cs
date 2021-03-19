@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Yousei.Contracts
+namespace Yousei.Shared
 {
     public interface IConnector
     {
