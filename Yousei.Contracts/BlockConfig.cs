@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace YouseiReloaded
+namespace Yousei.Contracts
 {
-    internal class BlockConfig
+    public class BlockConfig
     {
         public IReadOnlyDictionary<string, object> Arguments { get; set; }
 

@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Yousei.Contracts;
 
 namespace YouseiReloaded
 {
@@ -47,7 +48,7 @@ namespace YouseiReloaded
 
             public string Type => throw new NotImplementedException();
 
-            public async Task Act(FlowContext context, object arguments)
+            public async Task Act(IFlowContext context, object arguments)
             {
                 var args = arguments as Arguments;
                 Console.WriteLine(await args.Text.Resolve(context));

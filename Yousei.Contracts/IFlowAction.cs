@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace YouseiReloaded
+namespace Yousei.Contracts
 {
-    internal interface IFlowAction
+    public interface IFlowAction
     {
         Type ArgumentsType { get; }
 
         string Type { get; }
 
-        Task Act(FlowContext context, object arguments);
+        Task Act(IFlowContext context, object arguments);
     }
 }

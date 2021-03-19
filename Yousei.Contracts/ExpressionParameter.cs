@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace YouseiReloaded
+namespace Yousei.Contracts
 {
-    internal class ExpressionParameter : IParameter
+    public class ExpressionParameter : IParameter
     {
         public ExpressionParameter(string expressionCode)
         {
@@ -10,7 +10,7 @@ namespace YouseiReloaded
             throw new System.NotImplementedException();
         }
 
-        public Task<object> Resolve(FlowContext context)
+        public Task<object> Resolve(IFlowContext context)
         {
             // Resolve by running script
             throw new System.NotImplementedException();

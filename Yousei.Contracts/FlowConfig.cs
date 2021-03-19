@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace YouseiReloaded
+namespace Yousei.Contracts
 {
-    internal class FlowConfig
+    public class FlowConfig
     {
         public IReadOnlyList<BlockConfig> Actions { get; }
 

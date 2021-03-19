@@ -1,14 +1,15 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Threading.Tasks;
+using Yousei.Contracts;
 
 namespace YouseiReloaded
 {
-    internal class FlowContext
+    internal class FlowContext : IFlowContext
     {
         private readonly JObject data = new JObject();
 
-        public FlowContext(FlowActor actor)
+        public FlowContext(IFlowActor actor)
         {
             Actor = actor;
         }
@@ -19,7 +20,7 @@ namespace YouseiReloaded
             data = from.data.DeepClone() as JObject;
         }
 
-        public FlowActor Actor { get; }
+        public IFlowActor Actor { get; }
 
         public Task AddData(string type, JToken data)
         {
@@ -32,7 +33,7 @@ namespace YouseiReloaded
 
         public Task<JObject> AsObject() => Task.FromResult(data);
 
-        public FlowContext Clone() => new FlowContext(this);
+        public IFlowContext Clone() => new FlowContext(this);
 
         public Task<JToken> GetData(string path)
         {

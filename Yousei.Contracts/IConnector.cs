@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace YouseiReloaded
+namespace Yousei.Contracts
 {
-    interface IConnector
+    public interface IConnector
     {
         Type ConfigurationType { get; }
 

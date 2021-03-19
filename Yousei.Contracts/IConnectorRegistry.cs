@@ -1,11 +1,11 @@
-﻿namespace YouseiReloaded
+﻿namespace Yousei.Contracts
 {
-    interface IConnectorRegistry
+    public interface IConnectorRegistry
     {
+        IConnector Get(string name);
+
         void Register(IConnector connector);
 
         void Unregister(IConnector connector);
-
-        IConnector Get(string name);
     }
 }

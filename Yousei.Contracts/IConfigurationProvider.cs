@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace YouseiReloaded
+namespace Yousei.Contracts
 {
-    interface IConfigurationProvider
+    public interface IConfigurationProvider
     {
         object GetConnectionConfiguration(string type, string name);
 

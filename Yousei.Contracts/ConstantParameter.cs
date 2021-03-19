@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace YouseiReloaded
+namespace Yousei.Contracts
 {
-    class ConstantParameter : IParameter
+    public class ConstantParameter : IParameter
     {
         private readonly object value;
 
@@ -11,6 +11,7 @@ namespace YouseiReloaded
             this.value = value;
         }
 
-        public Task<object> Resolve(FlowContext context) => Task.FromResult(value);
+        public Task<object> Resolve(IFlowContext context)
+            => Task.FromResult(value);
     }
 }

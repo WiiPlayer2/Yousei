@@ -5,7 +5,11 @@ VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yousei", "Yousei\Yousei.csproj", "{FD41B96F-4339-4A4A-B5B7-6D34F08232F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouseiReloaded", "YouseiReloaded\YouseiReloaded.csproj", "{D7345184-0F75-4119-843F-AAC4C1A852B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YouseiReloaded", "YouseiReloaded\YouseiReloaded.csproj", "{D7345184-0F75-4119-843F-AAC4C1A852B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yousei.Contracts", "Yousei.Contracts\Yousei.Contracts.csproj", "{A3638EA0-F325-4A6F-A814-55E8359DBB75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yousei.Core", "Yousei.Core\Yousei.Core.csproj", "{3CD52776-BEA9-4C9C-9416-85938DCC1080}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{D7345184-0F75-4119-843F-AAC4C1A852B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7345184-0F75-4119-843F-AAC4C1A852B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7345184-0F75-4119-843F-AAC4C1A852B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3638EA0-F325-4A6F-A814-55E8359DBB75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3638EA0-F325-4A6F-A814-55E8359DBB75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3638EA0-F325-4A6F-A814-55E8359DBB75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3638EA0-F325-4A6F-A814-55E8359DBB75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CD52776-BEA9-4C9C-9416-85938DCC1080}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CD52776-BEA9-4C9C-9416-85938DCC1080}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CD52776-BEA9-4C9C-9416-85938DCC1080}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CD52776-BEA9-4C9C-9416-85938DCC1080}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

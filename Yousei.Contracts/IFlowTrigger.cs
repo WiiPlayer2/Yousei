@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 
-namespace YouseiReloaded
+namespace Yousei.Contracts
 {
-    internal interface IFlowTrigger
+    public interface IFlowTrigger
     {
         Type ArgumentsType { get; }
 
