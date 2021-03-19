@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yousei", "Yousei\Yousei.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YouseiReloaded", "YouseiReloaded\YouseiReloaded.csproj", "{D7345184-0F75-4119-843F-AAC4C1A852B8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yousei.Shared", "Yousei.Contracts\Yousei.Shared.csproj", "{A3638EA0-F325-4A6F-A814-55E8359DBB75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yousei.Shared", "Yousei.Shared\Yousei.Shared.csproj", "{A3638EA0-F325-4A6F-A814-55E8359DBB75}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yousei.Core", "Yousei.Core\Yousei.Core.csproj", "{3CD52776-BEA9-4C9C-9416-85938DCC1080}"
 EndProject
