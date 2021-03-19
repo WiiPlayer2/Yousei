@@ -4,6 +4,6 @@ namespace Yousei.Contracts
 {
     public interface IParameter
     {
-        Task<object> Resolve(IFlowContext context);
+        Task<T> Resolve<T>(IFlowContext context);
     }
 }

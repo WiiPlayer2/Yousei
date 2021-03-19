@@ -1,17 +1,18 @@
-﻿using System.Threading.Tasks;
+﻿using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace Yousei.Contracts
 {
     public class ConstantParameter : IParameter
     {
-        private readonly object value;
-
         public ConstantParameter(object value)
         {
-            this.value = value;
+            Value = value is null ? null : JToken.FromObject(value);
         }
 
-        public Task<object> Resolve(IFlowContext context)
-            => Task.FromResult(value);
+        public JToken Value { get; }
+
+        public Task<T> Resolve<T>(IFlowContext context)
+            => Task.FromResult(Value is null ? default(T) : Value.ToObject<T>());
     }
 }

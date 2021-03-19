@@ -10,7 +10,9 @@ namespace Yousei.Contracts
             throw new System.NotImplementedException();
         }
 
-        public Task<object> Resolve(IFlowContext context)
+        public string Code { get; }
+
+        public Task<T> Resolve<T>(IFlowContext context)
         {
             // Resolve by running script
             throw new System.NotImplementedException();

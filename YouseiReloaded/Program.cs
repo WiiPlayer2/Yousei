@@ -51,7 +51,7 @@ namespace YouseiReloaded
             public async Task Act(IFlowContext context, object arguments)
             {
                 var args = arguments as Arguments;
-                Console.WriteLine(await args.Text.Resolve(context));
+                Console.WriteLine(await args.Text.Resolve<string>(context));
             }
 
             private class Arguments
@@ -73,28 +73,6 @@ namespace YouseiReloaded
         public void Unregister(IConnector connector)
         {
             throw new NotImplementedException();
-        }
-    }
-
-    internal class ParameterConverter : JsonConverter
-    {
-        record Dto(string Type, string Path);
-
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType.IsAssignableTo(typeof(IParameter));
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            var dto = serializer.Deserialize<Dto>(reader);
-            return new VariableParameter(dto.Path);
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            var variableParameter = value as VariableParameter;
-            serializer.Serialize(writer, new Dto("variable", variableParameter.Path));
         }
     }
 
