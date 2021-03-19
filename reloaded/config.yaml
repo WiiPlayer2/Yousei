@@ -1,0 +1,62 @@
+connections:
+  http:
+    default:
+      port: 80
+
+flows:
+  demo:
+    trigger: manual
+    actions:
+      - type: log.write
+        configuration: default
+        level: info
+        message: Triggered.
+
+  webhook_demo:
+    trigger:
+      type: http.webhook
+      path: /webhook
+    actions:
+      - type: log.write
+        level: info
+        message: !v http.webhook.body
+  
+  control_demo:
+    trigger: manual
+    actions:
+      - type: control.if
+        if: !e new Random().Next(1) == 0
+        then:
+          - type: log.write
+            level: info
+            message: Random was 0.
+        else:
+          - type: log.write
+            level: info
+            message: Random was 1.
+
+  subflow_demo:
+    trigger: manual
+    actions:
+      - type: flow.invoke
+        name: demo
+
+  async_workflow_demo:
+    trigger: manual
+    actions:
+      - type: sync.init_channel
+        target: channel
+      - type: control.parallel
+        aggregation: aggregate
+        actions:
+          - - type: flow.invoke
+              name: demo 
+            - type: control.parallel_aggregate
+              value: !e 1337 + 6969
+          - - type: control.parallel_aggregate
+              value: !e '42'
+      - type: log.write
+        level: info
+        message: !e string.Join("\n", context.control.parallel.aggregate)
+
+
