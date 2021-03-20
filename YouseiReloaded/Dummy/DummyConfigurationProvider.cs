@@ -20,10 +20,10 @@ namespace YouseiReloaded.Dummy
             Trigger = new()
             {
                 Type = "dummy.trigger",
-                Arguments = new Dictionary<string, object>
+                Arguments = new
                 {
-                    { "seconds", 1 },
-                }
+                    Seconds = 1,
+                },
             },
             Actions = new BlockConfig[]
             {
@@ -39,19 +39,19 @@ namespace YouseiReloaded.Dummy
                 new()
                 {
                     Type = "control.switch",
-                    Arguments = new Dictionary<string, object>
+                    Arguments = new
                     {
-                        { "value", new ExpressionParameter("new Random().Next(5)") },
-                        { "cases", new[]
+                        Value = new ExpressionParameter("new Random().Next(5)"),
+                        Cases = new[]
                             {
                                 (0, new BlockConfig[]
                                 {
                                     new()
                                     {
                                         Type = "dummy.out",
-                                        Arguments = new Dictionary<string, object>
+                                        Arguments = new
                                         {
-                                            { "text", "was 0." },
+                                            Text = "was 0.",
                                         },
                                     },
                                 }),
@@ -60,27 +60,25 @@ namespace YouseiReloaded.Dummy
                                     new()
                                     {
                                         Type = "dummy.out",
-                                        Arguments = new Dictionary<string, object>
+                                        Arguments = new
                                         {
-                                            { "text", "was 1." },
+                                            Text = "was 1.",
                                         },
                                     },
                                 }),
-                            }
-                        },
-                        {"default", new BlockConfig[]
+                            },
+                        Default = new BlockConfig[]
                             {
                                 new()
                                 {
                                     Type = "internal.sendvalue",
-                                    Arguments = new Dictionary<string, object>
+                                    Arguments = new
                                     {
-                                        {"topic", "DUMMY" },
-                                        {"value", new ExpressionParameter("DateTimeOffset.Now") },
+                                        Topic = "DUMMY",
+                                        Value = new ExpressionParameter("DateTimeOffset.Now"),
                                     }
                                 }
-                            }
-                        }
+                            },
                     }
                 },
             }
@@ -89,9 +87,9 @@ namespace YouseiReloaded.Dummy
             Trigger = new()
             {
                 Type = "internal.onvalue",
-                Arguments = new Dictionary<string, object>
+                Arguments = new
                 {
-                    { "topic", "DUMMY" }
+                    Topic = "DUMMY",
                 }
             },
             Actions = new BlockConfig[]
@@ -99,9 +97,9 @@ namespace YouseiReloaded.Dummy
                 new()
                 {
                     Type = "dummy.out",
-                    Arguments = new Dictionary<string, object>
+                    Arguments = new
                     {
-                        { "text", new VariableParameter("internal.onvalue") }
+                        Text = new VariableParameter("internal.onvalue"),
                     }
                 }
             }
