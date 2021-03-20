@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Yousei.Core;
@@ -23,14 +24,7 @@ namespace YouseiReloaded.Internal
 
         public IFlowActor Actor { get; }
 
-        public Task AddData(string type, object data)
-        {
-            var (connectorName, name) = type.SplitType();
-            if (!this.data.ContainsKey(connectorName))
-                this.data[connectorName] = new JObject();
-            this.data[connectorName][name] = data.Map<JToken>();
-            return Task.CompletedTask;
-        }
+        public string CurrentType { get; set; }
 
         public Task<object> AsObject() => Task.FromResult<object>(data);
 
@@ -42,5 +36,31 @@ namespace YouseiReloaded.Internal
                 .Aggregate(data as JToken, (data, segment) => data[segment]);
             return Task.FromResult<object>(value);
         }
+
+        public Task SetData(string path, object data)
+        {
+            if (string.IsNullOrEmpty(path))
+                throw new InvalidOperationException();
+
+            var segments = path.SplitPath();
+            JToken current = this.data;
+            for (var i = 0; i < segments.Length; i++)
+            {
+                var segment = segments[i];
+                if (i < segments.Length - 1)
+                {
+                    if (current[segment] is not JObject)
+                        current[segment] = new JObject();
+                    current = current[segment];
+                    continue;
+                }
+
+                current[segment] = data.Map<JToken>();
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task SetData(object data)
+            => SetData(CurrentType, data);
     }
 }

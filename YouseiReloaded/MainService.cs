@@ -64,7 +64,7 @@ namespace YouseiReloaded
                         try
                         {
                             var context = new FlowContext(flowActor);
-                            await context.AddData(tuple.Config.Trigger.Type, data);
+                            await context.SetData(tuple.Config.Trigger.Type, data);
                             await flowActor.Act(tuple.Config.Actions, context);
                         }
                         catch (Exception exception)

@@ -10,12 +10,16 @@ namespace Yousei.Shared
     {
         IFlowActor Actor { get; }
 
-        Task AddData(string type, object data);
+        string CurrentType { get; set; }
 
         Task<object> AsObject();
 
         IFlowContext Clone();
 
         Task<object> GetData(string path);
+
+        Task SetData(object data);
+
+        Task SetData(string path, object data);
     }
 }

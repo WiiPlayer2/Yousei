@@ -27,16 +27,6 @@ namespace YouseiReloaded.Internal
             }
         }
 
-        public Task Act(BlockConfig action, IFlowContext context)
-        {
-            var (connection, name) = GetConnection(action);
-
-            var flowAction = connection.CreateAction(name);
-            var flowActionConfiguration = action.Arguments.Map(flowAction.ArgumentsType);
-
-            return flowAction.Act(context, flowActionConfiguration);
-        }
-
         public IObservable<object> GetTrigger(BlockConfig trigger)
         {
             var (connection, name) = GetConnection(trigger);
@@ -45,6 +35,17 @@ namespace YouseiReloaded.Internal
             var flowTriggerConfiguration = trigger.Arguments.Map(flowTrigger.ArgumentsType);
 
             return flowTrigger.GetEvents(flowTriggerConfiguration);
+        }
+
+        private Task Act(BlockConfig action, IFlowContext context)
+        {
+            var (connection, name) = GetConnection(action);
+
+            var flowAction = connection.CreateAction(name);
+            var flowActionConfiguration = action.Arguments.Map(flowAction.ArgumentsType);
+
+            context.CurrentType = action.Type;
+            return flowAction.Act(context, flowActionConfiguration);
         }
 
         private (IConnection Connection, string Name) GetConnection(BlockConfig config)
