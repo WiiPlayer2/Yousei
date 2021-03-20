@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reactive.Linq;
 using Yousei.Shared;
 
 namespace YouseiReloaded.Dummy
@@ -12,9 +14,27 @@ namespace YouseiReloaded.Dummy
             throw new NotImplementedException();
         }
 
-        public IObservable<(string Name, FlowConfig Config)> GetFlows()
+        public IObservable<(string Name, FlowConfig Config)> GetFlows() => Observable.Return(("dummy", new FlowConfig
         {
-            throw new NotImplementedException();
-        }
+            Trigger = new()
+            {
+                Type = "dummy.trigger",
+                Arguments = new Dictionary<string, object>
+                {
+                    { "seconds", 30 },
+                }
+            },
+            Actions = new BlockConfig[]
+            {
+                new()
+                {
+                    Type = "dummy.out",
+                    Arguments = new Dictionary<string, object>
+                    {
+                        { "text", new VariableParameter("dummy.trigger") },
+                    },
+                }
+            }
+        }));
     }
 }

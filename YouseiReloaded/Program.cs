@@ -15,7 +15,17 @@ namespace YouseiReloaded
     internal class Program
     {
         public static void Main(string[] args)
-                    => CreateHostBuilder(args).Build().Run();
+        {
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                Converters = new[]
+                {
+                    new ParameterConverter(),
+                }
+            };
+
+            CreateHostBuilder(args).Build().Run();
+        }
 
         private static void ConfigureLogging(ILoggingBuilder logging)
         {
@@ -25,6 +35,10 @@ namespace YouseiReloaded
 
         private static void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IConfigurationProvider, DummyConfigurationProvider>();
+            services.AddSingleton<IConnectorRegistry, DummyConnectorRegistry>();
+            services.AddSingleton<IFlowActor, FlowActor>();
+            services.AddHostedService<MainService>();
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args)

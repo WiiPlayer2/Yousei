@@ -9,6 +9,6 @@ namespace Yousei.Shared
 
         string Type { get; }
 
-        IObservable<JObject> GetEvents(object arguments);
+        IObservable<JToken> GetEvents(object arguments);
     }
 }
