@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Yousei.Shared;
 
-namespace Yousei.Shared
+namespace Yousei.Core
 {
     public class VariableParameter : IParameter
     {

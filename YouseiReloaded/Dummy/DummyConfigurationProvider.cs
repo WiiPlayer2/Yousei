@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+using Yousei.Core;
 using Yousei.Shared;
 
 namespace YouseiReloaded.Dummy

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using Yousei.Core;
 using Yousei.Shared;
 
 namespace YouseiReloaded.Serialization.Json

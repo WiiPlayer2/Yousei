@@ -2,8 +2,9 @@
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using System.Threading.Tasks;
+using Yousei.Shared;
 
-namespace Yousei.Shared
+namespace Yousei.Core
 {
     public class ExpressionParameter : IParameter
     {

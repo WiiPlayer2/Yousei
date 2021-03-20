@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Yousei.Core;
 using Yousei.Shared;
 
 namespace YouseiReloaded.Internal
