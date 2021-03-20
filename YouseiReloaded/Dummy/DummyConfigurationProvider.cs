@@ -19,31 +19,16 @@ namespace YouseiReloaded.Dummy
         {
             Trigger = new()
             {
-                Type = "dummy.trigger",
-                Arguments = new
-                {
-                    Seconds = 1,
-                },
+                Type = "internal.onstart",
             },
             Actions = new BlockConfig[]
             {
                 new()
                 {
-                    Type = "data.set",
-                    Arguments = new
-                    {
-                        Path = "vars.list",
-                        Value = new[]{ 1, 2, 3, 4},
-                    },
-                },
-                new()
-                {
                     Type = "log.write",
                     Arguments = new
                     {
-                        Level = "Debug",
-                        Tag = new ExpressionParameter("new Random().Next().ToString(\"X8\")"),
-                        Message = new VariableParameter("vars.list"),
+                        Message = "on start.",
                     },
                 },
             }
@@ -51,20 +36,16 @@ namespace YouseiReloaded.Dummy
         {
             Trigger = new()
             {
-                Type = "internal.onvalue",
-                Arguments = new
-                {
-                    Topic = "DUMMY",
-                }
+                Type = "internal.onstop",
             },
             Actions = new BlockConfig[]
             {
                 new()
                 {
-                    Type = "dummy.out",
+                    Type = "log.write",
                     Arguments = new
                     {
-                        Text = new VariableParameter("internal.onvalue"),
+                        Message = "on stop.",
                     }
                 }
             }

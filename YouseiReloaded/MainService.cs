@@ -75,11 +75,13 @@ namespace YouseiReloaded
                         }
                     });
                 });
+            InternalConnection.Instance.OnStart();
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
+            InternalConnection.Instance.OnStop();
             flowSubscription.Dispose();
             foreach (var subscription in flowSubscriptions.Values)
             {
