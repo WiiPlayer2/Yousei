@@ -38,28 +38,12 @@ namespace YouseiReloaded.Dummy
                 },
                 new()
                 {
-                    Type = "internal.sendvalue",
+                    Type = "log.write",
                     Arguments = new
                     {
-                        Topic = "DUMMY",
-                        Value = new VariableParameter("vars.list"),
-                    },
-                },
-                new()
-                {
-                    Type = "data.clear",
-                    Arguments = new
-                    {
-                        Path = "vars",
-                    },
-                },
-                new()
-                {
-                    Type = "internal.sendvalue",
-                    Arguments = new
-                    {
-                        Topic = "DUMMY",
-                        Value = new VariableParameter("vars.list"),
+                        Level = "Debug",
+                        Tag = new ExpressionParameter("new Random().Next().ToString(\"X8\")"),
+                        Message = new VariableParameter("vars.list"),
                     },
                 },
             }

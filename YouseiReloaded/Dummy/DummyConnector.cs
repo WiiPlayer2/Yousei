@@ -21,19 +21,7 @@ namespace YouseiReloaded.Dummy
             public Connection()
             {
                 AddTrigger<Trigger>("trigger");
-                AddAction<OutAction>("out");
             }
-        }
-
-        private class OutAction : FlowAction<OutArguments>
-        {
-            protected override async Task Act(IFlowContext context, OutArguments arguments)
-                => Console.WriteLine(await arguments.Text.Resolve<object>(context));
-        }
-
-        private class OutArguments
-        {
-            public IParameter Text { get; init; }
         }
 
         private class Trigger : FlowTrigger<TriggerArguments>

@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Yousei.Shared;
+using YouseiRelaoded.Internal.Connectors.Log;
 using YouseiReloaded.Internal.Connectors.Control;
 using YouseiReloaded.Internal.Connectors.Data;
 using YouseiReloaded.Internal.Connectors.Internal;
@@ -15,13 +17,14 @@ namespace YouseiReloaded.Internal
     {
         private readonly ConcurrentDictionary<string, IConnector> connectors = new();
 
-        public ConnectorRegistry()
+        public ConnectorRegistry(ILogger<LogConnector> logConnectorLogger)
         {
             // Load internal connectors
             Register(new Dummy.DummyConnector());
             Register(InternalConnector.Instance);
             Register(new ControlConnector());
             Register(new DataConnector());
+            Register(new LogConnector(logConnectorLogger));
         }
 
         public IConnector Get(string name) => connectors.GetValueOrDefault(name);
