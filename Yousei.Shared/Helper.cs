@@ -15,6 +15,8 @@ namespace Yousei.Shared
         public static object Map(this object source, Type targetType)
             => source is null ? null : JToken.FromObject(source).ToObject(targetType);
 
+        public static T SafeCast<T>(this object obj) => obj is T castObj ? castObj : default;
+
         public static string[] SplitPath(this string s)
         {
             var splits = s.Split('.');

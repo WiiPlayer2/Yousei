@@ -7,8 +7,6 @@ namespace Yousei.Shared
     {
         Type ArgumentsType { get; }
 
-        string Type { get; }
-
         IObservable<JToken> GetEvents(object arguments);
     }
 }

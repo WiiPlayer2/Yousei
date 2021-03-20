@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,10 +22,13 @@ namespace YouseiReloaded
 
         private readonly Dictionary<string, IDisposable> flowSubscriptions = new();
 
+        private readonly ILogger<MainService> logger;
+
         private IDisposable flowSubscription;
 
-        public MainService(IConfigurationProvider configurationProvider, IFlowActor flowActor)
+        public MainService(ILogger<MainService> logger, IConfigurationProvider configurationProvider, IFlowActor flowActor)
         {
+            this.logger = logger;
             this.configurationProvider = configurationProvider;
             this.flowActor = flowActor;
         }
@@ -57,9 +61,16 @@ namespace YouseiReloaded
                     var triggerEvents = flowActor.GetTrigger(tuple.Config.Trigger);
                     flowSubscriptions[tuple.Name] = triggerEvents.Subscribe(async data =>
                     {
-                        var context = new FlowContext(flowActor);
-                        await context.AddData(tuple.Config.Trigger.Type, data);
-                        await flowActor.Act(tuple.Config.Actions, context);
+                        try
+                        {
+                            var context = new FlowContext(flowActor);
+                            await context.AddData(tuple.Config.Trigger.Type, data);
+                            await flowActor.Act(tuple.Config.Actions, context);
+                        }
+                        catch (Exception exception)
+                        {
+                            logger.LogError(exception, "Error while handling flow.");
+                        }
                     });
                 });
             return Task.CompletedTask;

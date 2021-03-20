@@ -1,70 +1,56 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Yousei.Core;
 using Yousei.Shared;
 
 namespace YouseiReloaded.Dummy
 {
-    internal class DummyConnector : IConnector
+    internal class DummyConnector : Connector<Unit>
     {
-        public Type ConfigurationType { get; } = typeof(Config);
-
-        public string Name { get; } = "dummy";
-
-        public IConnection GetConnection(object configuration) => new Connection();
-
-        private class Config
+        public DummyConnector() : base("dummy")
         {
         }
 
-        private class Connection : IConnection
+        protected override IConnection GetConnection(Unit _) => new Connection();
+
+        private class Connection : SimpleConnection<Connection>
         {
-            public IFlowAction CreateAction(string name) => new OutAction();
-
-            public IFlowTrigger CreateTrigger(string name) => new Trigger();
-        }
-
-        private class OutAction : IFlowAction
-        {
-            public Type ArgumentsType { get; } = typeof(Arguments);
-
-            public string Type => throw new NotImplementedException();
-
-            public async Task Act(IFlowContext context, object arguments)
+            public Connection()
             {
-                var args = arguments as Arguments;
-                Console.WriteLine(await args.Text.Resolve<object>(context));
-            }
-
-            private class Arguments
-            {
-                public IParameter Text { get; init; }
+                AddTrigger<Trigger>("trigger");
+                AddAction<OutAction>("out");
             }
         }
 
-        private class Trigger : IFlowTrigger
+        private class OutAction : FlowAction<OutArguments>
         {
-            public Type ArgumentsType { get; } = typeof(Arguments);
+            protected override async Task Act(IFlowContext context, OutArguments arguments)
+                => Console.WriteLine(await arguments.Text.Resolve<object>(context));
+        }
 
-            public string Type => throw new NotImplementedException();
+        private class OutArguments
+        {
+            public IParameter Text { get; init; }
+        }
 
-            public IObservable<JToken> GetEvents(object arguments)
-            {
-                var args = arguments as Arguments;
-                return Observable.Create<JToken>(async (observer, cancellationToken) =>
+        private class Trigger : FlowTrigger<TriggerArguments>
+        {
+            protected override IObservable<JToken> GetEvents(TriggerArguments arguments)
+                => Observable.Create<JToken>(async (observer, cancellationToken) =>
                     {
-                        await Task.Delay(TimeSpan.FromSeconds(args.Seconds), cancellationToken);
+                        await Task.Delay(TimeSpan.FromSeconds(arguments.Seconds), cancellationToken);
                         observer.OnNext(JToken.FromObject(DateTimeOffset.Now));
                         observer.OnCompleted();
                     })
                     .Repeat();
-            }
+        }
 
-            private class Arguments
-            {
-                public double Seconds { get; init; }
-            }
+        private class TriggerArguments
+        {
+            public double Seconds { get; init; }
         }
     }
 }
