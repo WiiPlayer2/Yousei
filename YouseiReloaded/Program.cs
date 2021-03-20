@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,7 +14,26 @@ namespace YouseiReloaded
 {
     internal class Program
     {
-        private static async Task Main(string[] args)
+        public static void Main(string[] args)
+                    => CreateHostBuilder(args).Build().Run();
+
+        private static void ConfigureLogging(ILoggingBuilder logging)
+        {
+            logging.ClearProviders();
+            logging.AddLog4Net();
+        }
+
+        private static void ConfigureServices(IServiceCollection services)
+        {
+        }
+
+        private static IHostBuilder CreateHostBuilder(string[] args)
+            => Host.CreateDefaultBuilder(args)
+                .UseConsoleLifetime()
+                .ConfigureLogging(ConfigureLogging)
+                .ConfigureServices(ConfigureServices);
+
+        private static async Task Prototype()
         {
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
