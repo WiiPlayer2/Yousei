@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Yousei.Shared;
+using YouseiReloaded.Internal.Connectors.Control;
+using YouseiReloaded.Internal.Connectors.Internal;
 
 namespace YouseiReloaded.Internal
 {
@@ -16,6 +18,8 @@ namespace YouseiReloaded.Internal
         {
             // Load internal connectors
             Register(new Dummy.DummyConnector());
+            Register(InternalConnector.Instance);
+            Register(new ControlConnector());
         }
 
         public IConnector Get(string name) => connectors.GetValueOrDefault(name);

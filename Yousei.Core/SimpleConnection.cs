@@ -30,20 +30,22 @@ namespace Yousei.Core
 
         protected void AddAction<T>(string name)
             where T : IFlowAction
-            => AddAction(name, GetInstanceCreator<T, IFlowAction>());
+            => AddAction(name, Activator.CreateInstance<T>());
+
+        protected void AddAction(string name, IFlowAction instance)
+            => AddAction(name, _ => instance);
 
         protected void AddAction(string name, Func<TConnection, IFlowAction> creator)
             => actionTypes.Add(name, creator);
 
         protected void AddTrigger<T>(string name)
             where T : IFlowTrigger
-            => AddTrigger(name, GetInstanceCreator<T, IFlowTrigger>());
+            => AddTrigger(name, Activator.CreateInstance<T>());
 
         protected void AddTrigger(string name, Func<TConnection, IFlowTrigger> creator)
             => triggerTypes.Add(name, creator);
 
-        private static Func<TConnection, TReturn> GetInstanceCreator<T, TReturn>()
-            where T : TReturn
-            => _ => Activator.CreateInstance<T>();
+        protected void AddTrigger(string name, IFlowTrigger instance)
+            => AddTrigger(name, _ => instance);
     }
 }

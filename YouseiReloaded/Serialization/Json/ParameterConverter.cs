@@ -24,7 +24,12 @@ namespace YouseiReloaded.Serialization.Json
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var dto = serializer.Deserialize<Dto>(reader);
+            var jtoken = JToken.ReadFrom(reader);
+            if (!jtoken.TryToObject<Dto>(out var dto))
+            {
+                return new ConstantParameter(jtoken);
+            }
+
             var parameter = dto.Type.Match<IParameter>(
                 () => new ConstantParameter(dto.Config),
                 () => new VariableParameter(dto.Config.ToObject<string>()),

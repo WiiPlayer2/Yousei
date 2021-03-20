@@ -21,9 +21,13 @@ namespace YouseiReloaded.Internal
 
         public async Task Act(IReadOnlyList<BlockConfig> actions, IFlowContext context)
         {
-            foreach (var action in actions)
+            var currentType = context.CurrentType;
+            using (new ActionDisposable(() => context.CurrentType = currentType))
             {
-                await Act(action, context);
+                foreach (var action in actions)
+                {
+                    await Act(action, context);
+                }
             }
         }
 

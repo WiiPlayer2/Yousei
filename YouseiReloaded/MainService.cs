@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Yousei.Shared;
 using YouseiReloaded.Internal;
+using YouseiReloaded.Internal.Connectors.Internal;
 
 namespace YouseiReloaded
 {
@@ -70,6 +71,7 @@ namespace YouseiReloaded
                         catch (Exception exception)
                         {
                             logger.LogError(exception, "Error while handling flow.");
+                            InternalConnection.Instance.OnException(exception);
                         }
                     });
                 });

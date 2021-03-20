@@ -31,5 +31,19 @@ namespace Yousei.Core
 
             return (splits[0], splits[1]);
         }
+
+        public static bool TryToObject<T>(this JToken jtoken, out T result)
+        {
+            try
+            {
+                result = jtoken.ToObject<T>();
+                return true;
+            }
+            catch
+            {
+                result = default;
+                return false;
+            }
+        }
     }
 }
