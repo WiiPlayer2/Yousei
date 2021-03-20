@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Yousei.Shared
 {
@@ -7,10 +6,10 @@ namespace Yousei.Shared
     {
         public ConstantParameter(object value)
         {
-            Value = value.Map<JToken>();
+            Value = value;
         }
 
-        public JToken Value { get; }
+        public object Value { get; }
 
         public Task<T> Resolve<T>(IFlowContext context)
             => Task.FromResult(Value.Map<T>());

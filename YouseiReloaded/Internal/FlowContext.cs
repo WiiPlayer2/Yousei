@@ -22,24 +22,24 @@ namespace YouseiReloaded.Internal
 
         public IFlowActor Actor { get; }
 
-        public Task AddData(string type, JToken data)
+        public Task AddData(string type, object data)
         {
             var (connectorName, name) = type.SplitType();
             if (!this.data.ContainsKey(connectorName))
                 this.data[connectorName] = new JObject();
-            this.data[connectorName][name] = data;
+            this.data[connectorName][name] = data.Map<JToken>();
             return Task.CompletedTask;
         }
 
-        public Task<JObject> AsObject() => Task.FromResult(data);
+        public Task<object> AsObject() => Task.FromResult<object>(data);
 
         public IFlowContext Clone() => new FlowContext(this);
 
-        public Task<JToken> GetData(string path)
+        public Task<object> GetData(string path)
         {
             var value = path.SplitPath()
                 .Aggregate(data as JToken, (data, segment) => data[segment]);
-            return Task.FromResult(value);
+            return Task.FromResult<object>(value);
         }
     }
 }

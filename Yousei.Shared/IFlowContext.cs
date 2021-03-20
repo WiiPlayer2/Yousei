@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,12 +10,12 @@ namespace Yousei.Shared
     {
         IFlowActor Actor { get; }
 
-        Task AddData(string type, JToken data);
+        Task AddData(string type, object data);
 
-        Task<JObject> AsObject();
+        Task<object> AsObject();
 
         IFlowContext Clone();
 
-        Task<JToken> GetData(string path);
+        Task<object> GetData(string path);
     }
 }

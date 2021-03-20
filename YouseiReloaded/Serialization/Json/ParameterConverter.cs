@@ -35,7 +35,7 @@ namespace YouseiReloaded.Serialization.Json
         {
             var dto = value switch
             {
-                ConstantParameter constantParameter => new Dto(ParameterType.Constant, constantParameter.Value),
+                ConstantParameter constantParameter => new Dto(ParameterType.Constant, constantParameter.Value.Map<JToken>()),
                 VariableParameter variableParameter => new Dto(ParameterType.Variable, variableParameter.Path),
                 ExpressionParameter expressionParameter => new Dto(ParameterType.Expression, expressionParameter.Code),
                 _ => throw new NotImplementedException(),

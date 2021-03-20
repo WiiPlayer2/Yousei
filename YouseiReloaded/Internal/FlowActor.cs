@@ -36,7 +36,7 @@ namespace YouseiReloaded.Internal
             return flowAction.Act(context, flowActionConfiguration);
         }
 
-        public IObservable<JToken> GetTrigger(BlockConfig trigger)
+        public IObservable<object> GetTrigger(BlockConfig trigger)
         {
             var (connection, name) = GetConnection(trigger);
 

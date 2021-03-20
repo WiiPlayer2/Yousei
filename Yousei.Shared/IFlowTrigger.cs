@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 
 namespace Yousei.Shared
 {
@@ -7,6 +6,6 @@ namespace Yousei.Shared
     {
         Type ArgumentsType { get; }
 
-        IObservable<JToken> GetEvents(object arguments);
+        IObservable<object> GetEvents(object arguments);
     }
 }

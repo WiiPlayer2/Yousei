@@ -8,9 +8,9 @@ namespace Yousei.Core
     {
         public Type ArgumentsType { get; } = typeof(TArguments);
 
-        public IObservable<JToken> GetEvents(object arguments)
+        public IObservable<object> GetEvents(object arguments)
             => GetEvents(arguments.SafeCast<TArguments>());
 
-        protected abstract IObservable<JToken> GetEvents(TArguments arguments);
+        protected abstract IObservable<object> GetEvents(TArguments arguments);
     }
 }

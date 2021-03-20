@@ -38,11 +38,11 @@ namespace YouseiReloaded.Dummy
 
         private class Trigger : FlowTrigger<TriggerArguments>
         {
-            protected override IObservable<JToken> GetEvents(TriggerArguments arguments)
-                => Observable.Create<JToken>(async (observer, cancellationToken) =>
+            protected override IObservable<object> GetEvents(TriggerArguments arguments)
+                => Observable.Create<object>(async (observer, cancellationToken) =>
                     {
                         await Task.Delay(TimeSpan.FromSeconds(arguments.Seconds), cancellationToken);
-                        observer.OnNext(JToken.FromObject(DateTimeOffset.Now));
+                        observer.OnNext(DateTimeOffset.Now);
                         observer.OnCompleted();
                     })
                     .Repeat();
