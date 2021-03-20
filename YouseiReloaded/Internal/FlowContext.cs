@@ -28,7 +28,34 @@ namespace YouseiReloaded.Internal
 
         public Task<object> AsObject() => Task.FromResult<object>(data);
 
+        public async Task ClearData(string path)
+        {
+            var exists = await ExistsData(path);
+            if (!exists)
+                return;
+
+            var segments = path.SplitPath();
+            var relevantObject = segments
+                .Take(segments.Length - 1)
+                .Aggregate(data, (current, segment) => current[segment] as JObject);
+            relevantObject.Remove(segments.Last());
+        }
+
         public IFlowContext Clone() => new FlowContext(this);
+
+        public Task<bool> ExistsData(string path)
+        {
+            var segments = path.SplitPath();
+            JToken current = data;
+            foreach (var segment in segments)
+            {
+                if (current[segment] is not JToken newToken)
+                    return Task.FromResult(false);
+                current = newToken;
+            }
+
+            return Task.FromResult(true);
+        }
 
         public Task<object> GetData(string path)
         {

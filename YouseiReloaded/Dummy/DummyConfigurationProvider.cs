@@ -27,59 +27,40 @@ namespace YouseiReloaded.Dummy
             },
             Actions = new BlockConfig[]
             {
-                //new()
-                //{
-                //    Type = "data.set",
-                //    Arguments = new Dictionary<string, object>
-                //    {
-                //        { "path", "vars.list" },
-                //        { "value", new[]{ 1, 2, 3, 4} },
-                //    },
-                //},
                 new()
                 {
-                    Type = "control.switch",
+                    Type = "data.set",
                     Arguments = new
                     {
-                        Value = new ExpressionParameter("new Random().Next(5)"),
-                        Cases = new[]
-                            {
-                                (0, new BlockConfig[]
-                                {
-                                    new()
-                                    {
-                                        Type = "dummy.out",
-                                        Arguments = new
-                                        {
-                                            Text = "was 0.",
-                                        },
-                                    },
-                                }),
-                                (1, new BlockConfig[]
-                                {
-                                    new()
-                                    {
-                                        Type = "dummy.out",
-                                        Arguments = new
-                                        {
-                                            Text = "was 1.",
-                                        },
-                                    },
-                                }),
-                            },
-                        Default = new BlockConfig[]
-                            {
-                                new()
-                                {
-                                    Type = "internal.sendvalue",
-                                    Arguments = new
-                                    {
-                                        Topic = "DUMMY",
-                                        Value = new ExpressionParameter("DateTimeOffset.Now"),
-                                    }
-                                }
-                            },
-                    }
+                        Path = "vars.list",
+                        Value = new[]{ 1, 2, 3, 4},
+                    },
+                },
+                new()
+                {
+                    Type = "internal.sendvalue",
+                    Arguments = new
+                    {
+                        Topic = "DUMMY",
+                        Value = new VariableParameter("vars.list"),
+                    },
+                },
+                new()
+                {
+                    Type = "data.clear",
+                    Arguments = new
+                    {
+                        Path = "vars",
+                    },
+                },
+                new()
+                {
+                    Type = "internal.sendvalue",
+                    Arguments = new
+                    {
+                        Topic = "DUMMY",
+                        Value = new VariableParameter("vars.list"),
+                    },
                 },
             }
         })).Concat(Observable.Return(("dummy2", new FlowConfig

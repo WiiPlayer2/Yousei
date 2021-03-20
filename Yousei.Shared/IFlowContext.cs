@@ -14,7 +14,11 @@ namespace Yousei.Shared
 
         Task<object> AsObject();
 
+        Task ClearData(string path);
+
         IFlowContext Clone();
+
+        Task<bool> ExistsData(string path);
 
         Task<object> GetData(string path);
 

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Yousei.Shared;
 using YouseiReloaded.Internal.Connectors.Control;
+using YouseiReloaded.Internal.Connectors.Data;
 using YouseiReloaded.Internal.Connectors.Internal;
 
 namespace YouseiReloaded.Internal
@@ -20,6 +21,7 @@ namespace YouseiReloaded.Internal
             Register(new Dummy.DummyConnector());
             Register(InternalConnector.Instance);
             Register(new ControlConnector());
+            Register(new DataConnector());
         }
 
         public IConnector Get(string name) => connectors.GetValueOrDefault(name);

@@ -72,6 +72,14 @@ Starts flow **Name** asynchronously (context will be cloned).
 ```
 Sets **Path** in context to be **Value**.
 
+#### set
+```cs
+{
+    IParameter Path;
+}
+```
+Clears **Path** in context.
+
 ## internal
 ### Triggers
 #### onvalue
