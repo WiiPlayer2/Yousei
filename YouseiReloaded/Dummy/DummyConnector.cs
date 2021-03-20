@@ -10,6 +10,8 @@ namespace YouseiReloaded.Dummy
     {
         public Type ConfigurationType { get; } = typeof(Config);
 
+        public string Name { get; } = "dummy";
+
         public IConnection GetConnection(object configuration) => new Connection();
 
         private class Config
@@ -50,13 +52,12 @@ namespace YouseiReloaded.Dummy
             public IObservable<JToken> GetEvents(object arguments)
             {
                 var args = arguments as Arguments;
-                return Observable.Create<JToken>(observer =>
+                return Observable.Create<JToken>(async (observer, cancellationToken) =>
                     {
+                        await Task.Delay(TimeSpan.FromSeconds(args.Seconds), cancellationToken);
                         observer.OnNext(JToken.FromObject(DateTimeOffset.Now));
                         observer.OnCompleted();
-                        return Task.CompletedTask;
                     })
-                    .Delay(TimeSpan.FromSeconds(args.Seconds))
                     .Repeat();
             }
 

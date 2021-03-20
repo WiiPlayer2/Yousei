@@ -36,7 +36,7 @@ namespace YouseiReloaded
         private static void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IConfigurationProvider, DummyConfigurationProvider>();
-            services.AddSingleton<IConnectorRegistry, DummyConnectorRegistry>();
+            services.AddSingleton<IConnectorRegistry, ConnectorRegistry>();
             services.AddSingleton<IFlowActor, FlowActor>();
             services.AddHostedService<MainService>();
         }

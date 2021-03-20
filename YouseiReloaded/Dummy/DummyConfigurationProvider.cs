@@ -21,7 +21,7 @@ namespace YouseiReloaded.Dummy
                 Type = "dummy.trigger",
                 Arguments = new Dictionary<string, object>
                 {
-                    { "seconds", 30 },
+                    { "seconds", 1 },
                 }
             },
             Actions = new BlockConfig[]

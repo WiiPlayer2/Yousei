@@ -6,6 +6,8 @@ namespace Yousei.Shared
     {
         Type ConfigurationType { get; }
 
+        string Name { get; }
+
         IConnection GetConnection(object configuration);
     }
 }
