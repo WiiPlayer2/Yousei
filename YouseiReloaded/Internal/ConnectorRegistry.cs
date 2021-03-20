@@ -20,7 +20,6 @@ namespace YouseiReloaded.Internal
         public ConnectorRegistry(ILogger<LogConnector> logConnectorLogger)
         {
             // Load internal connectors
-            Register(new Dummy.DummyConnector());
             Register(InternalConnector.Instance);
             Register(new ControlConnector());
             Register(new DataConnector());
