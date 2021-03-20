@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Yousei.Shared;
 
-namespace YouseiReloaded
+namespace YouseiReloaded.Internal
 {
     internal class FlowContext : IFlowContext
     {

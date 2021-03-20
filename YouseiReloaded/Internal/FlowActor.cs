@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Yousei.Shared;
 
-namespace YouseiReloaded
+namespace YouseiReloaded.Internal
 {
     internal class FlowActor : IFlowActor
     {

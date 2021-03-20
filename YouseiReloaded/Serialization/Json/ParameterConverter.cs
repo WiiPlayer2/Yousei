@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using Yousei.Shared;
 
-namespace YouseiReloaded
+namespace YouseiReloaded.Serialization.Json
 {
     internal class ParameterConverter : JsonConverter
     {
