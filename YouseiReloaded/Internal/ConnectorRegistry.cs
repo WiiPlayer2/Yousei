@@ -26,6 +26,10 @@ namespace YouseiReloaded.Internal
             Register(new ControlConnector());
             Register(new DataConnector());
             Register(new LogConnector(logConnectorLogger));
+
+            // External connectors
+            Register(new HttpConnector());
+            Register(new TelegramConnector());
         }
 
         public IConnector Get(string name) => connectors.GetValueOrDefault(name);
