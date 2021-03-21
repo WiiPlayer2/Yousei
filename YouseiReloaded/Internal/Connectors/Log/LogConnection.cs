@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace YouseiRelaoded.Internal.Connectors.Log
 {
-    internal class LogConnection : SimpleConnection<LogConnection>
+    internal class LogConnection : SimpleConnection
     {
         public LogConnection(ILogger logger)
         {

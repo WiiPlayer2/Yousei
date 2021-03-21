@@ -5,7 +5,7 @@ using System.Reactive;
 
 namespace YouseiReloaded.Internal.Connectors.Internal
 {
-    internal class InternalConnection : SimpleConnection<InternalConnection>
+    internal class InternalConnection : SimpleConnection
     {
         private readonly ISubject<Exception> exceptionSubject = new Subject<Exception>();
 
