@@ -8,17 +8,25 @@ using System.IO;
 using YamlDotNet.Serialization.NamingConventions;
 using Yousei.Core;
 using System.Reactive.Linq;
+using Microsoft.Extensions.Configuration;
+using IConfigurationProvider = Yousei.Shared.IConfigurationProvider;
 
 namespace YouseiReloaded.Serialization.Yaml
 {
+    internal class Options
+    {
+        public static string KEY = "YamlConfigurationProvider";
+
+        public string File { get; init; }
+    }
+
     internal class YamlConfigurationProvider : IConfigurationProvider
     {
         private readonly YamlConfig config;
 
-        private readonly string path = @"D:\Data\Dropbox\Workspace\DotNET\Tools\Yousei\reloaded\demo_config.yaml";
-
-        public YamlConfigurationProvider()
+        public YamlConfigurationProvider(IConfiguration configuration)
         {
+            var options = configuration.GetSection(Options.KEY).Get<Options>();
             var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)
                 .WithNodeDeserializer(new BlockConfigDeserializer())
@@ -26,7 +34,7 @@ namespace YouseiReloaded.Serialization.Yaml
                 .WithTagMapping("!v", typeof(VariableParameter))
                 .WithTagMapping("!e", typeof(ExpressionParameter))
                 .Build();
-            using var reader = new StreamReader(path);
+            using var reader = new StreamReader(options.File);
             config = deserializer.Deserialize<YamlConfig>(reader) ?? new YamlConfig();
         }
 
