@@ -40,40 +40,48 @@ namespace YouseiReloaded
                 .Synchronize()
                 .Subscribe(tuple =>
                 {
-                    if (tuple.Config is null && flowConfigs.ContainsKey(tuple.Name))
+                    try
                     {
-                        flowConfigs.Remove(tuple.Name);
-                        if (flowSubscriptions.TryGetValue(tuple.Name, out var subscription))
-                            subscription.Dispose();
-                        return;
-                    }
-
-                    // TODO: Handle duplicate flows. Duplicate flows would overwrite existing flows
-                    if (flowSubscriptions.ContainsKey(tuple.Name))
-                    {
-                        flowSubscriptions[tuple.Name].Dispose();
-                        flowSubscriptions.Remove(tuple.Name);
-                    }
-
-                    flowConfigs[tuple.Name] = tuple.Config;
-                    if (tuple.Config.Trigger is null)
-                        return;
-
-                    var triggerEvents = flowActor.GetTrigger(tuple.Config.Trigger);
-                    flowSubscriptions[tuple.Name] = triggerEvents.Subscribe(async data =>
-                    {
-                        try
+                        if (tuple.Config is null && flowConfigs.ContainsKey(tuple.Name))
                         {
-                            var context = new FlowContext(flowActor);
-                            await context.SetData(tuple.Config.Trigger.Type, data);
-                            await flowActor.Act(tuple.Config.Actions, context);
+                            flowConfigs.Remove(tuple.Name);
+                            if (flowSubscriptions.TryGetValue(tuple.Name, out var subscription))
+                                subscription.Dispose();
+                            return;
                         }
-                        catch (Exception exception)
+
+                        // TODO: Handle duplicate flows. Duplicate flows would overwrite existing flows
+                        if (flowSubscriptions.ContainsKey(tuple.Name))
                         {
-                            logger.LogError(exception, "Error while handling flow.");
-                            InternalConnection.Instance.OnException(exception);
+                            flowSubscriptions[tuple.Name].Dispose();
+                            flowSubscriptions.Remove(tuple.Name);
                         }
-                    });
+
+                        flowConfigs[tuple.Name] = tuple.Config;
+                        if (tuple.Config.Trigger is null)
+                            return;
+
+                        var triggerEvents = flowActor.GetTrigger(tuple.Config.Trigger);
+                        flowSubscriptions[tuple.Name] = triggerEvents.Subscribe(async data =>
+                        {
+                            try
+                            {
+                                var context = new FlowContext(flowActor);
+                                await context.SetData(tuple.Config.Trigger.Type, data);
+                                await flowActor.Act(tuple.Config.Actions, context);
+                            }
+                            catch (Exception exception)
+                            {
+                                logger.LogError(exception, "Error while handling flow.");
+                                InternalConnection.Instance.OnException(exception);
+                            }
+                        });
+                    }
+                    catch (Exception exception)
+                    {
+                        logger.LogError(exception, "Error while creating flow.");
+                        InternalConnection.Instance.OnException(exception);
+                    }
                 });
             InternalConnection.Instance.OnStart();
             return Task.CompletedTask;

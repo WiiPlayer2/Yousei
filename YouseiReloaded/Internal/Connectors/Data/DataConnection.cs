@@ -2,7 +2,7 @@
 
 namespace YouseiReloaded.Internal.Connectors.Data
 {
-    internal class DataConnection : SimpleConnection<DataConnection>
+    internal class DataConnection : SimpleConnection
     {
         public DataConnection()
         {

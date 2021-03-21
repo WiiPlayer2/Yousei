@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Yousei.Connectors.Telegram;
 using Yousei.Shared;
 using YouseiRelaoded.Internal.Connectors.Log;
 using YouseiReloaded.Internal.Connectors.Control;
@@ -19,11 +20,14 @@ namespace YouseiReloaded.Internal
 
         public ConnectorRegistry(ILogger<LogConnector> logConnectorLogger)
         {
-            // Load internal connectors
+            // Internal connectors
             Register(InternalConnector.Instance);
             Register(new ControlConnector());
             Register(new DataConnector());
             Register(new LogConnector(logConnectorLogger));
+
+            // External connectors
+            Register(new TelegramConnector());
         }
 
         public IConnector Get(string name) => connectors.GetValueOrDefault(name);
