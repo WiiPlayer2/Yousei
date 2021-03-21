@@ -5,7 +5,7 @@ namespace Yousei.Shared
 {
     public class FlowConfig
     {
-        public IReadOnlyList<BlockConfig> Actions { get; init; } = Array.Empty<BlockConfig>();
+        public List<BlockConfig> Actions { get; init; } = new();
 
         public BlockConfig Trigger { get; init; }
     }
