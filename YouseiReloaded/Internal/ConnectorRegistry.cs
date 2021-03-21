@@ -28,7 +28,7 @@ namespace YouseiReloaded.Internal
             Register(new LogConnector(logConnectorLogger));
 
             // External connectors
-            Register(new TransmissionConnector(null));
+            Register(new TransmissionConnector());
             Register(new TelegramConnector());
         }
 

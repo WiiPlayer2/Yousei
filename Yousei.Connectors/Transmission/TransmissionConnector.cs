@@ -1,19 +1,29 @@
-﻿using System.Reactive;
-using Transmission.API.RPC;
+﻿using Transmission.API.RPC;
 using Yousei.Core;
 using Yousei.Shared;
 
 namespace Yousei.Connectors.Transmission
 {
-    public class TransmissionConnector : Connector<Unit>
+    public class TransmissionConnector : Connector<TransmissionConfiguration>
     {
-        private readonly TransmissionConnection connection;
+        private TransmissionConnection connection = null;
 
-        public TransmissionConnector(Client client) : base("transmission")
+        public TransmissionConnector() : base("transmission")
         {
-            connection = new TransmissionConnection(client);
         }
 
-        protected override IConnection GetConnection(Unit configuration) => connection;
+        protected override IConnection GetConnection(TransmissionConfiguration configuration)
+        {
+            if (connection is null)
+            {
+                var client = new Client(
+                    configuration.Endpoint,
+                    login: configuration.Login,
+                    password: configuration.Password
+                );
+                connection = new TransmissionConnection(client);
+            }
+            return connection;
+        }
     }
 }
