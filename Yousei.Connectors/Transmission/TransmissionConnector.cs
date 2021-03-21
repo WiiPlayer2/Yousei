@@ -5,7 +5,7 @@ using Yousei.Shared;
 
 namespace Yousei.Connectors.Transmission
 {
-    internal class TransmissionConnector : Connector<Unit>
+    public class TransmissionConnector : Connector<Unit>
     {
         private readonly TransmissionConnection connection;
 

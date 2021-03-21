@@ -3,7 +3,7 @@ using Yousei.Core;
 
 namespace Yousei.Connectors.Transmission
 {
-    internal class TransmissionConnection : SimpleConnection<TransmissionConnection>
+    internal class TransmissionConnection : SimpleConnection
     {
         public TransmissionConnection(Client client)
         {
