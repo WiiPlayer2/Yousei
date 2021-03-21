@@ -1,7 +1,6 @@
 flows:
   demo:
-    trigger:
-      type: internal.onstart
+    trigger: internal.onstart
     actions:
       - type: data.set
         path: vars.current_time
