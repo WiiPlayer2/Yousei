@@ -1,6 +1,6 @@
 flows:
   demo:
-    trigger: internal.onstart
+    trigger: internal.onstart2
     actions:
       - type: data.set
         path: vars.current_time
@@ -18,3 +18,9 @@ flows:
     actions:
       - type: log.write
         message: !e '$"OnValue: {Context.@internal.onvalue}"'
+
+  demo_onexception:
+    trigger: internal.onexception
+    actions:
+      - type: log.write
+        message: !v internal.onexception
