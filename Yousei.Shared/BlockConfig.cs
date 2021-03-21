@@ -6,7 +6,7 @@ namespace Yousei.Shared
     {
         public object Arguments { get; set; }
 
-        public string ConfigurationName { get; set; } = "default";
+        public string Configuration { get; set; } = "default";
 
         public string Type { get; set; }
     }

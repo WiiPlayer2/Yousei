@@ -9,6 +9,7 @@ using Yousei.Shared;
 using YouseiReloaded.Dummy;
 using YouseiReloaded.Internal;
 using YouseiReloaded.Serialization.Json;
+using YouseiReloaded.Serialization.Yaml;
 
 namespace YouseiReloaded
 {
@@ -35,7 +36,7 @@ namespace YouseiReloaded
 
         private static void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IConfigurationProvider, DummyConfigurationProvider>();
+            services.AddSingleton<IConfigurationProvider, YamlConfigurationProvider>();
             services.AddSingleton<IConnectorRegistry, ConnectorRegistry>();
             services.AddSingleton<IFlowActor, FlowActor>();
             services.AddHostedService<MainService>();

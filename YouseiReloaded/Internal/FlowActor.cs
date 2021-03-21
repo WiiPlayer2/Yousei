@@ -58,7 +58,7 @@ namespace YouseiReloaded.Internal
             var connector = connectorRegistry.Get(connectorName);
 
             var connectionConfiguration = configurationProvider
-                .GetConnectionConfiguration(connectorName, config.ConfigurationName)
+                .GetConnectionConfiguration(connectorName, config.Configuration)
                 .Map(connector.ConfigurationType);
             var connection = connector.GetConnection(connectionConfiguration);
 

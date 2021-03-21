@@ -1,0 +1,21 @@
+flows:
+  demo:
+    trigger:
+      type: internal.onstart
+    actions:
+      - type: data.set
+        path: vars.current_time
+        value: !e DateTimeOffset.Now
+      - type: log.write
+        message: !v vars.current_time
+      - type: internal.sendvalue
+        topic: demo
+        value: !e '$"{Context.vars.current_time}"'
+  
+  demo_onvalue:
+    trigger:
+      type: internal.onvalue
+      topic: demo
+    actions:
+      - type: log.write
+        message: !e '$"OnValue: {Context.@internal.onvalue}"'

@@ -21,7 +21,7 @@ namespace YouseiReloaded.Dummy
             {
                 Type = "internal.onstart",
             },
-            Actions = new BlockConfig[]
+            Actions = new()
             {
                 new()
                 {
@@ -38,7 +38,7 @@ namespace YouseiReloaded.Dummy
             {
                 Type = "internal.onstop",
             },
-            Actions = new BlockConfig[]
+            Actions = new()
             {
                 new()
                 {
