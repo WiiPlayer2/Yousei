@@ -14,5 +14,7 @@ namespace Yousei.Core
 
         public Task<T> Resolve<T>(IFlowContext context)
             => Task.FromResult(Value.Map<T>());
+
+        public override string ToString() => Value?.ToString() ?? string.Empty;
     }
 }

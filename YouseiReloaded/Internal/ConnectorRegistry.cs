@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Yousei.Connectors.Http;
+using Yousei.Connectors.Telegram;
 using Yousei.Shared;
 using YouseiRelaoded.Internal.Connectors.Log;
 using YouseiReloaded.Internal.Connectors.Control;
@@ -25,9 +26,6 @@ namespace YouseiReloaded.Internal
             Register(new ControlConnector());
             Register(new DataConnector());
             Register(new LogConnector(logConnectorLogger));
-
-            // External connectors
-            Register(new HttpConnector());
         }
 
         public IConnector Get(string name) => connectors.GetValueOrDefault(name);
