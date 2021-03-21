@@ -18,7 +18,7 @@ namespace Yousei.Connectors.Telegram
 
             AddTrigger("onmessage", new ObservableTrigger(OnMessage.Select(o => o.Message)));
             AddTrigger("onupdate", new ObservableTrigger(OnUpdate.Select(o => o.Update)));
-            AddAction("send", new SendAction(telegramBotClient));
+            AddAction("sendtextmessage", new SendAction(telegramBotClient));
         }
 
         public IObservable<MessageEventArgs> OnMessage { get; }
