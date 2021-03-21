@@ -15,5 +15,7 @@ namespace Yousei.Core
 
         public async Task<T> Resolve<T>(IFlowContext context)
             => (await context.GetData(Path)).Map<T>();
+
+        public override string ToString() => $"-> {Path}";
     }
 }

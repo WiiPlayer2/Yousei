@@ -38,5 +38,7 @@ namespace Yousei.Core
                 globals: globals);
             return result.ReturnValue.Map<T>();
         }
+
+        public override string ToString() => $"=> {Code}";
     }
 }
