@@ -2,7 +2,7 @@
 
 namespace YouseiReloaded.Internal.Connectors.Control
 {
-    internal class ControlConnection : SimpleConnection<ControlConnection>
+    internal class ControlConnection : SimpleConnection
     {
         public ControlConnection()
         {

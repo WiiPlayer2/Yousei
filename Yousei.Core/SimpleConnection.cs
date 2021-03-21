@@ -7,24 +7,23 @@ using Yousei.Shared;
 
 namespace Yousei.Core
 {
-    public class SimpleConnection<TConnection> : IConnection
-        where TConnection : SimpleConnection<TConnection>
+    public class SimpleConnection : IConnection
     {
-        private readonly Dictionary<string, Func<TConnection, IFlowAction>> actionTypes = new();
+        private readonly Dictionary<string, IFlowAction> actions = new();
 
-        private readonly Dictionary<string, Func<TConnection, IFlowTrigger>> triggerTypes = new();
+        private readonly Dictionary<string, IFlowTrigger> triggers = new();
 
         public IFlowAction CreateAction(string name)
         {
-            if (actionTypes.TryGetValue(name, out var creator))
-                return creator(this as TConnection);
+            if (actions.TryGetValue(name, out var action))
+                return action;
             return default;
         }
 
         public IFlowTrigger CreateTrigger(string name)
         {
-            if (triggerTypes.TryGetValue(name, out var creator))
-                return creator(this as TConnection);
+            if (triggers.TryGetValue(name, out var trigger))
+                return trigger;
             return default;
         }
 
@@ -33,19 +32,13 @@ namespace Yousei.Core
             => AddAction(name, Activator.CreateInstance<T>());
 
         protected void AddAction(string name, IFlowAction instance)
-            => AddAction(name, _ => instance);
-
-        protected void AddAction(string name, Func<TConnection, IFlowAction> creator)
-            => actionTypes.Add(name, creator);
+            => actions.Add(name, instance);
 
         protected void AddTrigger<T>(string name)
             where T : IFlowTrigger
             => AddTrigger(name, Activator.CreateInstance<T>());
 
-        protected void AddTrigger(string name, Func<TConnection, IFlowTrigger> creator)
-            => triggerTypes.Add(name, creator);
-
         protected void AddTrigger(string name, IFlowTrigger instance)
-            => AddTrigger(name, _ => instance);
+            => triggers.Add(name, instance);
     }
 }
