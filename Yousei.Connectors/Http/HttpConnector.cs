@@ -19,6 +19,9 @@ namespace Yousei.Connectors.Http
 
         protected override IConnection GetConnection(Config configuration)
         {
+            if (configuration is null)
+                return new HttpConnection(default);
+
             if (!httpListeners.TryGetValue(configuration, out var listener))
             {
                 if (configuration.Prefixes.Any())

@@ -15,19 +15,20 @@ namespace Yousei.Connectors.Http
             HttpRequests = GetHttpRequests();
 
             AddTrigger("webhook", new WebhookTrigger(this));
+            AddAction<RequestAction>("request");
         }
 
-        public IObservable<WebRequest> HttpRequests { get; }
+        public IObservable<HttpRequest> HttpRequests { get; }
 
-        private IObservable<WebRequest> GetHttpRequests()
-            => Observable.Create<WebRequest>(async (observer, cancellationToken) =>
+        private IObservable<HttpRequest> GetHttpRequests()
+            => Observable.Create<HttpRequest>(async (observer, cancellationToken) =>
             {
                 listener.Start();
                 cancellationToken.Register(listener.Stop);
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     var context = await listener.GetContextAsync();
-                    var dto = await WebRequest.FromRequest(context.Request);
+                    var dto = await HttpRequest.FromRequest(context.Request);
                     observer.OnNext(dto);
                     context.Response.Close();
                 }

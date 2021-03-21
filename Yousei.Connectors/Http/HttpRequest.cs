@@ -9,7 +9,7 @@ using System.Collections.Specialized;
 
 namespace Yousei.Connectors.Http
 {
-    internal record WebRequest
+    internal record HttpRequest
     {
         public Uri Url { get; init; }
 
@@ -35,14 +35,14 @@ namespace Yousei.Connectors.Http
 
         public Uri UrlReferrer { get; init; }
 
-        public static async Task<WebRequest> FromRequest(HttpListenerRequest request)
+        public static async Task<HttpRequest> FromRequest(HttpListenerRequest request)
         {
             using var memStream = new MemoryStream();
             await request.InputStream.CopyToAsync(memStream);
             var bodyData = memStream.ToArray();
             var bodyText = request.ContentEncoding.GetString(bodyData);
 
-            return new WebRequest
+            return new HttpRequest
             {
                 Url = request.Url,
                 BodyText = bodyText,
