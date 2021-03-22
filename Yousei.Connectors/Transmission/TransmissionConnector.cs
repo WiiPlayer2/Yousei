@@ -4,13 +4,13 @@ using Yousei.Shared;
 
 namespace Yousei.Connectors.Transmission
 {
-    public class TransmissionConnector : Connector<TransmissionConfiguration>
+    public class TransmissionConnector : SimpleConnector<TransmissionConfiguration>
     {
         public TransmissionConnector() : base("transmission")
         {
         }
 
-        protected override IConnection GetConnection(TransmissionConfiguration configuration)
+        protected override IConnection CreateConnection(TransmissionConfiguration configuration)
         {
             var client = new Client(
                 configuration.Endpoint,
