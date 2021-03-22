@@ -19,11 +19,13 @@ namespace Yousei.Connectors.Transmission
             var url = await arguments.Url.Resolve<string>(context);
             var downloadDirectory = await arguments.DownloadDirectory.Resolve<string>(context);
 
-            await client.TorrentAddAsync(new()
-            {
-                Filename = url,
-                DownloadDirectory = downloadDirectory
-            }).ConfigureAwait(false);
+            await context.SetData(
+                await client.TorrentAddAsync(new()
+                {
+                    Filename = url,
+                    DownloadDirectory = downloadDirectory
+                }).ConfigureAwait(false)
+            );
         }
     }
 }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Yousei.Connectors.Transmission
+﻿namespace Yousei.Connectors.Transmission
 {
     public record TransmissionConfiguration
     {
