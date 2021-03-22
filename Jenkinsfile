@@ -6,14 +6,14 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'docker build -t registry.home.dark-link.info/yousei:latest -f ./Yousei/Dockerfile .'
+                sh 'docker build -t registry.dark-link.info/yousei:$GIT_BRANCH -f ./YouseiReloaded/Dockerfile .'
             }
         }
 
-        stage('Publish') {
-            steps {
-                sh 'docker image push registry.home.dark-link.info/yousei:latest'
-            }
-        }
+        // stage('Publish') {
+        //     steps {
+        //         sh 'docker image push registry.dark-link.info/yousei:$GIT_BRANCH'
+        //     }
+        // }
     }
 }
