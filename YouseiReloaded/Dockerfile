@@ -5,9 +5,8 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["YouseiReloaded/YouseiReloaded.csproj", "YouseiReloaded/"]
-RUN dotnet restore "YouseiReloaded/YouseiReloaded.csproj"
 COPY . .
+RUN dotnet restore "YouseiReloaded/YouseiReloaded.csproj"
 WORKDIR "/src/YouseiReloaded"
 RUN dotnet build "YouseiReloaded.csproj" -c Release -o /app/build
 
