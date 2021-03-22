@@ -19,7 +19,8 @@ namespace Yousei.Connectors.Transmission
             var fields = await arguments.Fields.Resolve<string[]>(context);
             var ids = await arguments.Ids.Resolve<int[]>(context);
 
-            await client.TorrentGetAsync(fields, ids);
+            var torrents = await client.TorrentGetAsync(fields, ids);
+            await context.SetData(torrents);
         }
     }
 }
