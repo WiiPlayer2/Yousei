@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Yousei.Connectors.Http;
 using Yousei.Connectors.Telegram;
 using Yousei.Shared;
 using YouseiRelaoded.Internal.Connectors.Log;
@@ -27,6 +28,7 @@ namespace YouseiReloaded.Internal
             Register(new LogConnector(logConnectorLogger));
 
             // External connectors
+            Register(new HttpConnector());
             Register(new TelegramConnector());
         }
 
