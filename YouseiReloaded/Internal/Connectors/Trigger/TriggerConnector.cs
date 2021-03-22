@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Text;
@@ -16,8 +15,6 @@ namespace YouseiReloaded.Internal.Connectors.Trigger
         }
 
         protected override IConnection CreateConnection()
-        {
-            throw new NotImplementedException();
-        }
+            => new TriggerConnection();
     }
 }
