@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 
 namespace Yousei.Connectors.Http
 {
-    internal class HttpConnection : SimpleConnection<HttpConnection>
+    internal class HttpConnection : SimpleConnection
     {
         private readonly HttpListener listener;
 
