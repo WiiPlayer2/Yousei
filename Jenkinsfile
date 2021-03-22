@@ -36,7 +36,9 @@ pipeline {
             }
             steps {
                 withDockerRegistry([credentialsId: 'vserver-container-registry', url: "https://registry.dark-link.info/"]) {
+                    sh 'docker tag registry.dark-link.info/yousei:$CLEAN_GIT_BRANCH registry.dark-link.info/yousei:latest'
                     sh 'docker image push registry.dark-link.info/yousei:$CLEAN_GIT_BRANCH'
+                    sh 'docker image push registry.dark-link.info/yousei:latest'
                 }
             }
         }
