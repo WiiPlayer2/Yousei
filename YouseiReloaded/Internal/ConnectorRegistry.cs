@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Yousei.Connectors.Http;
 using Yousei.Connectors.Telegram;
+using Yousei.Connectors.Rss;
 using Yousei.Shared;
 using YouseiRelaoded.Internal.Connectors.Log;
 using YouseiReloaded.Internal.Connectors.Control;
@@ -30,6 +31,7 @@ namespace YouseiReloaded.Internal
             // External connectors
             Register(new HttpConnector());
             Register(new TelegramConnector());
+            Register(new RssConnector());
         }
 
         public IConnector Get(string name) => connectors.GetValueOrDefault(name);
