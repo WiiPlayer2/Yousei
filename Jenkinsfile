@@ -9,7 +9,7 @@ pipeline {
 
     stages {
         stage('Check Integrity') {
-            when { branch 'PR-.*' }
+            when { changeRequest() }
             steps {
                 script {
                     if(env.CHANGE_TARGET == 'main' && !(env.CHANGE_BRANCH ==~ /(release|hotfix)\/.+/)) {
