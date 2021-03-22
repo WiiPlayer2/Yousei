@@ -13,7 +13,7 @@ namespace Yousei.Connectors.Transmission
         protected override IConnection CreateConnection(TransmissionConfiguration configuration)
         {
             var client = new Client(
-                configuration.Endpoint,
+                configuration.Endpoint.ToString(),
                 login: configuration.Login,
                 password: configuration.Password
             );
