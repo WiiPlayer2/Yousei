@@ -5,16 +5,11 @@ using Yousei.Core;
 
 namespace YouseiReloaded.Internal.Connectors.Internal
 {
-    internal class OnStopTrigger : FlowTrigger<Unit>
+    internal class OnStopTrigger : ObservableTrigger
     {
-        private readonly IObservable<Unit> stopObservable;
-
         public OnStopTrigger(IObservable<Unit> stopObservable)
+            : base(stopObservable.Select(_ => default(object)))
         {
-            this.stopObservable = stopObservable;
         }
-
-        protected override IObservable<object> GetEvents(Unit arguments)
-            => stopObservable.Select(o => (object)o);
     }
 }

@@ -61,14 +61,15 @@ namespace YouseiReloaded
                         if (tuple.Config.Trigger is null)
                             return;
 
-                        var triggerEvents = flowActor.GetTrigger(tuple.Config.Trigger);
+                        var flowContext = new FlowContext(flowActor);
+                        var triggerEvents = flowActor.GetTrigger(tuple.Config.Trigger, flowContext);
                         flowSubscriptions[tuple.Name] = triggerEvents.Subscribe(async data =>
                         {
                             try
                             {
-                                var context = new FlowContext(flowActor);
-                                await context.SetData(tuple.Config.Trigger.Type, data);
-                                await flowActor.Act(tuple.Config.Actions, context);
+                                var flowInstanceContext = flowContext.Clone();
+                                await flowInstanceContext.SetData(tuple.Config.Trigger.Type, data);
+                                await flowActor.Act(tuple.Config.Actions, flowInstanceContext);
                             }
                             catch (Exception exception)
                             {

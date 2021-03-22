@@ -18,6 +18,6 @@ namespace Yousei.Core
 
         public Type ArgumentsType { get; } = typeof(object);
 
-        public IObservable<object> GetEvents(object arguments) => observable;
+        public IObservable<object> GetEvents(IFlowContext context, object arguments) => observable;
     }
 }

@@ -8,6 +8,6 @@ namespace Yousei.Shared
     {
         Task Act(IReadOnlyList<BlockConfig> actions, IFlowContext context);
 
-        IObservable<object> GetTrigger(BlockConfig trigger);
+        IObservable<object> GetTrigger(BlockConfig trigger, IFlowContext context);
     }
 }
