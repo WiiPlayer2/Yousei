@@ -32,6 +32,9 @@ namespace Yousei.Core
             return (splits[0], splits[1]);
         }
 
+        public static ConstantParameter ToConstantParameter(this object obj)
+            => new ConstantParameter(obj);
+
         public static bool TryToObject<T>(this JToken jtoken, out T result)
         {
             try
