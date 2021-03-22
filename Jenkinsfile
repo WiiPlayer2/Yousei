@@ -3,17 +3,37 @@ pipeline {
         label 'docker'
     }
 
+    environment {
+        CLEAN_GIT_BRANCH = "${env.GIT_BRANCH.replaceAll('/', '_')}"
+    }
+
     stages {
-        stage('Build') {
+        stage('Check Integrity') {
+            when { changeRequest() }
             steps {
-                sh 'docker build -t registry.home.dark-link.info/yousei:latest -f ./Yousei/Dockerfile .'
+                script {
+                    if(env.CHANGE_TARGET == 'main' && !(env.CHANGE_BRANCH ==~ /(release|hotfix)\/.+/)) {
+                        error('Only release and hotifx branches are allowed.')
+                    }
+                    if(env.CHANGE_TARGET == 'dev' && !(env.CHANGE_BRANCH ==~ /(feature|hotfix)\/.*/)) {
+                        error('Only feature and hotfix branches are allowed.')
+                    }
+                }
             }
         }
 
-        stage('Publish') {
+        stage('Build') {
             steps {
-                sh 'docker image push registry.home.dark-link.info/yousei:latest'
+                sh '''#!/bin/bash -xe
+                    docker build -t registry.dark-link.info/yousei:${CLEAN_GIT_BRANCH} -f ./YouseiReloaded/Dockerfile .
+                '''
             }
         }
+
+        // stage('Publish') {
+        //     steps {
+        //         sh 'docker image push registry.dark-link.info/yousei:$GIT_BRANCH'
+        //     }
+        // }
     }
 }
