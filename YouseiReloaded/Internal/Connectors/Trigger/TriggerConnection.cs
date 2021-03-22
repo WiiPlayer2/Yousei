@@ -7,6 +7,7 @@ namespace YouseiReloaded.Internal.Connectors.Trigger
         public TriggerConnection()
         {
             AddTrigger<DistinctTrigger>("distinct");
+            AddTrigger<PeriodicTrigger>("periodic");
         }
     }
 }
