@@ -8,6 +8,20 @@ pipeline {
     }
 
     stages {
+        stage('Check Integrity') {
+            when { branch '^PR-.*' }
+            steps {
+                script {
+                    if(env.CHANGE_TARGET == 'main' && !(env.CHANGE_BRANCH ==~ /(release|hotfix)/.+/)) {
+                        error('Only release and hotifx branches are allowed.')
+                    }
+                    if(env.CHANGE_TARGET == 'dev' && !(env.CHANGE_BRANCH ==~ /(feature|hotfix)/.*/)) {
+                        error('Only feature and hotfix branches are allowed.')
+                    }
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 sh '''#!/bin/bash -xe
