@@ -6,14 +6,14 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY . .
-RUN dotnet restore "YouseiReloaded/YouseiReloaded.csproj"
-WORKDIR "/src/YouseiReloaded"
-RUN dotnet build "YouseiReloaded.csproj" -c Release -o /app/build
+RUN dotnet restore "Yousei/Yousei.csproj"
+WORKDIR "/src/Yousei"
+RUN dotnet build "Yousei.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "YouseiReloaded.csproj" -c Release -o /app/publish
+RUN dotnet publish "Yousei.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "YouseiReloaded.dll"]
+ENTRYPOINT ["dotnet", "Yousei.dll"]
