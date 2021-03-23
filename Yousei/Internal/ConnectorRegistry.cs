@@ -42,6 +42,8 @@ namespace YouseiReloaded.Internal
 
         public void Register(IConnector connector) => connectors.TryAdd(connector.Name, connector);
 
+        public Task ResetAll() => Task.WhenAll(connectors.Values.Select(o => o.Reset()));
+
         public void Unregister(IConnector connector) => connectors.TryRemove(connector.Name, out var _);
     }
 }

@@ -17,6 +17,8 @@ namespace YouseiReloaded
     {
         private readonly IConfigurationProvider configurationProvider;
 
+        private readonly IConnectorRegistry connectorRegistry;
+
         private readonly IFlowActor flowActor;
 
         private readonly Dictionary<string, FlowConfig> flowConfigs = new();
@@ -27,14 +29,38 @@ namespace YouseiReloaded
 
         private IDisposable flowSubscription;
 
-        public MainService(ILogger<MainService> logger, IConfigurationProvider configurationProvider, IFlowActor flowActor)
+        public MainService(ILogger<MainService> logger, IConfigurationProvider configurationProvider, IFlowActor flowActor, IConnectorRegistry connectorRegistry)
         {
             this.logger = logger;
             this.configurationProvider = configurationProvider;
             this.flowActor = flowActor;
+            this.connectorRegistry = connectorRegistry;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
+        {
+            LoadFlows();
+            InternalConnection.Instance.OnStart();
+            return Task.CompletedTask;
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            InternalConnection.Instance.OnStop();
+            CancelSubscriptions();
+            return Task.CompletedTask;
+        }
+
+        private void CancelSubscriptions()
+        {
+            flowSubscription.Dispose();
+            foreach (var subscription in flowSubscriptions.Values)
+            {
+                subscription.Dispose();
+            }
+        }
+
+        private void LoadFlows()
         {
             flowSubscription = configurationProvider.GetFlows()
                 .Synchronize()
@@ -84,19 +110,13 @@ namespace YouseiReloaded
                         InternalConnection.Instance.OnException(exception);
                     }
                 });
-            InternalConnection.Instance.OnStart();
-            return Task.CompletedTask;
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        private async Task Reload()
         {
-            InternalConnection.Instance.OnStop();
-            flowSubscription.Dispose();
-            foreach (var subscription in flowSubscriptions.Values)
-            {
-                subscription.Dispose();
-            }
-            return Task.CompletedTask;
+            CancelSubscriptions();
+            await connectorRegistry.ResetAll();
+            LoadFlows();
         }
     }
 }
