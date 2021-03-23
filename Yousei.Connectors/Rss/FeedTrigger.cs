@@ -8,13 +8,15 @@ using Yousei.Core;
 
 namespace Yousei.Connectors.Rss
 {
-    internal class FeedTrigger : FlowTrigger<Unit>
+    internal class FeedTrigger : ObservableTrigger
     {
-        private readonly IObservable<FeedItem> observable;
-
         public FeedTrigger(FeedReader feedReader, Config config)
+            : base(CreateObservable(feedReader, config))
         {
-            observable = Observable.Create<FeedItem>(async (observer, cancellationToken) =>
+        }
+
+        private static IObservable<object> CreateObservable(FeedReader feedReader, Config config)
+                    => Observable.Create<FeedItem>(async (observer, cancellationToken) =>
             {
                 var lastItem = feedReader.RetrieveFeed(config.Url.ToString())
                     .OrderBy(o => o.PublishDate)
@@ -36,9 +38,5 @@ namespace Yousei.Connectors.Rss
             })
                 .Publish()
                 .RefCount();
-        }
-
-        protected override IObservable<object> GetEvents(Unit arguments)
-            => observable;
     }
 }

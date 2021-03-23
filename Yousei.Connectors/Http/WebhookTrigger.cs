@@ -2,6 +2,7 @@
 using Yousei.Core;
 using System.Reactive.Linq;
 using System.Linq;
+using Yousei.Shared;
 
 namespace Yousei.Connectors.Http
 {
@@ -14,7 +15,7 @@ namespace Yousei.Connectors.Http
             this.httpConnection = httpConnection;
         }
 
-        protected override IObservable<object> GetEvents(WebhookArguments arguments)
+        protected override IObservable<object> GetEvents(IFlowContext context, WebhookArguments arguments)
             => httpConnection.HttpRequests
                 .Where(o => string.IsNullOrEmpty(arguments.Path) || o.Url.AbsolutePath.StartsWith(arguments.Path));
     }

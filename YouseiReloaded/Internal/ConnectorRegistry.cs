@@ -14,6 +14,7 @@ using YouseiRelaoded.Internal.Connectors.Log;
 using YouseiReloaded.Internal.Connectors.Control;
 using YouseiReloaded.Internal.Connectors.Data;
 using YouseiReloaded.Internal.Connectors.Internal;
+using YouseiReloaded.Internal.Connectors.Trigger;
 
 namespace YouseiReloaded.Internal
 {
@@ -28,6 +29,7 @@ namespace YouseiReloaded.Internal
             Register(new ControlConnector());
             Register(new DataConnector());
             Register(new LogConnector(logConnectorLogger));
+            Register(new TriggerConnector());
 
             // External connectors
             Register(new HttpConnector());

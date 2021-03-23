@@ -8,9 +8,9 @@ namespace Yousei.Core
     {
         public Type ArgumentsType { get; } = typeof(TArguments);
 
-        public IObservable<object> GetEvents(object arguments)
-            => GetEvents(arguments.SafeCast<TArguments>());
+        public IObservable<object> GetEvents(IFlowContext context, object arguments)
+            => GetEvents(context, arguments.SafeCast<TArguments>());
 
-        protected abstract IObservable<object> GetEvents(TArguments arguments);
+        protected abstract IObservable<object> GetEvents(IFlowContext context, TArguments arguments);
     }
 }

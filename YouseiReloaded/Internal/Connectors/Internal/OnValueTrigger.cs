@@ -1,6 +1,7 @@
 ﻿using System;
 using Yousei.Core;
 using System.Reactive.Linq;
+using Yousei.Shared;
 
 namespace YouseiReloaded.Internal.Connectors.Internal
 {
@@ -13,7 +14,7 @@ namespace YouseiReloaded.Internal.Connectors.Internal
             this.valueObservable = valueObservable;
         }
 
-        protected override IObservable<object> GetEvents(OnValueConfiguration arguments)
+        protected override IObservable<object> GetEvents(IFlowContext context, OnValueConfiguration arguments)
             => valueObservable
                 .Where(o => o.Topic == arguments.Topic)
                 .Select(o => o.Value);

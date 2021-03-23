@@ -5,16 +5,11 @@ using System.Reactive.Linq;
 
 namespace YouseiReloaded.Internal.Connectors.Internal
 {
-    internal class OnStartTrigger : FlowTrigger<Unit>
+    internal class OnStartTrigger : ObservableTrigger
     {
-        private readonly IObservable<Unit> startObservable;
-
         public OnStartTrigger(IObservable<Unit> startObservable)
+            : base(startObservable.Select(_ => default(object)))
         {
-            this.startObservable = startObservable;
         }
-
-        protected override IObservable<object> GetEvents(Unit arguments)
-            => startObservable.Select(o => (object)o);
     }
 }

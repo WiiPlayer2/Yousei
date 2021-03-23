@@ -31,14 +31,14 @@ namespace YouseiReloaded.Internal
             }
         }
 
-        public IObservable<object> GetTrigger(BlockConfig trigger)
+        public IObservable<object> GetTrigger(BlockConfig trigger, IFlowContext context)
         {
             var (connection, name) = GetConnection(trigger);
 
             var flowTrigger = connection.CreateTrigger(name);
             var flowTriggerConfiguration = trigger.Arguments.Map(flowTrigger.ArgumentsType);
 
-            return flowTrigger.GetEvents(flowTriggerConfiguration);
+            return flowTrigger.GetEvents(context, flowTriggerConfiguration);
         }
 
         private Task Act(BlockConfig action, IFlowContext context)

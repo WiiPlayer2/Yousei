@@ -4,16 +4,11 @@ using System.Reactive;
 
 namespace YouseiReloaded.Internal.Connectors.Internal
 {
-    internal class OnExceptionTrigger : FlowTrigger<Unit>
+    internal class OnExceptionTrigger : ObservableTrigger
     {
-        private readonly IObservable<Exception> exceptionObservable;
-
         public OnExceptionTrigger(IObservable<Exception> exceptionObservable)
+            : base(exceptionObservable)
         {
-            this.exceptionObservable = exceptionObservable;
         }
-
-        protected override IObservable<object> GetEvents(Unit arguments)
-            => exceptionObservable;
     }
 }
