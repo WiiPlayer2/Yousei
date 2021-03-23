@@ -40,13 +40,13 @@ namespace YouseiReloaded
         public Task StartAsync(CancellationToken cancellationToken)
         {
             LoadFlows();
-            InternalConnection.Instance.OnStart();
+            InternalConnection.Instance.RaiseEvent(InternalEvent.Start);
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            InternalConnection.Instance.OnStop();
+            InternalConnection.Instance.RaiseEvent(InternalEvent.Stop);
             CancelSubscriptions();
             return Task.CompletedTask;
         }
@@ -100,23 +100,25 @@ namespace YouseiReloaded
                             catch (Exception exception)
                             {
                                 logger.LogError(exception, "Error while handling flow.");
-                                InternalConnection.Instance.OnException(exception);
+                                InternalConnection.Instance.RaiseEvent(InternalEvent.Exception, exception);
                             }
                         });
                     }
                     catch (Exception exception)
                     {
                         logger.LogError(exception, "Error while creating flow.");
-                        InternalConnection.Instance.OnException(exception);
+                        InternalConnection.Instance.RaiseEvent(InternalEvent.Exception, exception);
                     }
                 });
         }
 
         private async Task Reload()
         {
+            InternalConnection.Instance.RaiseEvent(InternalEvent.Reloading);
             CancelSubscriptions();
             await connectorRegistry.ResetAll();
             LoadFlows();
+            InternalConnection.Instance.RaiseEvent(InternalEvent.Reloaded);
         }
     }
 }
