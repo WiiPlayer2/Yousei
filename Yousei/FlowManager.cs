@@ -40,6 +40,7 @@ namespace Yousei
             this.flowActor = flowActor;
             this.connectorRegistry = connectorRegistry;
             this.eventHub = eventHub;
+            eventHub.Reload.Subscribe(async _ => await Reload());
         }
 
         public void CancelSubscriptions()

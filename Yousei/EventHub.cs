@@ -13,9 +13,14 @@ namespace Yousei
     {
         public ISubject<(InternalEvent Event, object Data)> Events { get; } = new Subject<(InternalEvent, object)>();
 
+        public ISubject<Unit> Reload { get; } = new Subject<Unit>();
+
         public ISubject<(string Topic, object Value)> Values { get; } = new Subject<(string, object)>();
 
         public void RaiseEvent(InternalEvent @event, object data = default)
             => Events.OnNext((@event, data ?? Unit.Default));
+
+        public void TriggerReload()
+            => Reload.OnNext(Unit.Default);
     }
 }

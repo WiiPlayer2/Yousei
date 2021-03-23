@@ -26,6 +26,7 @@ namespace YouseiReloaded.Internal.Connectors.Internal
 
             AddTrigger("onvalue", new OnValueTrigger(eventHub.Values));
             AddAction("sendvalue", new SendValueAction(eventHub.Values));
+            AddAction("reload", new InvokeAction(eventHub.TriggerReload));
         }
 
         private IObservable<object> Filter(InternalEvent @event)
