@@ -25,7 +25,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh '''#!/bin/bash -xe
-                    docker build -t registry.dark-link.info/yousei:$CLEAN_GIT_BRANCH -f ./YouseiReloaded/Dockerfile .
+                    docker build -t registry.dark-link.info/yousei:$CLEAN_GIT_BRANCH -f ./Yousei/Dockerfile .
                 '''
             }
         }
