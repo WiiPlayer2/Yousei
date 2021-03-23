@@ -22,10 +22,10 @@ namespace YouseiReloaded.Internal
     {
         private readonly ConcurrentDictionary<string, IConnector> connectors = new();
 
-        public ConnectorRegistry(ILogger<LogConnector> logConnectorLogger)
+        public ConnectorRegistry(ILogger<LogConnector> logConnectorLogger, InternalConnector internalConnector)
         {
             // Internal connectors
-            Register(InternalConnector.Instance);
+            Register(internalConnector);
             Register(new ControlConnector());
             Register(new DataConnector());
             Register(new LogConnector(logConnectorLogger));
