@@ -9,7 +9,7 @@ using Yousei.Shared;
 
 namespace YouseiReloaded.Internal.Connectors.Internal
 {
-    internal class InternalConnector : Connector<Unit>
+    internal class InternalConnector : SingletonConnector
     {
         private InternalConnector() : base("internal")
         {
@@ -17,7 +17,6 @@ namespace YouseiReloaded.Internal.Connectors.Internal
 
         public static InternalConnector Instance { get; } = new();
 
-        protected override IConnection GetConnection(Unit configuration)
-            => InternalConnection.Instance;
+        protected override IConnection CreateConnection() => InternalConnection.Instance;
     }
 }

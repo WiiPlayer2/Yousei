@@ -9,27 +9,22 @@ using System.Reactive.Linq;
 
 namespace Yousei.Connectors.Http
 {
-    public class HttpConnector : Connector<Config>
+    public class HttpConnector : SimpleConnector<Config>
     {
-        private readonly Dictionary<Config, HttpListener> httpListeners = new();
-
         public HttpConnector() : base("http")
         {
+            DefaultConnection = new HttpConnection(default);
         }
 
-        protected override IConnection GetConnection(Config configuration)
+        protected override IConnection CreateConnection(Config configuration)
         {
-            if (configuration is null)
-                return new HttpConnection(default);
-
-            if (!httpListeners.TryGetValue(configuration, out var listener))
+            if (!configuration.Prefixes.Any())
             {
-                if (configuration.Prefixes.Any())
-                {
-                    listener = new HttpListener();
-                    configuration.Prefixes.ForEach(listener.Prefixes.Add);
-                }
+                return default;
             }
+
+            var listener = new HttpListener();
+            configuration.Prefixes.ForEach(listener.Prefixes.Add);
             return new HttpConnection(listener);
         }
     }

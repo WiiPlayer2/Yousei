@@ -5,15 +5,15 @@ using Microsoft.Extensions.Logging;
 
 namespace YouseiRelaoded.Internal.Connectors.Log
 {
-    internal class LogConnector : Connector<Unit>
+    internal class LogConnector : SingletonConnector
     {
-        private readonly LogConnection connection;
+        private readonly ILogger<LogConnector> logger;
 
         public LogConnector(ILogger<LogConnector> logger) : base("log")
         {
-            connection = new LogConnection(logger);
+            this.logger = logger;
         }
 
-        protected override IConnection GetConnection(Unit configuration) => connection;
+        protected override IConnection CreateConnection() => new LogConnection(logger);
     }
 }
