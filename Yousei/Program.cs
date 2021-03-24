@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Yousei.Shared;
+using Yousei.Internal;
 using YouseiReloaded.Internal;
 using YouseiReloaded.Serialization.Json;
 using YouseiReloaded.Serialization.Yaml;
@@ -33,6 +34,7 @@ namespace YouseiReloaded
         private static void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IConfigurationProvider, YamlConfigurationProvider>();
+            services.AddSingleton<IConfigurationDatabase, ConfigurationProviderDatabase>();
             services.AddSingleton<IConnectorRegistry, ConnectorRegistry>();
             services.AddSingleton<IFlowActor, FlowActor>();
             services.AddHostedService<MainService>();

@@ -47,7 +47,9 @@ namespace YouseiReloaded.Serialization.Yaml
 
         public IObservable<(string, string, object)> ListConnectionConfigurations()
         {
-            return config.Connections.SelectMany(o => o.Value, (name, conn) => (name.Key, conn.Key, conn.Value)).ToObservable();
+            return config.Connections
+                .SelectMany(o => o.Value, (name, conn) => (name.Key, conn.Key, conn.Value))
+                .ToObservable();
         }
     }
 }
