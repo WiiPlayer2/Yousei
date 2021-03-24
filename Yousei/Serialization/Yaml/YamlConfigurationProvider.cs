@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -46,9 +45,9 @@ namespace YouseiReloaded.Serialization.Yaml
                 .Select(o => (o.Key, o.Value))
                 .ToObservable();
 
-        public IObservable<(string, IReadOnlyDictionary<string, object>)> ListConnectionConfigurations()
-            => config.Connections
-                .Select(o => (o.Key, o.Value as IReadOnlyDictionary<string, object>))
-                .ToObservable();
+        public IObservable<(string, string, object)> ListConnectionConfigurations()
+        {
+            return config.Connections.SelectMany(o => o.Value, (name, conn) => (name.Key, conn.Key, conn.Value)).ToObservable();
+        }
     }
 }
