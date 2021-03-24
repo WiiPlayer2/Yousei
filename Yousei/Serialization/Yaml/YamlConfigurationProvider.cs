@@ -1,14 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Yousei.Shared;
-using YamlDotNet.Serialization;
+﻿using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reactive.Linq;
+using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using Yousei.Core;
-using System.Reactive.Linq;
-using Microsoft.Extensions.Configuration;
+using Yousei.Shared;
 using IConfigurationProvider = Yousei.Shared.IConfigurationProvider;
 
 namespace YouseiReloaded.Serialization.Yaml
@@ -45,6 +44,11 @@ namespace YouseiReloaded.Serialization.Yaml
         public IObservable<(string Name, FlowConfig Config)> GetFlows()
             => config.Flows
                 .Select(o => (o.Key, o.Value))
+                .ToObservable();
+
+        public IObservable<(string, IReadOnlyDictionary<string, object>)> ListConnectionConfigurations()
+            => config.Connections
+                .Select(o => (o.Key, o.Value as IReadOnlyDictionary<string, object>))
                 .ToObservable();
     }
 }
