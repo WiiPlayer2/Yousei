@@ -22,10 +22,10 @@ namespace YouseiReloaded.Internal
     {
         private readonly ConcurrentDictionary<string, IConnector> connectors = new();
 
-        public ConnectorRegistry(ILogger<LogConnector> logConnectorLogger)
+        public ConnectorRegistry(ILogger<LogConnector> logConnectorLogger, InternalConnector internalConnector)
         {
             // Internal connectors
-            Register(InternalConnector.Instance);
+            Register(internalConnector);
             Register(new ControlConnector());
             Register(new DataConnector());
             Register(new LogConnector(logConnectorLogger));
@@ -41,6 +41,8 @@ namespace YouseiReloaded.Internal
         public IConnector Get(string name) => connectors.GetValueOrDefault(name);
 
         public void Register(IConnector connector) => connectors.TryAdd(connector.Name, connector);
+
+        public Task ResetAll() => Task.WhenAll(connectors.Values.Select(o => o.Reset()));
 
         public void Unregister(IConnector connector) => connectors.TryRemove(connector.Name, out var _);
     }

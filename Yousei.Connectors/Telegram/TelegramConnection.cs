@@ -28,12 +28,11 @@ namespace Yousei.Connectors.Telegram
         private IObservable<Unit> CreateConnectionObservable(TelegramBotClient telegramBotClient)
             => Observable.Create<Unit>(async (observer, cancellationToken) =>
                 {
-                    telegramBotClient.StartReceiving();
-                    cancellationToken.Register(telegramBotClient.StopReceiving);
+                    telegramBotClient.StartReceiving(cancellationToken: cancellationToken);
                     await Task.Delay(-1, cancellationToken);
                 })
                 .Publish()
-                .RefCount();
+                .RefCount(TimeSpan.FromSeconds(1));
 
         private IObservable<T> WrapEvent<T>(IObservable<Unit> connectionObservable, object target, string eventName)
                     where T : class

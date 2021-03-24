@@ -4,10 +4,11 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Yousei.Shared;
 using YouseiReloaded.Internal;
+using YouseiReloaded.Internal.Connectors.Internal;
 using YouseiReloaded.Serialization.Json;
 using YouseiReloaded.Serialization.Yaml;
 
-namespace YouseiReloaded
+namespace Yousei
 {
     internal class Program
     {
@@ -35,6 +36,9 @@ namespace YouseiReloaded
             services.AddSingleton<IConfigurationProvider, YamlConfigurationProvider>();
             services.AddSingleton<IConnectorRegistry, ConnectorRegistry>();
             services.AddSingleton<IFlowActor, FlowActor>();
+            services.AddSingleton<EventHub>();
+            services.AddSingleton<FlowManager>();
+            services.AddSingleton<InternalConnector>();
             services.AddHostedService<MainService>();
         }
 

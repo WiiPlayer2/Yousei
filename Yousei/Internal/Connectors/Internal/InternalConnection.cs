@@ -2,43 +2,38 @@
 using Yousei.Core;
 using System.Reactive.Subjects;
 using System.Reactive;
+using System.Reactive.Linq;
+using Yousei;
 
 namespace YouseiReloaded.Internal.Connectors.Internal
 {
     internal class InternalConnection : SimpleConnection
     {
-        private readonly ISubject<Exception> exceptionSubject = new Subject<Exception>();
+        private readonly EventHub eventHub;
 
-        private readonly ISubject<Unit> startSubject = new AsyncSubject<Unit>();
-
-        private readonly ISubject<Unit> stopSubject = new AsyncSubject<Unit>();
-
-        private readonly ISubject<(string Topic, object Value)> valueSubject = new Subject<(string, object)>();
-
-        private InternalConnection()
+        public InternalConnection(EventHub eventHub)
         {
-            AddTrigger("onexception", new OnExceptionTrigger(exceptionSubject));
-            AddTrigger("onvalue", new OnValueTrigger(valueSubject));
-            AddTrigger("onstart", new OnStartTrigger(startSubject));
-            AddTrigger("onstop", new OnStopTrigger(stopSubject));
-            AddAction("sendvalue", new SendValueAction(valueSubject));
+            this.eventHub = eventHub;
+
+            AddTrigger("onevent", new ObservableTrigger(eventHub.Events.Select(o => new
+            {
+                Event = o.Event,
+                Data = o.Data,
+            })));
+            AddTrigger("onexception", new ObservableTrigger(Filter<Exception>(InternalEvent.Exception)));
+            AddTrigger("onstart", new ObservableTrigger(Filter(InternalEvent.Start).FirstAsync()));
+            AddTrigger("onstop", new ObservableTrigger(Filter(InternalEvent.Stop).FirstAsync()));
+
+            AddTrigger("onvalue", new OnValueTrigger(eventHub.Values));
+            AddAction("sendvalue", new SendValueAction(eventHub.Values));
+            AddAction("reload", new InvokeAction(eventHub.TriggerReload));
         }
 
-        public static InternalConnection Instance { get; } = new();
+        private IObservable<object> Filter(InternalEvent @event)
+            => Filter<object>(@event);
 
-        public void OnException(Exception exception)
-            => exceptionSubject.OnNext(exception);
-
-        public void OnStart()
-        {
-            startSubject.OnNext(Unit.Default);
-            startSubject.OnCompleted();
-        }
-
-        public void OnStop()
-        {
-            stopSubject.OnNext(Unit.Default);
-            stopSubject.OnCompleted();
-        }
+        private IObservable<T> Filter<T>(InternalEvent @event)
+            => eventHub.Events.Where(o => o.Event == @event)
+                .Select(o => (T)o.Data);
     }
 }
