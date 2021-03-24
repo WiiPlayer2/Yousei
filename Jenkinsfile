@@ -1,3 +1,6 @@
+def built_app = false;
+def built_web = false;
+
 pipeline {
     agent {
         label 'docker'
@@ -22,23 +25,68 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build App') {
+            when {
+                anyOf {
+                    environment name: 'BUILD_NUMBER', value: '1'
+                    changeset 'Yousei/**'
+                    changeset 'Yousei.Connectors/**'
+                    changeset 'Yousei.Core/**'
+                    changeset 'Yousei.Shared/**'
+                }
+            }
             steps {
-                sh '''#!/bin/bash -xe
-                    docker build -t registry.dark-link.info/yousei:$CLEAN_GIT_BRANCH -f ./Yousei/Dockerfile .
-                '''
+                sh 'docker build -t registry.dark-link.info/yousei:$CLEAN_GIT_BRANCH -f ./Yousei/Dockerfile .'
+                script {
+                    built_app = true;
+                }
             }
         }
 
-        stage('Publish') {
+        stage('Build Web') {
             when {
-                branch pattern: "main|dev", comparator: "REGEXP"
+                anyOf {
+                    environment name: 'BUILD_NUMBER', value: '1'
+                    changeset 'Yousei.Shared/**'
+                    changeset 'Yousei.Web/**'
+                }
+            }
+            steps {
+                sh 'docker build -t registry.dark-link.info/yousei-web:$CLEAN_GIT_BRANCH -f ./Yousei.Web/Dockerfile .'
+                script {
+                    built_web = true;
+                }
+            }
+        }
+
+        stage('Publish App') {
+            when {
+                allOf {
+                    branch pattern: "main|dev", comparator: "REGEXP"
+                    expression { built_app }
+                }
             }
             steps {
                 withDockerRegistry([credentialsId: 'vserver-container-registry', url: "https://registry.dark-link.info/"]) {
                     sh 'docker tag registry.dark-link.info/yousei:$CLEAN_GIT_BRANCH registry.dark-link.info/yousei:latest'
                     sh 'docker image push registry.dark-link.info/yousei:$CLEAN_GIT_BRANCH'
                     sh 'docker image push registry.dark-link.info/yousei:latest'
+                }
+            }
+        }
+
+        stage('Publish Web') {
+            when {
+                allOf {
+                    branch pattern: "main|dev", comparator: "REGEXP"
+                    expression { built_web }
+                }
+            }
+            steps {
+                withDockerRegistry([credentialsId: 'vserver-container-registry', url: "https://registry.dark-link.info/"]) {
+                    sh 'docker tag registry.dark-link.info/yousei-web:$CLEAN_GIT_BRANCH registry.dark-link.info/yousei-web:latest'
+                    sh 'docker image push registry.dark-link.info/yousei-web:$CLEAN_GIT_BRANCH'
+                    sh 'docker image push registry.dark-link.info/yousei-web:latest'
                 }
             }
         }

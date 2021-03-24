@@ -6,18 +6,19 @@ using System.Threading.Tasks;
 using Yousei.Core;
 using System.Reactive;
 using Yousei.Shared;
+using Yousei;
 
 namespace YouseiReloaded.Internal.Connectors.Internal
 {
-    internal class InternalConnector : Connector<Unit>
+    internal class InternalConnector : SingletonConnector
     {
-        private InternalConnector() : base("internal")
+        private readonly EventHub eventHub;
+
+        public InternalConnector(EventHub eventHub) : base("internal")
         {
+            this.eventHub = eventHub;
         }
 
-        public static InternalConnector Instance { get; } = new();
-
-        protected override IConnection GetConnection(Unit configuration)
-            => InternalConnection.Instance;
+        protected override IConnection CreateConnection() => new InternalConnection(eventHub);
     }
 }

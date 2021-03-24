@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Yousei.Shared
 {
@@ -9,5 +10,7 @@ namespace Yousei.Shared
         string Name { get; }
 
         IConnection GetConnection(object configuration);
+
+        Task Reset();
     }
 }

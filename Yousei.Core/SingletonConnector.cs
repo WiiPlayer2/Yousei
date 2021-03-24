@@ -24,6 +24,8 @@ namespace Yousei.Core
         public IConnection GetConnection(object configuration)
             => lazyConnection.Value;
 
+        public Task Reset() => Task.CompletedTask;
+
         protected abstract IConnection CreateConnection();
     }
 }

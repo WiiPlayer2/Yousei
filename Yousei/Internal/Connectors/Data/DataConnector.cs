@@ -9,14 +9,12 @@ using Yousei.Shared;
 
 namespace YouseiReloaded.Internal.Connectors.Data
 {
-    internal class DataConnector : Connector<Unit>
+    internal class DataConnector : SingletonConnector
     {
-        private readonly DataConnection connection = new DataConnection();
-
         public DataConnector() : base("data")
         {
         }
 
-        protected override IConnection GetConnection(Unit configuration) => connection;
+        protected override IConnection CreateConnection() => new DataConnection();
     }
 }

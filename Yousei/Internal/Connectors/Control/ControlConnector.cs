@@ -4,14 +4,12 @@ using Yousei.Shared;
 
 namespace YouseiReloaded.Internal.Connectors.Control
 {
-    internal class ControlConnector : Connector<Unit>
+    internal class ControlConnector : SingletonConnector
     {
-        private readonly ControlConnection connection = new ControlConnection();
-
         public ControlConnector() : base("control")
         {
         }
 
-        protected override IConnection GetConnection(Unit configuration) => connection;
+        protected override IConnection CreateConnection() => new ControlConnection();
     }
 }

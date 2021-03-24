@@ -19,6 +19,8 @@ namespace Yousei.Core
 
         public IConnection GetConnection(object configuration) => GetConnection(configuration.SafeCast<TConfiguration>());
 
+        public abstract Task Reset();
+
         protected abstract IConnection GetConnection(TConfiguration configuration);
     }
 }
