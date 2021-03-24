@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Yousei.Shared
@@ -11,11 +8,15 @@ namespace Yousei.Shared
         bool IsReadOnly { get; }
 
         Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> ListConfigurations();
-        Task<object> ReadConfiguration(string connector, string name);
+
+        Task<object> GetConfiguration(string connector, string name);
+
         Task SetConfiguration(string connector, string name, object configuration);
 
         Task<IReadOnlyList<string>> ListFlows();
-        Task<FlowConfig> ReadFlow(string name);
+
+        Task<FlowConfig> GetFlow(string name);
+
         Task SetFlow(string name, FlowConfig flowConfig);
     }
 }
