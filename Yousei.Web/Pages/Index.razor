@@ -1,0 +1,17 @@
+﻿@page "/"
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<MonacoEditor ConstructionOptions="Construct" CssClass="editor" />
+
+@code {
+    private StandaloneEditorConstructionOptions Construct(MonacoEditor editor)
+        => new StandaloneEditorConstructionOptions
+        {
+            AutomaticLayout = true,
+            Language = "yaml",
+            Theme = "vs-dark",
+        };
+}
