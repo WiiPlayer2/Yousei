@@ -1,3 +1,6 @@
+def built_app = false;
+def built_web = false;
+
 pipeline {
     agent {
         label 'docker'
@@ -25,6 +28,7 @@ pipeline {
         stage('Build App') {
             when {
                 anyOf {
+                    environment name: 'BUILD_NUMBER', value: '1'
                     changeset 'Yousei/**'
                     changeset 'Yousei.Connectors/**'
                     changeset 'Yousei.Core/**'
@@ -33,18 +37,25 @@ pipeline {
             }
             steps {
                 sh 'docker build -t registry.dark-link.info/yousei:$CLEAN_GIT_BRANCH -f ./Yousei/Dockerfile .'
+                script {
+                    built_app = true;
+                }
             }
         }
 
         stage('Build Web') {
             when {
                 anyOf {
+                    environment name: 'BUILD_NUMBER', value: '1'
                     changeset 'Yousei.Shared/**'
                     changeset 'Yousei.Web/**'
                 }
             }
             steps {
                 sh 'docker build -t registry.dark-link.info/yousei-web:$CLEAN_GIT_BRANCH -f ./Yousei.Web/Dockerfile .'
+                script {
+                    built_web = true;
+                }
             }
         }
 
@@ -52,12 +63,7 @@ pipeline {
             when {
                 allOf {
                     branch pattern: "main|dev", comparator: "REGEXP"
-                    anyOf {
-                        changeset 'Yousei/**'
-                        changeset 'Yousei.Connectors/**'
-                        changeset 'Yousei.Core/**'
-                        changeset 'Yousei.Shared/**'
-                    }
+                    expression { built_app }
                 }
             }
             steps {
@@ -73,10 +79,7 @@ pipeline {
             when {
                 allOf {
                     branch pattern: "main|dev", comparator: "REGEXP"
-                    anyOf {
-                        changeset 'Yousei.Shared/**'
-                        changeset 'Yousei.Web/**'
-                    }
+                    expression { built_web }
                 }
             }
             steps {
