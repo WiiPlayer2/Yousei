@@ -48,16 +48,40 @@ pipeline {
             }
         }
 
-        stage('Publish') {
+        stage('Publish App') {
             when {
-                branch pattern: "main|dev", comparator: "REGEXP"
+                allOf {
+                    branch pattern: "main|dev", comparator: "REGEXP"
+                    anyOf {
+                        changeset 'Yousei/**'
+                        changeset 'Yousei.Connectors/**'
+                        changeset 'Yousei.Core/**'
+                        changeset 'Yousei.Shared/**'
+                    }
+                }
             }
             steps {
                 withDockerRegistry([credentialsId: 'vserver-container-registry', url: "https://registry.dark-link.info/"]) {
                     sh 'docker tag registry.dark-link.info/yousei:$CLEAN_GIT_BRANCH registry.dark-link.info/yousei:latest'
-                    sh 'docker tag registry.dark-link.info/yousei-web:$CLEAN_GIT_BRANCH registry.dark-link.info/yousei-web:latest'
                     sh 'docker image push registry.dark-link.info/yousei:$CLEAN_GIT_BRANCH'
                     sh 'docker image push registry.dark-link.info/yousei:latest'
+                }
+            }
+        }
+
+        stage('Publish Web') {
+            when {
+                allOf {
+                    branch pattern: "main|dev", comparator: "REGEXP"
+                    anyOf {
+                        changeset 'Yousei.Shared/**'
+                        changeset 'Yousei.Web/**'
+                    }
+                }
+            }
+            steps {
+                withDockerRegistry([credentialsId: 'vserver-container-registry', url: "https://registry.dark-link.info/"]) {
+                    sh 'docker tag registry.dark-link.info/yousei-web:$CLEAN_GIT_BRANCH registry.dark-link.info/yousei-web:latest'
                     sh 'docker image push registry.dark-link.info/yousei-web:$CLEAN_GIT_BRANCH'
                     sh 'docker image push registry.dark-link.info/yousei-web:latest'
                 }
