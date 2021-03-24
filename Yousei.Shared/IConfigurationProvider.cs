@@ -7,7 +7,7 @@ namespace Yousei.Shared
     {
         object GetConnectionConfiguration(string type, string name);
 
-        IObservable<(string Connector, string Name, object Configuration)> ListConnectionConfigurations();
+        IObservable<(string Connector, string Name, object Configuration)> GetConnectionConfigurations();
 
         FlowConfig GetFlow(string name);
 

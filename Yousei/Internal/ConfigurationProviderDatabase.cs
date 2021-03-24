@@ -19,7 +19,7 @@ namespace Yousei.Internal
         }
 
         public async Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> ListConfigurations()
-            => await ConfigurationProvider.ListConnectionConfigurations()
+            => await ConfigurationProvider.GetConnectionConfigurations()
                 .ToLookup(o => o.Connector, o => o.Name)
                 .Select(lookup => lookup.ToDictionary(o => o.Key, o => (IReadOnlyList<string>)o.ToList()));
 
