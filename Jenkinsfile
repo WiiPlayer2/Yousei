@@ -24,9 +24,8 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh '''#!/bin/bash -xe
-                    docker build -t registry.dark-link.info/yousei:$CLEAN_GIT_BRANCH -f ./Yousei/Dockerfile .
-                '''
+                sh 'docker build -t registry.dark-link.info/yousei:$CLEAN_GIT_BRANCH -f ./Yousei/Dockerfile .'
+                sh 'docker build -t registry.dark-link.info/yousei-web:$CLEAN_GIT_BRANCH -f ./Yousei.Web/Dockerfile .'
             }
         }
 
@@ -37,8 +36,11 @@ pipeline {
             steps {
                 withDockerRegistry([credentialsId: 'vserver-container-registry', url: "https://registry.dark-link.info/"]) {
                     sh 'docker tag registry.dark-link.info/yousei:$CLEAN_GIT_BRANCH registry.dark-link.info/yousei:latest'
+                    sh 'docker tag registry.dark-link.info/yousei-web:$CLEAN_GIT_BRANCH registry.dark-link.info/yousei-web:latest'
                     sh 'docker image push registry.dark-link.info/yousei:$CLEAN_GIT_BRANCH'
                     sh 'docker image push registry.dark-link.info/yousei:latest'
+                    sh 'docker image push registry.dark-link.info/yousei-web:$CLEAN_GIT_BRANCH'
+                    sh 'docker image push registry.dark-link.info/yousei-web:latest'
                 }
             }
         }
