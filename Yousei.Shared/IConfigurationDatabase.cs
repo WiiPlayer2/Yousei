@@ -7,13 +7,13 @@ namespace Yousei.Shared
     {
         bool IsReadOnly { get; }
 
-        Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> GetConfigurations();
+        Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> ListConfigurations();
 
         Task<object> GetConfiguration(string connector, string name);
 
         Task SetConfiguration(string connector, string name, object configuration);
 
-        Task<IReadOnlyList<string>> GetFlows();
+        Task<IReadOnlyList<string>> ListFlows();
 
         Task<FlowConfig> GetFlow(string name);
 

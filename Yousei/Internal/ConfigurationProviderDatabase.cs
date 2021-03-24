@@ -18,12 +18,12 @@ namespace Yousei.Internal
             ConfigurationProvider = configurationProvider;
         }
 
-        public async Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> GetConfigurations()
+        public async Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> ListConfigurations()
             => await ConfigurationProvider.ListConnectionConfigurations()
                 .ToLookup(o => o.Connector, o => o.Name)
                 .Select(lookup => lookup.ToDictionary(o => o.Key, o => (IReadOnlyList<string>)o.ToList()));
 
-        public async Task<IReadOnlyList<string>> GetFlows()
+        public async Task<IReadOnlyList<string>> ListFlows()
         {
             var flowTuples = await ConfigurationProvider.GetFlows().ToList();
             return new List<string>(flowTuples.Select(item => item.Name));
