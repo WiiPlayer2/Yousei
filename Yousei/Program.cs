@@ -8,10 +8,13 @@ using YouseiReloaded.Internal;
 using YouseiReloaded.Internal.Connectors.Internal;
 using YouseiReloaded.Serialization.Json;
 using YouseiReloaded.Serialization.Yaml;
+using Microsoft.AspNetCore.Hosting;
+using System;
+using Microsoft.AspNetCore.Builder;
 
 namespace Yousei
 {
-    internal class Program
+    internal static class Program
     {
         public static void Main(string[] args)
         {
@@ -32,22 +35,13 @@ namespace Yousei
             logging.AddLog4Net();
         }
 
-        private static void ConfigureServices(IServiceCollection services)
-        {
-            services.AddSingleton<IConfigurationProvider, YamlConfigurationProvider>();
-            services.AddSingleton<IConfigurationDatabase, ConfigurationProviderDatabase>();
-            services.AddSingleton<IConnectorRegistry, ConnectorRegistry>();
-            services.AddSingleton<IFlowActor, FlowActor>();
-            services.AddSingleton<EventHub>();
-            services.AddSingleton<FlowManager>();
-            services.AddSingleton<InternalConnector>();
-            services.AddHostedService<MainService>();
-        }
-
         private static IHostBuilder CreateHostBuilder(string[] args)
             => Host.CreateDefaultBuilder(args)
                 .UseConsoleLifetime()
                 .ConfigureLogging(ConfigureLogging)
-                .ConfigureServices(ConfigureServices);
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
     }
 }
