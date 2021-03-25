@@ -15,6 +15,7 @@ using YouseiReloaded.Internal.Connectors.Control;
 using YouseiReloaded.Internal.Connectors.Data;
 using YouseiReloaded.Internal.Connectors.Internal;
 using YouseiReloaded.Internal.Connectors.Trigger;
+using Yousei.Internal.Connectors.Debug;
 
 namespace YouseiReloaded.Internal
 {
@@ -22,7 +23,10 @@ namespace YouseiReloaded.Internal
     {
         private readonly ConcurrentDictionary<string, IConnector> connectors = new();
 
-        public ConnectorRegistry(ILogger<LogConnector> logConnectorLogger, InternalConnector internalConnector)
+        public ConnectorRegistry(
+            ILogger<LogConnector> logConnectorLogger,
+            ILogger<DebugConnector> debugConnectorLogger,
+            InternalConnector internalConnector)
         {
             // Internal connectors
             Register(internalConnector);
@@ -30,6 +34,7 @@ namespace YouseiReloaded.Internal
             Register(new DataConnector());
             Register(new LogConnector(logConnectorLogger));
             Register(new TriggerConnector());
+            Register(new DebugConnector(debugConnectorLogger));
 
             // External connectors
             Register(new HttpConnector());
