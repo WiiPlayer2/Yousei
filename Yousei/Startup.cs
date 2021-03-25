@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Builder;
 
 namespace Yousei
 {
-
     internal class Startup
     {
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -30,6 +29,7 @@ namespace Yousei
             services.AddSingleton<IConfigurationProvider, YamlConfigurationProvider>();
             services.AddSingleton<IConfigurationDatabase, ConfigurationProviderDatabase>();
             services.AddSingleton<IConnectorRegistry, ConnectorRegistry>();
+            services.AddSingleton<IApi, Api>();
             services.AddSingleton<IFlowActor, FlowActor>();
             services.AddSingleton<EventHub>();
             services.AddSingleton<FlowManager>();
