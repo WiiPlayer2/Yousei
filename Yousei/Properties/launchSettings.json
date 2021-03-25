@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "YouseiReloaded": {
+    "Yousei": {
       "commandName": "Project",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
