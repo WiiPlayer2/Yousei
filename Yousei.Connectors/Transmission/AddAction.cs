@@ -1,11 +1,16 @@
 ﻿using System.Threading.Tasks;
 using Transmission.API.RPC;
+using Transmission.API.RPC.Entity;
 using Yousei.Core;
 using Yousei.Shared;
+using Yousei.SourceGen;
 
 namespace Yousei.Connectors.Transmission
 {
-    internal class AddAction : FlowAction<AddArguments>
+    [Parameterized(typeof(NewTorrent))]
+    internal partial record ParameterizedNewTorrent { }
+
+    internal class AddAction : FlowAction<ParameterizedNewTorrent>
     {
         private readonly Client client;
 
@@ -14,16 +19,10 @@ namespace Yousei.Connectors.Transmission
             this.client = client;
         }
 
-        protected override async Task Act(IFlowContext context, AddArguments arguments)
+        protected override async Task Act(IFlowContext context, ParameterizedNewTorrent arguments)
         {
-            var url = await arguments.Url.Resolve<string>(context);
-            var downloadDirectory = await arguments.DownloadDirectory.Resolve<string>(context);
-
-            var torrentInfo = await client.TorrentAddAsync(new()
-            {
-                Filename = url,
-                DownloadDirectory = downloadDirectory
-            }).ConfigureAwait(false);
+            var newTorrent = await arguments.Resolve(context);
+            var torrentInfo = await client.TorrentAddAsync(newTorrent).ConfigureAwait(false);
             await context.SetData(torrentInfo);
         }
     }
