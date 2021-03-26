@@ -1,17 +1,27 @@
 ﻿@page "/"
+@inject IApi api
+@using Yousei.Core
+@using Newtonsoft.Json.Linq
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
 
-<MonacoEditor ConstructionOptions="Construct" CssClass="editor" />
+<MonacoEditor ConstructionOptions="Construct" CssClass="editor" OnDidInit="OnEditorInit" />
 
 @code {
     private StandaloneEditorConstructionOptions Construct(MonacoEditor editor)
         => new StandaloneEditorConstructionOptions
         {
             AutomaticLayout = true,
-            Language = "yaml",
+            Language = "json",
             Theme = "vs-dark",
         };
+
+    private async Task OnEditorInit(MonacoEditorBase editorBase)
+    {
+        var editor = (MonacoEditor)editorBase;
+        var result = await api.ConfigurationDatabase.ListConfigurations();
+        await editor.SetValue(result.Map<JToken>().ToString());
+    }
 }

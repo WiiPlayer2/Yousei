@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Yousei.Shared;
+using Yousei.Web.Api;
 
 namespace Yousei.Web
 {
@@ -49,6 +51,9 @@ namespace Yousei.Web
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+
+            services.Configure<ApiOptions>(Configuration.GetSection("Api"));
+            services.AddSingleton<IApi, AppApi>();
         }
     }
 }
