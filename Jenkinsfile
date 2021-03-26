@@ -47,6 +47,7 @@ pipeline {
             when {
                 anyOf {
                     environment name: 'BUILD_NUMBER', value: '1'
+                    changeset 'Yousei.Core/**'
                     changeset 'Yousei.Shared/**'
                     changeset 'Yousei.Web/**'
                 }
