@@ -54,6 +54,8 @@ namespace Yousei
                 .BindRuntimeType<JToken, JsonType>()
                 .AddType<Query>()
                 .AddType<ConfigurationExtension>()
+                .AddType<FlowExtension>()
+                .AddType<BlockConfigExtension>()
                 .ModifyRequestOptions(options =>
                 {
                     options.IncludeExceptionDetails = true;
