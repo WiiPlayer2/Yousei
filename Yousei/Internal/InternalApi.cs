@@ -7,13 +7,13 @@ using Yousei.Shared;
 
 namespace Yousei.Internal
 {
-    internal class Api : IApi
+    internal class InternalApi : IApi
     {
         private readonly IConfigurationDatabase configurationDatabase;
 
         private readonly EventHub eventHub;
 
-        public Api(
+        public InternalApi(
             IConfigurationDatabase configurationDatabase,
             EventHub eventHub)
         {
