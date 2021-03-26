@@ -53,7 +53,13 @@ namespace Yousei
             // Api
             services.AddSingleton<IApi, InternalApi>();
             services.AddGraphQLServer()
-                .BindRuntimeType<JToken, JsonType>()
+                .AddType<JsonType>()
+                .AddTypeConverter<JObject, JToken>(from => from)
+                .AddTypeConverter<JArray, JToken>(from => from)
+                .AddTypeConverter<JValue, JToken>(from => from)
+                .BindRuntimeType<JObject, JsonType>()
+                .BindRuntimeType<JArray, JsonType>()
+                .BindRuntimeType<JValue, JsonType>()
                 .BindRuntimeType<Unit, AnyType>()
                 .AddQueryType<Query>()
                 .AddType<ConfigurationExtension>()
