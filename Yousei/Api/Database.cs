@@ -18,9 +18,19 @@ namespace Yousei.Api
 
         public bool IsReadOnly => api.ConfigurationDatabase.IsReadOnly;
 
+        public async Task<Configuration> GetConfiguration(string connector, string name)
+            => (await api.ConfigurationDatabase.GetConfiguration(connector, name)) is null
+                ? null
+                : new Configuration(connector, name);
+
         public async Task<IEnumerable<Connection>> GetConnections()
-            => (await api.ConfigurationDatabase.ListConfigurations())
+                    => (await api.ConfigurationDatabase.ListConfigurations())
                 .Select(o => new Connection(o.Key, o.Value.Select(value => new Configuration(o.Key, value)).ToList()));
+
+        public async Task<Flow> GetFlow(string name)
+            => (await api.ConfigurationDatabase.GetFlow(name)) is null
+                ? null
+                : new Flow(name);
 
         public async Task<IEnumerable<Flow>> GetFlows()
             => (await api.ConfigurationDatabase.ListFlows())

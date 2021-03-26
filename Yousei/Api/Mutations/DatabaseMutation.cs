@@ -26,10 +26,10 @@ namespace Yousei.Api.Mutations
 
         public async Task<Flow> SetFlow(
             string name,
-            FlowConfigInput flowConfig,
+            FlowConfigInput config,
             [Service] IApi api)
         {
-            await api.ConfigurationDatabase.SetFlow(name, flowConfig.Map());
+            await api.ConfigurationDatabase.SetFlow(name, config.Map());
             return new Flow(name);
         }
     }
