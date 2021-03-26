@@ -16,14 +16,29 @@ namespace Yousei.Api.SchemaType
 
         public override Type RuntimeType { get; } = typeof(JToken);
 
-        public override bool IsInstanceOfType(IValueNode valueSyntax)
-        {
-            throw new NotImplementedException();
-        }
+        public override bool IsInstanceOfType(IValueNode valueSyntax) => true;
 
         public override object ParseLiteral(IValueNode valueSyntax, bool withDefaults = true)
         {
-            throw new NotImplementedException();
+            switch (valueSyntax)
+            {
+                case ObjectValueNode objectValueNode:
+                    var jobject = new JObject();
+                    foreach (var field in objectValueNode.Fields)
+                    {
+                        jobject.Add(field.Name.Value, ParseLiteral(field.Value) as JToken);
+                    }
+                    return jobject;
+
+                case ListValueNode listValueNode:
+                    return new JArray(listValueNode.Items.Select(value => ParseLiteral(value)).ToArray());
+
+                case IntValueNode intValueNode:
+                    return new JValue(intValueNode.ToInt64());
+
+                default:
+                    return new JValue(valueSyntax.Value);
+            }
         }
 
         public override IValueNode ParseResult(object resultValue)

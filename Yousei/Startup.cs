@@ -17,6 +17,8 @@ using Newtonsoft.Json.Linq;
 using HotChocolate.Utilities;
 using HotChocolate.Types;
 using Yousei.Api.SchemaType;
+using Yousei.Api.Mutations;
+using System.Reactive;
 
 namespace Yousei
 {
@@ -52,10 +54,13 @@ namespace Yousei
             services.AddSingleton<IApi, InternalApi>();
             services.AddGraphQLServer()
                 .BindRuntimeType<JToken, JsonType>()
-                .AddType<Query>()
+                .BindRuntimeType<Unit, AnyType>()
+                .AddQueryType<Query>()
                 .AddType<ConfigurationExtension>()
                 .AddType<FlowExtension>()
                 .AddType<BlockConfigExtension>()
+                .AddMutationType<Mutation>()
+                .AddType<DatabaseMutation>()
                 .ModifyRequestOptions(options =>
                 {
                     options.IncludeExceptionDetails = true;
