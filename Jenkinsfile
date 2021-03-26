@@ -33,6 +33,7 @@ pipeline {
                     changeset 'Yousei.Connectors/**'
                     changeset 'Yousei.Core/**'
                     changeset 'Yousei.Shared/**'
+                    changeset 'Yousei.SourceGen/**'
                 }
             }
             steps {
@@ -49,6 +50,7 @@ pipeline {
                     environment name: 'BUILD_NUMBER', value: '1'
                     changeset 'Yousei.Core/**'
                     changeset 'Yousei.Shared/**'
+                    changeset 'Yousei.SourceGen/**'
                     changeset 'Yousei.Web/**'
                 }
             }
