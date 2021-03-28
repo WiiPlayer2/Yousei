@@ -12,7 +12,6 @@ using Yousei.Shared;
 
 namespace Yousei.Web.Api
 {
-
     internal class AppConfigurationDatabase : IConfigurationDatabase
     {
         private GraphQLHttpClient client;
@@ -22,23 +21,7 @@ namespace Yousei.Web.Api
             this.client = client;
         }
 
-        public bool IsReadOnly
-        {
-            get
-            {
-                var request = new GraphQLRequest
-                {
-                    Query = @"
-query {
-    database {
-        isReadOnly
-    }
-}",
-                };
-                var response = client.SendQueryAsync<JToken>(request).GetAwaiter().GetResult();
-                return response.Data["database"]["isReadOnly"].ToObject<bool>();
-            }
-        }
+        public Task<bool> IsReadOnly => GetIsReadOnly();
 
         public async Task<object> GetConfiguration(string connector, string name)
         {
@@ -165,6 +148,21 @@ mutation SetFlow($name: String, $config: FlowConfigInput) {
                 },
             };
             await client.SendMutationAsync<JToken>(request);
+        }
+
+        private async Task<bool> GetIsReadOnly()
+        {
+            var request = new GraphQLRequest
+            {
+                Query = @"
+query {
+    database {
+        isReadOnly
+    }
+}",
+            };
+            var response = await client.SendQueryAsync<JToken>(request);
+            return response.Data["database"]["isReadOnly"].ToObject<bool>();
         }
 
         private record ConfigurationOutput(string Name);

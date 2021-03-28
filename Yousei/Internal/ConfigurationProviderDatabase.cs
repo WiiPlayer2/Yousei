@@ -16,7 +16,7 @@ namespace Yousei.Internal
 
         public IConfigurationProvider ConfigurationProvider { get; }
 
-        public bool IsReadOnly { get; } = true;
+        public Task<bool> IsReadOnly { get; } = Task.FromResult(true);
 
         public Task<object> GetConfiguration(string connector, string name)
             => Task.FromResult(ConfigurationProvider.GetConnectionConfiguration(connector, name));

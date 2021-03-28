@@ -1,12 +1,15 @@
 ﻿@page "/"
 @inject IApi api
+@inject IJSRuntime js;
 @using Yousei.Core
 @using Newtonsoft.Json.Linq
+@using System.Linq
 
 <div class="sidebar">
     <ul>
         <li>
             <span>Flows</span>
+            <button @onclick="AddFlow">+</button>
             <ul>
                 @foreach (var flow in flows)
                 {
@@ -16,11 +19,13 @@
         </li>
         <li>
             <span>Connections</span>
+            <button @onclick="AddConnector">+</button>
             <ul>
                 <li>
                     @foreach (var (connector, names) in configurations)
                     {
                         <span>@connector</span>
+                        <button @onclick="() => AddConfiguration(connector)">+</button>
                         <ul>
                             @foreach (var name in names)
                             {
@@ -40,9 +45,9 @@
 </div>
 
 @code {
-    private IReadOnlyList<string> flows = new List<string>();
+    private List<string> flows = new();
 
-    private IReadOnlyDictionary<string, IReadOnlyList<string>> configurations = new Dictionary<string, IReadOnlyList<string>>();
+    private Dictionary<string, List<string>> configurations = new();
 
     private MonacoEditor editor;
 
@@ -61,8 +66,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        flows = await api.ConfigurationDatabase.ListFlows();
-        configurations = await api.ConfigurationDatabase.ListConfigurations();
+        flows = new(await api.ConfigurationDatabase.ListFlows());
+        configurations = (await api.ConfigurationDatabase.ListConfigurations())
+            .ToDictionary(o => o.Key, o => o.Value.ToList());
+        isReadOnly = await api.ConfigurationDatabase.IsReadOnly;
     }
 
     private async Task Save()
@@ -75,15 +82,52 @@
 
     private async Task SetConfig(ConfigModel configModel)
     {
-        var content = await configModel.Load();
+        string content = default;
+        try
+        {
+            content = await configModel.Load();
+        }
+        catch { }
+
+        content ??= string.Empty;
         await editor.SetValue(content);
         currentConfig = configModel;
 
-        var isReadOnly = api.ConfigurationDatabase.IsReadOnly;
         await editor.UpdateOptions(new()
         {
             ReadOnly = isReadOnly,
         });
-        this.isReadOnly = isReadOnly;
+    }
+
+    private async Task AddFlow()
+    {
+        if (isReadOnly)
+            return;
+
+        var name = await js.InvokeAsync<string>("prompt", "Enter flow name:", string.Empty);
+        flows.Add(name);
+        await SetConfig(new FlowConfigModel(name, api.ConfigurationDatabase));
+        this.StateHasChanged();
+    }
+
+    private async Task AddConnector()
+    {
+        if (isReadOnly)
+            return;
+
+        var name = await js.InvokeAsync<string>("prompt", "Enter connector name:", string.Empty);
+        configurations.Add(name, new List<string>());
+        this.StateHasChanged();
+    }
+
+    private async Task AddConfiguration(string connector)
+    {
+        if (isReadOnly)
+            return;
+
+        var name = await js.InvokeAsync<string>("prompt", "Enter configuration name:", string.Empty);
+        configurations[connector].Add(name);
+        await SetConfig(new ConnectionConfigModel(connector, name, api.ConfigurationDatabase));
+        this.StateHasChanged();
     }
 }
