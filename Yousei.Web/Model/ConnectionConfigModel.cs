@@ -20,6 +20,9 @@ namespace Yousei.Web.Model
             this.name = name;
         }
 
+        public override Task Delete()
+            => Database.SetConfiguration(connector, name, null);
+
         public override async Task<string> Load()
         {
             var config = await Database.GetConfiguration(connector, name);

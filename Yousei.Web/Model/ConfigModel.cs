@@ -15,6 +15,8 @@ namespace Yousei.Web.Model
 
         protected IConfigurationDatabase Database { get; }
 
+        public abstract Task Delete();
+
         public abstract Task<string> Load();
 
         public abstract Task Save(string content);

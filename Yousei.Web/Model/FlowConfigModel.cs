@@ -17,6 +17,9 @@ namespace Yousei.Web.Model
             this.flowName = flowName;
         }
 
+        public override Task Delete()
+            => Database.SetFlow(flowName, null);
+
         public override async Task<string> Load()
         {
             var config = await Database.GetFlow(flowName);

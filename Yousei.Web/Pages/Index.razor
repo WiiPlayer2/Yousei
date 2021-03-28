@@ -40,7 +40,8 @@
 </div>
 
 <div class="main">
-    <button class=".save" @onclick="Save">Save</button>
+    <button @onclick="Save">Save</button>
+    <button @onclick="Delete">Delete</button>
     <MonacoEditor @ref="editor" ConstructionOptions="Construct" CssClass="editor" />
 </div>
 
@@ -76,8 +77,18 @@
     {
         if (currentConfig is null || isReadOnly)
             return;
+
         var content = await editor.GetValue();
         await currentConfig.Save(content);
+    }
+
+    private async Task Delete()
+    {
+        if (currentConfig is null || isReadOnly)
+            return;
+
+        await currentConfig.Delete();
+        StateHasChanged();
     }
 
     private async Task SetConfig(ConfigModel configModel)
