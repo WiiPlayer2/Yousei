@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Yousei.Shared;
 
-namespace Yousei.Internal
+namespace Yousei.Internal.Database
 {
     internal class ConfigurationProviderDatabase : IConfigurationDatabase
     {

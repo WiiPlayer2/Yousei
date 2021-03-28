@@ -19,6 +19,7 @@ using HotChocolate.Types;
 using Yousei.Api.SchemaType;
 using Yousei.Api.Mutations;
 using System.Reactive;
+using Yousei.Internal.Database;
 
 namespace Yousei
 {
