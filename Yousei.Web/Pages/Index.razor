@@ -6,6 +6,7 @@
 @using System.Linq
 
 <div class="sidebar">
+    <button @onclick="Reload">Reload</button>
     <ul>
         <li>
             <span>Flows</span>
@@ -78,8 +79,12 @@
         if (currentConfig is null || isReadOnly)
             return;
 
-        var content = await editor.GetValue();
-        await currentConfig.Save(content);
+        try
+        {
+            var content = await editor.GetValue();
+            await currentConfig.Save(content);
+        }
+        catch { }
     }
 
     private async Task Delete()
@@ -140,5 +145,14 @@
         configurations[connector].Add(name);
         await SetConfig(new ConnectionConfigModel(connector, name, api.ConfigurationDatabase));
         this.StateHasChanged();
+    }
+
+    private async Task Reload()
+    {
+        await api.Reload();
+        flows = new(await api.ConfigurationDatabase.ListFlows());
+        configurations = (await api.ConfigurationDatabase.ListConfigurations())
+            .ToDictionary(o => o.Key, o => o.Value.ToList());
+        isReadOnly = await api.ConfigurationDatabase.IsReadOnly;
     }
 }
