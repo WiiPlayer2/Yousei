@@ -42,9 +42,9 @@ namespace Yousei
         public void ConfigureServices(IServiceCollection services)
         {
             // Internal
-            var inMemoryDatabase = new InMemoryDatabase();
-            services.AddSingleton<IConfigurationProvider>(inMemoryDatabase);
-            services.AddSingleton<IConfigurationDatabase>(inMemoryDatabase);
+            services.AddSingleton<IConfigurationDatabase, InMemoryDatabase>();
+            services.AddSingleton<IConfigurationProviderNotifier, ConfigurationProviderNotifier>();
+            services.AddSingleton<IConfigurationProvider, ConfigurationProviderReceiver>();
             services.AddSingleton<IConnectorRegistry, ConnectorRegistry>();
             services.AddSingleton<IFlowActor, FlowActor>();
             services.AddSingleton<EventHub>();

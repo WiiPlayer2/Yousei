@@ -8,13 +8,18 @@ using Yousei.Shared;
 
 namespace Yousei.Internal.Database
 {
-    public class InMemoryDatabase : IConfigurationDatabase, IConfigurationProvider
+    public class InMemoryDatabase : IConfigurationDatabase
     {
         private readonly Dictionary<string, Dictionary<string, object>> configs = new();
 
         private readonly Dictionary<string, FlowConfig> flows = new();
 
-        private readonly Subject<(string Name, FlowConfig Config)> flowSubject = new();
+        private readonly IConfigurationProviderNotifier notifier;
+
+        public InMemoryDatabase(IConfigurationProviderNotifier notifier)
+        {
+            this.notifier = notifier;
+        }
 
         public Task<bool> IsReadOnly { get; } = Task.FromResult(false);
 
@@ -26,26 +31,12 @@ namespace Yousei.Internal.Database
             return Task.FromResult(config);
         }
 
-        public object GetConnectionConfiguration(string type, string name)
-            => GetConfiguration(type, name).Result;
-
-        public IObservable<(string Connector, string Name, object Configuration)> GetConnectionConfigurations()
-            => configs
-                .SelectMany(o => o.Value, (pair1, pair2) => (pair1.Key, pair2.Key, pair2.Value))
-                .ToObservable();
-
         public Task<FlowConfig> GetFlow(string name)
         {
             if (!flows.TryGetValue(name, out var flow))
                 return Task.FromResult<FlowConfig>(default);
             return Task.FromResult(flow);
         }
-
-        FlowConfig IConfigurationProvider.GetFlow(string name)
-            => GetFlow(name).Result;
-
-        public IObservable<(string Name, FlowConfig Config)> GetFlows()
-            => flowSubject;
 
         public Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> ListConfigurations()
             => Task.FromResult<IReadOnlyDictionary<string, IReadOnlyList<string>>>(
@@ -78,7 +69,7 @@ namespace Yousei.Internal.Database
                 flows.Remove(name);
             else
                 flows[name] = flowConfig;
-            flowSubject.OnNext((name, flowConfig));
+            notifier.Flows.OnNext((name, flowConfig));
             return Task.CompletedTask;
         }
     }
