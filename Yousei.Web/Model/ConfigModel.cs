@@ -17,8 +17,8 @@ namespace Yousei.Web.Model
 
         public abstract Task Delete();
 
-        public abstract Task<string> Load();
+        public abstract Task<SourceConfig> Load();
 
-        public abstract Task Save(string content);
+        public abstract Task Save(SourceConfig content);
     }
 }

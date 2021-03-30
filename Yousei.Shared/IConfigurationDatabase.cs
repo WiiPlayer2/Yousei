@@ -9,14 +9,18 @@ namespace Yousei.Shared
 
         Task<object> GetConfiguration(string connector, string name);
 
+        Task<SourceConfig> GetConfigurationSource(string connector, string name);
+
         Task<FlowConfig> GetFlow(string name);
+
+        Task<SourceConfig> GetFlowSource(string name);
 
         Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> ListConfigurations();
 
         Task<IReadOnlyList<string>> ListFlows();
 
-        Task SetConfiguration(string connector, string name, object configuration);
+        Task SetConfiguration(string connector, string name, SourceConfig source);
 
-        Task SetFlow(string name, FlowConfig flowConfig);
+        Task SetFlow(string name, SourceConfig source);
     }
 }

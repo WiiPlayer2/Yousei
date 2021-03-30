@@ -23,7 +23,12 @@ namespace Yousei.Web.Api
 
         public Task<bool> IsReadOnly => GetIsReadOnly();
 
-        public async Task<object> GetConfiguration(string connector, string name)
+        public Task<object> GetConfiguration(string connector, string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<SourceConfig> GetConfigurationSource(string connector, string name)
         {
             var request = new GraphQLRequest
             {
@@ -42,10 +47,15 @@ query Configuration($connector: String, $name: String) {
                 },
             };
             var response = await client.SendQueryAsync<JToken>(request);
-            return response.Data["database"]["configuration"]["config"];
+            return response.Data["database"]["configuration"]["config"].ToObject<SourceConfig>();
         }
 
-        public async Task<FlowConfig> GetFlow(string name)
+        public Task<FlowConfig> GetFlow(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<SourceConfig> GetFlowSource(string name)
         {
             var request = new GraphQLRequest
             {
@@ -74,7 +84,7 @@ query Flow($name: String) {
                 },
             };
             var response = await client.SendQueryAsync<JToken>(request);
-            return response.Data["database"]["flow"]["config"].ToObject<FlowConfig>();
+            return response.Data["database"]["flow"]["config"].ToObject<SourceConfig>();
         }
 
         public async Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> ListConfigurations()
@@ -111,13 +121,13 @@ query {
                 .ToList();
         }
 
-        public async Task SetConfiguration(string connector, string name, object configuration)
+        public async Task SetConfiguration(string connector, string name, SourceConfig source)
         {
             var request = new GraphQLRequest
             {
                 Query = @"
-mutation SetConfiguration($connector: String, $name: String, $config: Json) {
-  setConfiguration(connector: $connector, name: $name, config: $config) {
+mutation SetConfiguration($connector: String, $name: String, $source: SourceConfigInput) {
+  setConfiguration(connector: $connector, name: $name, source: $source) {
     name
   }
 }",
@@ -125,26 +135,26 @@ mutation SetConfiguration($connector: String, $name: String, $config: Json) {
                 {
                     connector,
                     name,
-                    config = configuration.Map<JToken>(),
+                    source,
                 },
             };
             await client.SendMutationAsync<JToken>(request);
         }
 
-        public async Task SetFlow(string name, FlowConfig flowConfig)
+        public async Task SetFlow(string name, SourceConfig source)
         {
             var request = new GraphQLRequest
             {
                 Query = @"
-mutation SetFlow($name: String, $config: FlowConfigInput) {
-  setFlow(name: $name, config: $config) {
+mutation SetFlow($name: String, $source: SourceConfigInput) {
+  setFlow(name: $name, source: $source) {
     name
   }
 }",
                 Variables = new
                 {
                     name,
-                    config = flowConfig,
+                    source,
                 },
             };
             await client.SendMutationAsync<JToken>(request);

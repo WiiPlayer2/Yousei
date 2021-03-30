@@ -20,16 +20,14 @@ namespace Yousei.Web.Model
         public override Task Delete()
             => Database.SetFlow(flowName, null);
 
-        public override async Task<string> Load()
+        public override async Task<SourceConfig> Load()
         {
-            var config = await Database.GetFlow(flowName);
-            return config.Map<JToken>().ToString();
+            return await Database.GetFlowSource(flowName);
         }
 
-        public override async Task Save(string content)
+        public override async Task Save(SourceConfig source)
         {
-            var config = JToken.Parse(content).ToObject<FlowConfig>();
-            await Database.SetFlow(flowName, config);
+            await Database.SetFlow(flowName, source);
         }
     }
 }

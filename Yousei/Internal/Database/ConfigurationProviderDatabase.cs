@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Yousei.Core;
 using Yousei.Shared;
 
 namespace Yousei.Internal.Database
@@ -21,8 +23,14 @@ namespace Yousei.Internal.Database
         public Task<object> GetConfiguration(string connector, string name)
             => Task.FromResult(ConfigurationProvider.GetConnectionConfiguration(connector, name));
 
+        public async Task<SourceConfig> GetConfigurationSource(string connector, string name)
+            => new SourceConfig("json", (await GetConfiguration(connector, name)).Map<JToken>()?.ToString());
+
         public Task<FlowConfig> GetFlow(string name)
             => Task.FromResult(ConfigurationProvider.GetFlow(name));
+
+        public async Task<SourceConfig> GetFlowSource(string name)
+            => new SourceConfig("json", (await GetFlow(name)).Map<JToken>()?.ToString());
 
         public async Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> ListConfigurations()
                             => await ConfigurationProvider.GetConnectionConfigurations()
@@ -35,10 +43,10 @@ namespace Yousei.Internal.Database
             return new List<string>(flowTuples.Select(item => item.Name));
         }
 
-        public Task SetConfiguration(string connector, string name, object configuration)
+        public Task SetConfiguration(string connector, string name, SourceConfig source)
             => throw new NotImplementedException();
 
-        public Task SetFlow(string name, FlowConfig flowConfig)
+        public Task SetFlow(string name, SourceConfig source)
             => throw new NotImplementedException();
     }
 }

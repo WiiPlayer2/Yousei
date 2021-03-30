@@ -60,7 +60,7 @@ namespace Yousei
                 {
                     try
                     {
-                        if (tuple.Config is null && flowConfigs.ContainsKey(tuple.Name))
+                        if (tuple.Config is null)
                         {
                             flowConfigs.Remove(tuple.Name);
                             if (flowSubscriptions.TryGetValue(tuple.Name, out var subscription))

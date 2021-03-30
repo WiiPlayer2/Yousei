@@ -23,16 +23,14 @@ namespace Yousei.Web.Model
         public override Task Delete()
             => Database.SetConfiguration(connector, name, null);
 
-        public override async Task<string> Load()
+        public override async Task<SourceConfig> Load()
         {
-            var config = await Database.GetConfiguration(connector, name);
-            return config.Map<JToken>()?.ToString() ?? string.Empty;
+            return await Database.GetConfigurationSource(connector, name);
         }
 
-        public override async Task Save(string content)
+        public override async Task Save(SourceConfig source)
         {
-            var config = JToken.Parse(content);
-            await Database.SetConfiguration(connector, name, config);
+            await Database.SetConfiguration(connector, name, source);
         }
     }
 }
