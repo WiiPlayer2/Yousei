@@ -31,7 +31,7 @@ namespace Yousei.Web.Api
 query Configuration($connector: String, $name: String) {
   database {
     configuration(connector: $connector, name: $name) {
-      json
+      config
     }
   }
 }",
@@ -42,7 +42,7 @@ query Configuration($connector: String, $name: String) {
                 },
             };
             var response = await client.SendQueryAsync<JToken>(request);
-            return response.Data["database"]["configuration"]["json"];
+            return response.Data["database"]["configuration"]["config"];
         }
 
         public async Task<FlowConfig> GetFlow(string name)

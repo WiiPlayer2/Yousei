@@ -26,7 +26,7 @@ namespace Yousei.Web.Model
         public override async Task<string> Load()
         {
             var config = await Database.GetConfiguration(connector, name);
-            return config.Map<JToken>().ToString();
+            return config.Map<JToken>()?.ToString() ?? string.Empty;
         }
 
         public override async Task Save(string content)

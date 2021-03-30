@@ -21,7 +21,7 @@ namespace Yousei.Api.Extensions
             this.api = api;
         }
 
-        public async Task<JToken> GetJson(
+        public async Task<JToken> GetConfig(
             [Parent] Configuration configuration)
             => (await api.ConfigurationDatabase.GetConfiguration(configuration.Connector, configuration.Name)).Map<JToken>();
     }
