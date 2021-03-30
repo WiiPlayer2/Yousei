@@ -6,7 +6,6 @@ using System.Reactive.Linq;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using Yousei.Core;
-using Yousei.Core.Serialization.Yaml;
 using Yousei.Shared;
 using IConfigurationProvider = Yousei.Shared.IConfigurationProvider;
 
@@ -19,7 +18,13 @@ namespace YouseiReloaded.Serialization.Yaml
         public YamlConfigurationProvider(IConfiguration configuration)
         {
             var options = configuration.GetSection(Options.KEY).Get<Options>();
-            var deserializer = YamlUtil.BuildDeserializer();
+            var deserializer = new DeserializerBuilder()
+                .WithNamingConvention(UnderscoredNamingConvention.Instance)
+                .WithNodeDeserializer(new BlockConfigDeserializer())
+                .WithNodeDeserializer(new ParameterDeserializer())
+                .WithTagMapping("!v", typeof(VariableParameter))
+                .WithTagMapping("!e", typeof(ExpressionParameter))
+                .Build();
             using var reader = new StreamReader(options.File);
             config = deserializer.Deserialize<YamlConfig>(reader) ?? new YamlConfig();
         }
@@ -30,15 +35,8 @@ namespace YouseiReloaded.Serialization.Yaml
                 ? configuration
                 : default;
 
-        public IObservable<(string, string, object)> GetConnectionConfigurations()
-        {
-            return config.Connections
-                .SelectMany(o => o.Value, (name, conn) => (name.Key, conn.Key, conn.Value))
-                .ToObservable();
-        }
-
         public FlowConfig GetFlow(string name)
-                    => config.Flows.TryGetValue(name, out var flow)
+            => config.Flows.TryGetValue(name, out var flow)
                 ? flow
                 : default;
 
@@ -46,5 +44,12 @@ namespace YouseiReloaded.Serialization.Yaml
             => config.Flows
                 .Select(o => (o.Key, o.Value))
                 .ToObservable();
+
+        public IObservable<(string, string, object)> GetConnectionConfigurations()
+        {
+            return config.Connections
+                .SelectMany(o => o.Value, (name, conn) => (name.Key, conn.Key, conn.Value))
+                .ToObservable();
+        }
     }
 }
