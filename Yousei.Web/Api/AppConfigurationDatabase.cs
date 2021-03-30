@@ -36,7 +36,10 @@ namespace Yousei.Web.Api
 query Configuration($connector: String, $name: String) {
   database {
     configuration(connector: $connector, name: $name) {
-      config
+      config {
+        language
+        content
+      }
     }
   }
 }",
@@ -64,16 +67,8 @@ query Flow($name: String) {
   database {
     flow(name: $name) {
       config {
-        actions {
-          type
-          configuration
-          arguments
-        },
-        trigger {
-          type
-          configuration
-          arguments
-        }
+        language
+        content
       }
     }
   }
