@@ -16,7 +16,7 @@ namespace Yousei.Api
             this.api = api;
         }
 
-        public bool IsReadOnly => api.ConfigurationDatabase.IsReadOnly;
+        public Task<bool> IsReadOnly => api.ConfigurationDatabase.IsReadOnly;
 
         public async Task<Configuration> GetConfiguration(string connector, string name)
             => (await api.ConfigurationDatabase.GetConfiguration(connector, name)) is null

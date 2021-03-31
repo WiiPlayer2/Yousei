@@ -17,19 +17,19 @@ namespace Yousei.Api.Mutations
         public async Task<Configuration> SetConfiguration(
             string connector,
             string name,
-            JToken config,
+            SourceConfig source,
             [Service] IApi api)
         {
-            await api.ConfigurationDatabase.SetConfiguration(connector, name, config);
+            await api.ConfigurationDatabase.SetConfiguration(connector, name, source);
             return new Configuration(connector, name);
         }
 
         public async Task<Flow> SetFlow(
             string name,
-            FlowConfigInput config,
+            SourceConfig source,
             [Service] IApi api)
         {
-            await api.ConfigurationDatabase.SetFlow(name, config.Map());
+            await api.ConfigurationDatabase.SetFlow(name, source);
             return new Flow(name);
         }
     }

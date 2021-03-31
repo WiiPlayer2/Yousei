@@ -19,6 +19,7 @@ using HotChocolate.Types;
 using Yousei.Api.SchemaType;
 using Yousei.Api.Mutations;
 using System.Reactive;
+using Yousei.Internal.Database;
 
 namespace Yousei
 {
@@ -41,6 +42,9 @@ namespace Yousei
         public void ConfigureServices(IServiceCollection services)
         {
             // Internal
+            //services.AddSingleton<IConfigurationDatabase, InMemoryDatabase>();
+            //services.AddSingleton<IConfigurationProviderNotifier, ConfigurationProviderNotifier>();
+            //services.AddSingleton<IConfigurationProvider, ConfigurationProviderReceiver>();
             services.AddSingleton<IConfigurationProvider, YamlConfigurationProvider>();
             services.AddSingleton<IConfigurationDatabase, ConfigurationProviderDatabase>();
             services.AddSingleton<IConnectorRegistry, ConnectorRegistry>();
