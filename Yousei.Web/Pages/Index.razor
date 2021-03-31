@@ -1,6 +1,7 @@
 ﻿@page "/"
 @inject IApi api
 @inject IJSRuntime js;
+@inject ILogger<Index> logger
 @using Yousei.Core
 @using Newtonsoft.Json.Linq
 @using System.Linq
@@ -87,7 +88,10 @@
             var language = "yaml";
             await currentConfig.Save(new SourceConfig(language, content));
         }
-        catch { }
+        catch (Exception e)
+        {
+            logger.LogError(e, $"Exception while saving content.");
+        }
     }
 
     private async Task Delete()
@@ -109,7 +113,10 @@
             var model = await editor.GetModel();
             await js.InvokeVoidAsync("blazorMonaco.editor.setModelLanguage", editor.Id, model.Id, sourceConfig.Language ?? string.Empty);
         }
-        catch { }
+        catch (Exception e)
+        {
+            logger.LogError(e, $"Exception while loading content.");
+        }
 
         content ??= string.Empty;
         await editor.SetValue(content);
