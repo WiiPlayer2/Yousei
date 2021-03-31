@@ -127,6 +127,9 @@
             return;
 
         var name = await js.InvokeAsync<string>("prompt", "Enter flow name:", string.Empty);
+        if (string.IsNullOrWhiteSpace(name))
+            return;
+
         flows.Add(name);
         await SetConfig(new FlowConfigModel(name, api.ConfigurationDatabase));
         this.StateHasChanged();
@@ -138,6 +141,9 @@
             return;
 
         var name = await js.InvokeAsync<string>("prompt", "Enter connector name:", string.Empty);
+        if (string.IsNullOrWhiteSpace(name))
+            return;
+
         configurations.Add(name, new List<string>());
         this.StateHasChanged();
     }
@@ -148,6 +154,9 @@
             return;
 
         var name = await js.InvokeAsync<string>("prompt", "Enter configuration name:", string.Empty);
+        if (string.IsNullOrWhiteSpace(name))
+            return;
+
         configurations[connector].Add(name);
         await SetConfig(new ConnectionConfigModel(connector, name, api.ConfigurationDatabase));
         this.StateHasChanged();
