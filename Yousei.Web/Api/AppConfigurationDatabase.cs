@@ -1,6 +1,7 @@
 ﻿using GraphQL;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using System;
@@ -14,11 +15,14 @@ namespace Yousei.Web.Api
 {
     internal class AppConfigurationDatabase : IConfigurationDatabase
     {
-        private GraphQLHttpClient client;
+        private readonly ILogger<AppConfigurationDatabase> logger;
 
-        public AppConfigurationDatabase(GraphQLHttpClient client)
+        private readonly GraphQlRequestHandler requestHandler;
+
+        public AppConfigurationDatabase(GraphQlRequestHandler requestHandler, ILogger<AppConfigurationDatabase> logger)
         {
-            this.client = client;
+            this.requestHandler = requestHandler;
+            this.logger = logger;
         }
 
         public Task<bool> IsReadOnly => GetIsReadOnly();
@@ -49,8 +53,8 @@ query Configuration($connector: String, $name: String) {
                     name,
                 },
             };
-            var response = await client.SendQueryAsync<JToken>(request);
-            return response.Data["database"]["configuration"]["config"].ToObject<SourceConfig>();
+            var response = await requestHandler.Query<JToken>(request, logger);
+            return response["database"]["configuration"]["config"].ToObject<SourceConfig>();
         }
 
         public Task<FlowConfig> GetFlow(string name)
@@ -78,8 +82,8 @@ query Flow($name: String) {
                     name = name,
                 },
             };
-            var response = await client.SendQueryAsync<JToken>(request);
-            return response.Data["database"]["flow"]["config"].ToObject<SourceConfig>();
+            var response = await requestHandler.Query<JToken>(request, logger);
+            return response["database"]["flow"]["config"].ToObject<SourceConfig>();
         }
 
         public async Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> ListConfigurations()
@@ -95,8 +99,8 @@ query {
     }
   }
 }");
-            var response = await client.SendQueryAsync<JToken>(request);
-            return response.Data["database"]["connections"].ToObject<List<ConnectionOutput>>()
+            var response = await requestHandler.Query<JToken>(request, logger);
+            return response["database"]["connections"].ToObject<List<ConnectionOutput>>()
                 .ToDictionary(o => o.Id, o => (IReadOnlyList<string>)o.Configurations.Select(o => o.Name).ToList());
         }
 
@@ -110,8 +114,8 @@ query {
     }
   }
 }");
-            var response = await client.SendQueryAsync<JToken>(request);
-            return response.Data["database"]["flows"].ToObject<List<FlowOutput>>()
+            var response = await requestHandler.Query<JToken>(request, logger);
+            return response["database"]["flows"].ToObject<List<FlowOutput>>()
                 .Select(o => o.Name)
                 .ToList();
         }
@@ -133,7 +137,7 @@ mutation SetConfiguration($connector: String, $name: String, $source: SourceConf
                     source,
                 },
             };
-            await client.SendMutationAsync<JToken>(request);
+            await requestHandler.Mutate<JToken>(request, logger);
         }
 
         public async Task SetFlow(string name, SourceConfig source)
@@ -152,7 +156,7 @@ mutation SetFlow($name: String, $source: SourceConfigInput) {
                     source,
                 },
             };
-            await client.SendMutationAsync<JToken>(request);
+            await requestHandler.Mutate<JToken>(request, logger);
         }
 
         private async Task<bool> GetIsReadOnly()
@@ -166,8 +170,8 @@ query {
     }
 }",
             };
-            var response = await client.SendQueryAsync<JToken>(request);
-            return response.Data["database"]["isReadOnly"].ToObject<bool>();
+            var response = await requestHandler.Query<JToken>(request, logger);
+            return response["database"]["isReadOnly"].ToObject<bool>();
         }
 
         private record ConfigurationOutput(string Name);
