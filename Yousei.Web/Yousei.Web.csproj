@@ -7,10 +7,13 @@
 
   <ItemGroup>
     <PackageReference Include="BlazorMonaco" Version="2.0.0" />
+    <PackageReference Include="GraphQL.Client" Version="3.2.2" />
+    <PackageReference Include="GraphQL.Client.Serializer.Newtonsoft" Version="3.2.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Yousei.Core\Yousei.Core.csproj" />
     <ProjectReference Include="..\Yousei.Shared\Yousei.Shared.csproj" />
   </ItemGroup>
 

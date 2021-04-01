@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Yousei.Core\Yousei.Core.csproj" />
     <ProjectReference Include="..\Yousei.Shared\Yousei.Shared.csproj" />
+    <ProjectReference Include="..\Yousei.SourceGen\Yousei.SourceGen.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
   </ItemGroup>
 
 

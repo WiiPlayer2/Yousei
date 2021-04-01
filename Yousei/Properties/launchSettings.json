@@ -1,10 +1,18 @@
 {
   "profiles": {
-    "YouseiReloaded": {
+    "Yousei": {
       "commandName": "Project",
+      "launchBrowser": false,
       "environmentVariables": {
-        "DOTNET_ENVIRONMENT": "Development"
-      }
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5000"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/graphql",
+      "publishAllPorts": true
     }
   }
 }
