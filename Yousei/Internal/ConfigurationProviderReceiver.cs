@@ -20,7 +20,7 @@ namespace Yousei.Internal
         }
 
         public object GetConnectionConfiguration(string type, string name)
-            => database.GetConfiguration(type, name);
+            => database.GetConfiguration(type, name).GetAwaiter().GetResult();
 
         public IObservable<(string Connector, string Name, object Configuration)> GetConnectionConfigurations()
             => Observable.DeferAsync(async _ =>
