@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,10 @@ namespace Yousei.Web
             services.AddServerSideBlazor();
 
             services.Configure<ApiOptions>(Configuration.GetSection("Api"));
+            services.AddHostedService<MainService>();
             services.AddSingleton<IApi, AppApi>();
+            services.AddSingleton<IConfigurationDatabase, AppConfigurationDatabase>();
+            services.AddSingleton<GraphQlRequestHandler>();
         }
     }
 }
