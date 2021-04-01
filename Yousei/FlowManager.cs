@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Yousei;
@@ -55,7 +56,6 @@ namespace Yousei
         public void LoadFlows()
         {
             flowSubscription = configurationProvider.GetFlows()
-                .Synchronize()
                 .Subscribe(tuple =>
                 {
                     try
@@ -81,20 +81,22 @@ namespace Yousei
 
                         var flowContext = new FlowContext(flowActor);
                         var triggerEvents = flowActor.GetTrigger(tuple.Config.Trigger, flowContext);
-                        flowSubscriptions[tuple.Name] = triggerEvents.Subscribe(async data =>
-                        {
-                            try
+                        flowSubscriptions[tuple.Name] = triggerEvents
+                            .ObserveOn(TaskPoolScheduler.Default)
+                            .Subscribe(async data =>
                             {
-                                var flowInstanceContext = flowContext.Clone();
-                                await flowInstanceContext.SetData(tuple.Config.Trigger.Type, data);
-                                await flowActor.Act(tuple.Config.Actions, flowInstanceContext);
-                            }
-                            catch (Exception exception)
-                            {
-                                logger.LogError(exception, "Error while handling flow.");
-                                eventHub.RaiseEvent(InternalEvent.Exception, exception);
-                            }
-                        });
+                                try
+                                {
+                                    var flowInstanceContext = flowContext.Clone();
+                                    await flowInstanceContext.SetData(tuple.Config.Trigger.Type, data);
+                                    await flowActor.Act(tuple.Config.Actions, flowInstanceContext);
+                                }
+                                catch (Exception exception)
+                                {
+                                    logger.LogError(exception, "Error while handling flow.");
+                                    eventHub.RaiseEvent(InternalEvent.Exception, exception);
+                                }
+                            });
                     }
                     catch (Exception exception)
                     {
