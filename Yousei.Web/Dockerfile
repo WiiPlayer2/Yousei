@@ -5,10 +5,16 @@ WORKDIR /app
 EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+RUN apt-get update \
+    && apt-get install -y curl \
+    && curl -fsSL https://deb.nodesource.com/setup_15.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /src
 COPY . .
 RUN dotnet restore "Yousei.Web/Yousei.Web.csproj"
 WORKDIR "/src/Yousei.Web"
+RUN dotnet msbuild "Yousei.Web.csproj" -t:YarnInstall
 RUN dotnet build "Yousei.Web.csproj" -c Release -o /app/build
 
 FROM build AS publish
