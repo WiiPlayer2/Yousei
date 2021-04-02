@@ -11,13 +11,14 @@ namespace YouseiReloaded.Internal
     {
         private readonly JObject data = new JObject();
 
-        public FlowContext(IFlowActor actor)
+        public FlowContext(IFlowActor actor, string flowName)
         {
             Actor = actor;
+            this.Flow = flowName;
         }
 
         private FlowContext(FlowContext from)
-            : this(from.Actor)
+            : this(from.Actor, from.Flow)
         {
             data = from.data.DeepClone() as JObject;
         }
@@ -25,6 +26,8 @@ namespace YouseiReloaded.Internal
         public IFlowActor Actor { get; }
 
         public string CurrentType { get; set; }
+
+        public string Flow { get; }
 
         public Task<object> AsObject() => Task.FromResult<object>(data);
 

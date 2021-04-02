@@ -12,6 +12,8 @@ namespace Yousei.Shared
 
         string CurrentType { get; set; }
 
+        string Flow { get; }
+
         Task<object> AsObject();
 
         Task ClearData(string path);

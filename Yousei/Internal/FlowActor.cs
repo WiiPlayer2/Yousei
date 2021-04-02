@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Yousei.Core;
+using Yousei.Internal;
 using Yousei.Shared;
 
 namespace YouseiReloaded.Internal
@@ -43,13 +44,20 @@ namespace YouseiReloaded.Internal
 
         private Task Act(BlockConfig action, IFlowContext context)
         {
-            var (connection, name) = GetConnection(action);
+            try
+            {
+                var (connection, name) = GetConnection(action);
 
-            var flowAction = connection.CreateAction(name);
-            var flowActionConfiguration = action.Arguments.Map(flowAction.ArgumentsType);
+                var flowAction = connection.CreateAction(name);
+                var flowActionConfiguration = action.Arguments.Map(flowAction.ArgumentsType);
 
-            context.CurrentType = action.Type;
-            return flowAction.Act(context, flowActionConfiguration);
+                context.CurrentType = action.Type;
+                return flowAction.Act(context, flowActionConfiguration);
+            }
+            catch (Exception e)
+            {
+                throw new FlowException($"Error while executing \"{action.Type}\".", context, e);
+            }
         }
 
         private (IConnection Connection, string Name) GetConnection(BlockConfig config)

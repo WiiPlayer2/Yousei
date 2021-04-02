@@ -5,6 +5,7 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Yousei;
+using Yousei.Internal;
 using Yousei.Shared;
 using YouseiReloaded.Internal;
 using YouseiReloaded.Internal.Connectors.Internal;
@@ -79,7 +80,7 @@ namespace Yousei
                         if (tuple.Config.Trigger is null)
                             return;
 
-                        var flowContext = new FlowContext(flowActor);
+                        var flowContext = new FlowContext(flowActor, tuple.Name);
                         var triggerEvents = flowActor.GetTrigger(tuple.Config.Trigger, flowContext);
                         flowSubscriptions[tuple.Name] = triggerEvents
                             .ObserveOn(TaskPoolScheduler.Default)
@@ -96,11 +97,15 @@ namespace Yousei
                                     logger.LogError(exception, "Error while handling flow.");
                                     eventHub.RaiseEvent(InternalEvent.Exception, exception);
                                 }
+                            }, exception =>
+                            {
+                                var flowException = new FlowException($"Error in subscription from \"{tuple.Config.Trigger.Type}\".", flowContext, exception);
+                                eventHub.RaiseEvent(InternalEvent.Exception, flowException);
                             });
                     }
                     catch (Exception exception)
                     {
-                        logger.LogError(exception, "Error while creating flow.");
+                        logger.LogError(exception, $"Error while creating flow \"{tuple.Name}\".");
                         eventHub.RaiseEvent(InternalEvent.Exception, exception);
                     }
                 });
