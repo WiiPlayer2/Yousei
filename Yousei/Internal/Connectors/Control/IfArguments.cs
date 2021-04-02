@@ -5,10 +5,10 @@ namespace YouseiReloaded.Internal.Connectors.Control
 {
     internal class IfArguments
     {
-        public List<BlockConfig> Else { get; init; }
+        public List<BlockConfig> Else { get; init; } = new();
 
         public IParameter If { get; init; }
 
-        public List<BlockConfig> Then { get; init; }
+        public List<BlockConfig> Then { get; init; } = new();
     }
 }
