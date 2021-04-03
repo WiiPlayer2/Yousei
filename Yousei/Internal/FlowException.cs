@@ -7,6 +7,10 @@ using Yousei.Shared;
 
 namespace Yousei.Internal
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Design",
+        "RCS1194:Implement exception constructors.",
+        Justification = "This is a special exception that's always based on another exception (for now).")]
     internal class FlowException : Exception
     {
         public FlowException(string message, IFlowContext context, Exception innerException)
