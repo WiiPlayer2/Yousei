@@ -11,9 +11,11 @@ namespace YouseiReloaded.Internal.Connectors.Control
             var condition = await arguments.If.Resolve<bool>(context);
 
             if (condition)
-                await context.Actor.Act(arguments.Then, context);
+                using (context.ScopeStack("IF"))
+                    await context.Actor.Act(arguments.Then, context);
             else
-                await context.Actor.Act(arguments.Else, context);
+                using (context.ScopeStack("ELSE"))
+                    await context.Actor.Act(arguments.Else, context);
         }
     }
 }

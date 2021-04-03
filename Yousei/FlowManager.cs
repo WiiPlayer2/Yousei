@@ -5,6 +5,7 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Yousei;
+using Yousei.Core;
 using Yousei.Internal;
 using Yousei.Shared;
 using YouseiReloaded.Internal;
@@ -86,6 +87,7 @@ namespace Yousei
                             return;
 
                         var flowContext = new FlowContext(flowActor, tuple.Name);
+                        flowContext.ExecutionStack.Push($"-> {tuple.Name}");
                         var triggerEvents = flowActor.GetTrigger(tuple.Config.Trigger, flowContext);
                         flowSubscriptions[tuple.Name] = triggerEvents
                             .ObserveOn(TaskPoolScheduler.Default)

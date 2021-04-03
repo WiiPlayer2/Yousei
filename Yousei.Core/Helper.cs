@@ -4,18 +4,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Yousei.Shared;
 
 namespace Yousei.Core
 {
     public static class Helper
     {
+        public static string GetStackTrace(this IFlowContext context)
+            => string.Join("\n", context.ExecutionStack.Select(o => $"@ {o}"));
+
         public static TTarget Map<TTarget>(this object source)
-            => (TTarget)source.Map(typeof(TTarget));
+                    => (TTarget)source.Map(typeof(TTarget));
 
         public static object Map(this object source, Type targetType)
             => source is null ? null : JToken.FromObject(source).ToObject(targetType);
 
         public static T SafeCast<T>(this object obj) => obj is T castObj ? castObj : default;
+
+        public static IDisposable ScopeStack(this IFlowContext context, string frameDescription)
+        {
+            context.ExecutionStack.Push(frameDescription);
+            return new ActionDisposable(() => context.ExecutionStack.Pop());
+        }
 
         public static string[] SplitPath(this string s)
         {
