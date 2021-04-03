@@ -20,14 +20,10 @@ namespace Yousei.Web.Model
         public override Task Delete()
             => Database.SetFlow(flowName, null);
 
-        public override async Task<SourceConfig> Load()
-        {
-            return await Database.GetFlowSource(flowName);
-        }
+        public override Task<SourceConfig?> Load()
+            => Database.GetFlowSource(flowName);
 
-        public override async Task Save(SourceConfig source)
-        {
-            await Database.SetFlow(flowName, source);
-        }
+        public override Task Save(SourceConfig source)
+            => Database.SetFlow(flowName, source);
     }
 }

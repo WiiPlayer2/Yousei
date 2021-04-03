@@ -27,12 +27,12 @@ namespace Yousei.Web.Api
 
         public Task<bool> IsReadOnly => GetIsReadOnly();
 
-        public Task<object> GetConfiguration(string connector, string name)
+        public Task<object?> GetConfiguration(string connector, string name)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<SourceConfig> GetConfigurationSource(string connector, string name)
+        public async Task<SourceConfig?> GetConfigurationSource(string connector, string name)
         {
             var request = new GraphQLRequest
             {
@@ -54,15 +54,18 @@ query Configuration($connector: String, $name: String) {
                 },
             };
             var response = await requestHandler.Query<JToken>(request, logger);
-            return response["database"]["configuration"]["config"].ToObject<SourceConfig>();
+            return response?
+                .Value<JToken>("database")?
+                .Value<JToken>("configuration")?
+                .Value<SourceConfig>("config");
         }
 
-        public Task<FlowConfig> GetFlow(string name)
+        public Task<FlowConfig?> GetFlow(string name)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<SourceConfig> GetFlowSource(string name)
+        public async Task<SourceConfig?> GetFlowSource(string name)
         {
             var request = new GraphQLRequest
             {
@@ -83,7 +86,10 @@ query Flow($name: String) {
                 },
             };
             var response = await requestHandler.Query<JToken>(request, logger);
-            return response["database"]["flow"]["config"].ToObject<SourceConfig>();
+            return response?
+                .Value<JToken>("database")?
+                .Value<JToken>("flow")?
+                .Value<SourceConfig>("config");
         }
 
         public async Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> ListConfigurations()
@@ -100,8 +106,11 @@ query {
   }
 }");
             var response = await requestHandler.Query<JToken>(request, logger);
-            return response["database"]["connections"].ToObject<List<ConnectionOutput>>()
-                .ToDictionary(o => o.Id, o => (IReadOnlyList<string>)o.Configurations.Select(o => o.Name).ToList());
+            return response?
+                .Value<JToken>("database")?
+                .Value<List<ConnectionOutput>>("connections")?
+                .ToDictionary(o => o.Id, o => (IReadOnlyList<string>)o.Configurations.Select(o => o.Name).ToList())
+                ?? new Dictionary<string, IReadOnlyList<string>>();
         }
 
         public async Task<IReadOnlyList<string>> ListFlows()
@@ -115,12 +124,15 @@ query {
   }
 }");
             var response = await requestHandler.Query<JToken>(request, logger);
-            return response["database"]["flows"].ToObject<List<FlowOutput>>()
+            return response?
+                .Value<JToken>("database")?
+                .Value<List<FlowOutput>>("flows")?
                 .Select(o => o.Name)
-                .ToList();
+                .ToList()
+                ?? (IReadOnlyList<string>)Array.Empty<string>();
         }
 
-        public async Task SetConfiguration(string connector, string name, SourceConfig source)
+        public async Task SetConfiguration(string connector, string name, SourceConfig? source)
         {
             var request = new GraphQLRequest
             {
@@ -140,7 +152,7 @@ mutation SetConfiguration($connector: String, $name: String, $source: SourceConf
             await requestHandler.Mutate<JToken>(request, logger);
         }
 
-        public async Task SetFlow(string name, SourceConfig source)
+        public async Task SetFlow(string name, SourceConfig? source)
         {
             var request = new GraphQLRequest
             {
@@ -171,7 +183,10 @@ query {
 }",
             };
             var response = await requestHandler.Query<JToken>(request, logger);
-            return response["database"]["isReadOnly"].ToObject<bool>();
+            return response?
+                .Value<JToken>("database")?
+                .Value<bool>("isReadOnly")
+                ?? true;
         }
 
         private record ConfigurationOutput(string Name);
