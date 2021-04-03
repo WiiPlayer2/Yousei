@@ -63,17 +63,22 @@ namespace Yousei
                     {
                         if (tuple.Config is null)
                         {
-                            flowConfigs.Remove(tuple.Name);
+                            if (flowConfigs.Remove(tuple.Name))
+                                eventHub.RaiseEvent(InternalEvent.FlowRemoved, tuple.Name);
                             if (flowSubscriptions.TryGetValue(tuple.Name, out var subscription))
                                 subscription.Dispose();
                             return;
                         }
 
-                        // TODO: Handle duplicate flows. Duplicate flows would overwrite existing flows
                         if (flowSubscriptions.ContainsKey(tuple.Name))
                         {
                             flowSubscriptions[tuple.Name].Dispose();
                             flowSubscriptions.Remove(tuple.Name);
+                            eventHub.RaiseEvent(InternalEvent.FlowUpdated, tuple.Name);
+                        }
+                        else
+                        {
+                            eventHub.RaiseEvent(InternalEvent.FlowAdded, tuple.Name);
                         }
 
                         flowConfigs[tuple.Name] = tuple.Config;
