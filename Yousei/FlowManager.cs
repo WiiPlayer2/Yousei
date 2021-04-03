@@ -91,6 +91,14 @@ namespace Yousei
                         var triggerEvents = flowActor.GetTrigger(tuple.Config.Trigger, flowContext);
                         flowSubscriptions[tuple.Name] = triggerEvents
                             .ObserveOn(TaskPoolScheduler.Default)
+                            .Do(
+                                onNext: _ => { },
+                                onError: exception =>
+                                {
+                                    var flowException = new FlowException($"Error in subscription from \"{tuple.Config.Trigger.Type}\".", flowContext, exception);
+                                    eventHub.RaiseEvent(InternalEvent.Exception, flowException);
+                                })
+                            .Retry()
                             .Subscribe(async data =>
                             {
                                 try
@@ -104,10 +112,6 @@ namespace Yousei
                                     logger.LogError(exception, "Error while handling flow.");
                                     eventHub.RaiseEvent(InternalEvent.Exception, exception);
                                 }
-                            }, exception =>
-                            {
-                                var flowException = new FlowException($"Error in subscription from \"{tuple.Config.Trigger.Type}\".", flowContext, exception);
-                                eventHub.RaiseEvent(InternalEvent.Exception, flowException);
                             });
                     }
                     catch (Exception exception)
