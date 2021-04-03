@@ -17,7 +17,7 @@ namespace Yousei.SourceGen
         public void Execute(GeneratorExecutionContext context)
         {
             var attributeSource = GetAttributeSource();
-            context.AddSource("Attribute.cs", attributeSource);
+            context.AddSource("Attribute.g.cs", attributeSource);
 
             if (attributeNodeCandidates.Any())
             {
@@ -180,7 +180,7 @@ namespace Yousei.SourceGen
             sb.AppendLine($"    }}");
             sb.AppendLine($"}}");
             var source = SourceText.From(sb.ToString(), Encoding.UTF8);
-            context.AddSource($"{type}.cs", source);
+            context.AddSource($"{type}.g.cs", source);
         }
     }
 }
