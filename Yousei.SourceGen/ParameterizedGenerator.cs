@@ -23,6 +23,8 @@ namespace Yousei.SourceGen
             {
                 var compilation = AddAttributeCompilation(attributeSource, context.Compilation);
                 var attributeSymbol = compilation.GetTypeByMetadataName("Yousei.SourceGen.ParameterizedAttribute");
+                if (attributeSymbol is null)
+                    throw new ArgumentNullException(nameof(attributeSymbol));
 
                 foreach (var attributeNode in attributeNodeCandidates)
                 {
@@ -63,7 +65,7 @@ namespace Yousei.SourceGen
             if (!SymbolEqualityComparer.Default.Equals(attributeSymbol, currentAttributeSymbol))
                 return;
 
-            var typeNode = attributeNode.Parent.Parent as TypeDeclarationSyntax;
+            var typeNode = attributeNode.Parent?.Parent as TypeDeclarationSyntax;
             if (typeNode is not RecordDeclarationSyntax
                 && typeNode is not ClassDeclarationSyntax
                 && typeNode is not StructDeclarationSyntax)
@@ -97,10 +99,24 @@ namespace Yousei.SourceGen
             }
 
             var type = semanticModel.GetDeclaredSymbol(typeNode);
+            if (type is null)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(
+                    "YOUSEI04",
+                    "Generation",
+                    "Type not resolvable.",
+                    DiagnosticSeverity.Error,
+                    DiagnosticSeverity.Error,
+                    true,
+                    0,
+                    false,
+                    location: typeNode.GetLocation()));
+                return;
+            }
+
             var attributeData = type
                 .GetAttributes()
                 .First(o => SymbolEqualityComparer.Default.Equals(o.AttributeClass, attributeSymbol));
-
             if (attributeData.ConstructorArguments.Length != 1)
             {
                 context.ReportDiagnostic(Diagnostic.Create(
@@ -117,7 +133,6 @@ namespace Yousei.SourceGen
             }
 
             var targetType = attributeData.ConstructorArguments[0].Value as INamedTypeSymbol;
-
             if (targetType is null)
             {
                 context.ReportDiagnostic(Diagnostic.Create(
