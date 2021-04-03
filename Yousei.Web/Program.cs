@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Yousei.Web
 {
-    public class Program
+    public static class Program
     {
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
@@ -19,9 +19,7 @@ namespace Yousei.Web
                     webBuilder.UseStartup<Startup>();
                 });
 
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+        public static Task Main(string[] args)
+            => CreateHostBuilder(args).Build().RunAsync();
     }
 }

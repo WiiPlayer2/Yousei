@@ -12,6 +12,10 @@ namespace Yousei.Shared
 
         string CurrentType { get; set; }
 
+        Stack<string> ExecutionStack { get; }
+
+        string Flow { get; }
+
         Task<object> AsObject();
 
         Task ClearData(string path);

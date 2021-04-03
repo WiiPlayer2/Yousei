@@ -9,7 +9,7 @@ WORKDIR /src
 COPY . .
 RUN dotnet restore "Yousei/Yousei.csproj"
 WORKDIR "/src/Yousei"
-RUN dotnet build "Yousei.csproj" -c Release -o /app/build
+RUN dotnet build "Yousei.csproj" -c Release -o /app/build -warnaserror
 
 FROM build AS publish
 RUN dotnet publish "Yousei.csproj" -c Release -o /app/publish

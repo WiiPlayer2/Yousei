@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Yousei.Core;
+using Yousei.Internal;
 using Yousei.Shared;
 
 namespace YouseiReloaded.Internal
@@ -24,32 +25,48 @@ namespace YouseiReloaded.Internal
             var currentType = context.CurrentType;
             using (new ActionDisposable(() => context.CurrentType = currentType))
             {
-                foreach (var action in actions)
+                for (int i = 0; i < actions.Count; i++)
                 {
-                    await Act(action, context);
+                    var action = actions[i];
+                    using (context.ScopeStack($"[{i + 1}] {action.Type}"))
+                        await Act(action, context);
                 }
             }
         }
 
         public IObservable<object> GetTrigger(BlockConfig trigger, IFlowContext context)
         {
-            var (connection, name) = GetConnection(trigger);
+            try
+            {
+                var (connection, name) = GetConnection(trigger);
 
-            var flowTrigger = connection.CreateTrigger(name);
-            var flowTriggerConfiguration = trigger.Arguments.Map(flowTrigger.ArgumentsType);
+                var flowTrigger = connection.CreateTrigger(name);
+                var flowTriggerConfiguration = trigger.Arguments.Map(flowTrigger.ArgumentsType);
 
-            return flowTrigger.GetEvents(context, flowTriggerConfiguration);
+                return flowTrigger.GetEvents(context, flowTriggerConfiguration);
+            }
+            catch (Exception e) when (e is not FlowException)
+            {
+                throw new FlowException($"Error while getting trigger \"{trigger.Type}\".", context, e);
+            }
         }
 
-        private Task Act(BlockConfig action, IFlowContext context)
+        private async Task Act(BlockConfig action, IFlowContext context)
         {
-            var (connection, name) = GetConnection(action);
+            try
+            {
+                var (connection, name) = GetConnection(action);
 
-            var flowAction = connection.CreateAction(name);
-            var flowActionConfiguration = action.Arguments.Map(flowAction.ArgumentsType);
+                var flowAction = connection.CreateAction(name);
+                var flowActionConfiguration = action.Arguments.Map(flowAction.ArgumentsType);
 
-            context.CurrentType = action.Type;
-            return flowAction.Act(context, flowActionConfiguration);
+                context.CurrentType = action.Type;
+                await flowAction.Act(context, flowActionConfiguration);
+            }
+            catch (Exception e) when (e is not FlowException)
+            {
+                throw new FlowException($"Error while executing \"{action.Type}\".", context, e);
+            }
         }
 
         private (IConnection Connection, string Name) GetConnection(BlockConfig config)

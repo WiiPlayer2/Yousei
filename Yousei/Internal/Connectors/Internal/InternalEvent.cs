@@ -15,5 +15,11 @@ namespace YouseiReloaded.Internal.Connectors.Internal
         Reloading,
 
         Reloaded,
+
+        FlowAdded,
+
+        FlowUpdated,
+
+        FlowRemoved,
     }
 }

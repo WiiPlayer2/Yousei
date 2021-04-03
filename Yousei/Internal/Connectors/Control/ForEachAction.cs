@@ -13,7 +13,8 @@ namespace YouseiReloaded.Internal.Connectors.Control
             foreach (var item in collection)
             {
                 await context.SetData(item);
-                await context.Actor.Act(arguments.Actions, context);
+                using (context.ScopeStack($"{{{item}}}"))
+                    await context.Actor.Act(arguments.Actions, context);
             }
         }
     }

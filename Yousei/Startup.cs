@@ -20,6 +20,7 @@ using Yousei.Api.SchemaType;
 using Yousei.Api.Mutations;
 using System.Reactive;
 using Yousei.Internal.Database;
+using Yousei.Api.Subscriptions;
 
 namespace Yousei
 {
@@ -32,7 +33,8 @@ namespace Yousei
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting()
+            app.UseWebSockets()
+                .UseRouting()
                 .UseEndpoints(endpoints =>
                 {
                     endpoints.MapGraphQL();
@@ -55,6 +57,7 @@ namespace Yousei
             // Api
             services.AddSingleton<IApi, InternalApi>();
             services.AddGraphQLServer()
+                .AddInMemorySubscriptions()
                 .AddType<JsonType>()
                 .AddTypeConverter<JObject, JToken>(from => from)
                 .AddTypeConverter<JArray, JToken>(from => from)
@@ -63,12 +66,14 @@ namespace Yousei
                 .BindRuntimeType<JArray, JsonType>()
                 .BindRuntimeType<JValue, JsonType>()
                 .BindRuntimeType<Unit, AnyType>()
+                .BindRuntimeType<object, AnyType>()
                 .AddQueryType<Query>()
                 .AddType<ConfigurationExtension>()
                 .AddType<FlowExtension>()
                 .AddType<BlockConfigExtension>()
                 .AddMutationType<Mutation>()
                 .AddType<DatabaseMutation>()
+                .AddSubscriptionType<Subscription>()
                 .ModifyRequestOptions(options =>
                 {
                     options.IncludeExceptionDetails = true;

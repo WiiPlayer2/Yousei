@@ -11,12 +11,13 @@ using YouseiReloaded.Serialization.Yaml;
 using Microsoft.AspNetCore.Hosting;
 using System;
 using Microsoft.AspNetCore.Builder;
+using System.Threading.Tasks;
 
 namespace Yousei
 {
     internal static class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
@@ -26,7 +27,7 @@ namespace Yousei
                 }
             };
 
-            CreateHostBuilder(args).Build().Run();
+            await CreateHostBuilder(args).Build().RunAsync();
         }
 
         private static void ConfigureLogging(ILoggingBuilder logging)

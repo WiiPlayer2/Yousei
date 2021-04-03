@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yousei.Core;
@@ -11,20 +12,26 @@ namespace YouseiReloaded.Internal
     {
         private readonly JObject data = new JObject();
 
-        public FlowContext(IFlowActor actor)
+        public FlowContext(IFlowActor actor, string flowName)
         {
             Actor = actor;
+            this.Flow = flowName;
         }
 
         private FlowContext(FlowContext from)
-            : this(from.Actor)
+            : this(from.Actor, from.Flow)
         {
             data = from.data.DeepClone() as JObject;
+            ExecutionStack = new Stack<string>(from.ExecutionStack);
         }
 
         public IFlowActor Actor { get; }
 
         public string CurrentType { get; set; }
+
+        public Stack<string> ExecutionStack { get; } = new Stack<string>();
+
+        public string Flow { get; }
 
         public Task<object> AsObject() => Task.FromResult<object>(data);
 

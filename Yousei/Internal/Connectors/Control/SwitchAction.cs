@@ -14,12 +14,14 @@ namespace YouseiReloaded.Internal.Connectors.Control
             {
                 if (Equals(value, @case))
                 {
-                    await context.Actor.Act(actions, context);
+                    using (context.ScopeStack($"CASE {{{@case}}}"))
+                        await context.Actor.Act(actions, context);
                     return;
                 }
             }
 
-            await context.Actor.Act(arguments.Default, context);
+            using (context.ScopeStack("DEFAULT"))
+                await context.Actor.Act(arguments.Default, context);
         }
     }
 }
