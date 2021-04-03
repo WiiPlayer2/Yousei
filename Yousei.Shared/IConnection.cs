@@ -2,8 +2,8 @@
 {
     public interface IConnection
     {
-        IFlowAction CreateAction(string name);
+        IFlowAction? CreateAction(string name);
 
-        IFlowTrigger CreateTrigger(string name);
+        IFlowTrigger? CreateTrigger(string name);
     }
 }

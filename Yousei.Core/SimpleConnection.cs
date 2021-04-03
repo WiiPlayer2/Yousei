@@ -13,14 +13,14 @@ namespace Yousei.Core
 
         private readonly Dictionary<string, IFlowTrigger> triggers = new();
 
-        public IFlowAction CreateAction(string name)
+        public IFlowAction? CreateAction(string name)
         {
             if (actions.TryGetValue(name, out var action))
                 return action;
             return default;
         }
 
-        public IFlowTrigger CreateTrigger(string name)
+        public IFlowTrigger? CreateTrigger(string name)
         {
             if (triggers.TryGetValue(name, out var trigger))
                 return trigger;

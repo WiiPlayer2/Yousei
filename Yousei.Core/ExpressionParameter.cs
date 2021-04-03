@@ -30,7 +30,7 @@ namespace Yousei.Core
 
         public string Code { get; }
 
-        public async Task<T> Resolve<T>(IFlowContext context)
+        public async Task<T?> Resolve<T>(IFlowContext context)
         {
             var contextObj = await context.AsObject();
             var globals = new ScriptGlobals(contextObj);
@@ -39,6 +39,7 @@ namespace Yousei.Core
             return result.ReturnValue.Map<T>();
         }
 
-        public override string ToString() => $"=> {Code}";
+        public override string ToString()
+            => $"=> {Code}";
     }
 }

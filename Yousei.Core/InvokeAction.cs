@@ -18,7 +18,7 @@ namespace Yousei.Core
 
         public Type ArgumentsType { get; } = typeof(object);
 
-        public Task Act(IFlowContext context, object arguments)
+        public Task Act(IFlowContext context, object? arguments)
         {
             action();
             return Task.CompletedTask;

@@ -9,7 +9,7 @@ namespace Yousei.Shared
 
         string Name { get; }
 
-        IConnection GetConnection(object configuration);
+        IConnection? GetConnection(object configuration);
 
         Task Reset();
     }
