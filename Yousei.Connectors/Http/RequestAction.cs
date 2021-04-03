@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Yousei.Shared;
 using System.IO;
 using System.Text;
+using System;
 
 namespace Yousei.Connectors.Http
 {
@@ -11,11 +12,19 @@ namespace Yousei.Connectors.Http
     {
         private static readonly Encoding defaultEncoding = new UTF8Encoding(false);
 
-        protected override async Task Act(IFlowContext context, RequestArguments arguments)
+        protected override async Task Act(IFlowContext context, RequestArguments? arguments)
         {
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
+
             var url = await arguments.Url.Resolve<string>(context);
             var method = await arguments.Method.Resolve<string>(context);
             var body = await arguments.Body.Resolve<string>(context);
+
+            if (url is null)
+                throw new ArgumentNullException(nameof(arguments.Url));
+            if (method is null)
+                throw new ArgumentNullException(nameof(arguments.Method));
 
             var request = WebRequest.CreateHttp(url);
             request.Method = method;

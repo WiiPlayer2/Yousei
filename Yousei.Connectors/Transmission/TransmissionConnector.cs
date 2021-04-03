@@ -1,4 +1,5 @@
-﻿using Transmission.API.RPC;
+﻿using System;
+using Transmission.API.RPC;
 using Yousei.Core;
 using Yousei.Shared;
 
@@ -12,6 +13,9 @@ namespace Yousei.Connectors.Transmission
 
         protected override IConnection CreateConnection(TransmissionConfiguration configuration)
         {
+            if (configuration.Endpoint is null)
+                throw new ArgumentNullException(nameof(configuration.Endpoint));
+
             var client = new Client(
                 configuration.Endpoint.ToString(),
                 login: configuration.Login,

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Transmission.API.RPC;
 using Transmission.API.RPC.Entity;
 using Yousei.Core;
@@ -19,9 +20,13 @@ namespace Yousei.Connectors.Transmission
             this.client = client;
         }
 
-        protected override async Task Act(IFlowContext context, ParameterizedNewTorrent arguments)
+        protected override async Task Act(IFlowContext context, ParameterizedNewTorrent? arguments)
         {
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
+
             var newTorrent = await arguments.Resolve(context);
+
             var torrentInfo = await client.TorrentAddAsync(newTorrent).ConfigureAwait(false);
             await context.SetData(torrentInfo);
         }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Yousei.Core;
@@ -15,8 +16,11 @@ namespace Yousei.Connectors.Telegram
             this.telegramBotClient = telegramBotClient;
         }
 
-        protected override async Task Act(IFlowContext context, SendArguments arguments)
+        protected override async Task Act(IFlowContext context, SendArguments? arguments)
         {
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
+
             var chatId = await arguments.ChatId.Resolve<ChatId>(context);
             var text = await arguments.Text.Resolve<string>(context);
 

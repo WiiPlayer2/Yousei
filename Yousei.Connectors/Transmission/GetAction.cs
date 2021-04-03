@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Transmission.API.RPC;
 using Yousei.Core;
 using Yousei.Shared;
@@ -14,8 +15,11 @@ namespace Yousei.Connectors.Transmission
             this.client = client;
         }
 
-        protected override async Task Act(IFlowContext context, GetArguments arguments)
+        protected override async Task Act(IFlowContext context, GetArguments? arguments)
         {
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
+
             var fields = await arguments.Fields.Resolve<string[]>(context);
             var ids = await arguments.Ids.Resolve<int[]>(context);
 
