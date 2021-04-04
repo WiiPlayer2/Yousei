@@ -3,14 +3,14 @@ using Yousei.Shared;
 
 namespace Yousei.Api.Types
 {
-    public record BlockConfigInput(string Type, string Configuration = "default", JToken arguments = default)
+    public record BlockConfigInput(string Type, string Configuration = "default", JToken? Arguments = default)
     {
         public BlockConfig Map()
             => new()
             {
                 Type = Type,
                 Configuration = Configuration,
-                Arguments = arguments,
+                Arguments = Arguments,
             };
     }
 }

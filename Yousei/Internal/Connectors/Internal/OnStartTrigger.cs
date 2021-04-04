@@ -8,7 +8,7 @@ namespace YouseiReloaded.Internal.Connectors.Internal
     internal class OnStartTrigger : ObservableTrigger
     {
         public OnStartTrigger(IObservable<Unit> startObservable)
-            : base(startObservable.Select(_ => default(object)))
+            : base(startObservable.Select(_ => (object)_))
         {
         }
     }

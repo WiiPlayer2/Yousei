@@ -20,20 +20,20 @@ namespace Yousei.Internal.Database
 
         public Task<bool> IsReadOnly { get; } = Task.FromResult(true);
 
-        public Task<object> GetConfiguration(string connector, string name)
+        public Task<object?> GetConfiguration(string connector, string name)
             => Task.FromResult(ConfigurationProvider.GetConnectionConfiguration(connector, name));
 
-        public async Task<SourceConfig> GetConfigurationSource(string connector, string name)
-            => new SourceConfig("json", (await GetConfiguration(connector, name)).Map<JToken>()?.ToString());
+        public async Task<SourceConfig?> GetConfigurationSource(string connector, string name)
+            => new SourceConfig("json", (await GetConfiguration(connector, name)).Map<JToken>()?.ToString() ?? string.Empty);
 
-        public Task<FlowConfig> GetFlow(string name)
+        public Task<FlowConfig?> GetFlow(string name)
             => Task.FromResult(ConfigurationProvider.GetFlow(name));
 
-        public async Task<SourceConfig> GetFlowSource(string name)
-            => new SourceConfig("json", (await GetFlow(name)).Map<JToken>()?.ToString());
+        public async Task<SourceConfig?> GetFlowSource(string name)
+            => new SourceConfig("json", (await GetFlow(name)).Map<JToken>()?.ToString() ?? string.Empty);
 
         public async Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> ListConfigurations()
-                            => await ConfigurationProvider.GetConnectionConfigurations()
+            => await ConfigurationProvider.GetConnectionConfigurations()
                 .ToLookup(o => o.Connector, o => o.Name)
                 .Select(lookup => lookup.ToDictionary(o => o.Key, o => (IReadOnlyList<string>)o.ToList()));
 
@@ -43,10 +43,10 @@ namespace Yousei.Internal.Database
             return new List<string>(flowTuples.Select(item => item.Name));
         }
 
-        public Task SetConfiguration(string connector, string name, SourceConfig source)
+        public Task SetConfiguration(string connector, string name, SourceConfig? source)
             => throw new NotImplementedException();
 
-        public Task SetFlow(string name, SourceConfig source)
+        public Task SetFlow(string name, SourceConfig? source)
             => throw new NotImplementedException();
     }
 }

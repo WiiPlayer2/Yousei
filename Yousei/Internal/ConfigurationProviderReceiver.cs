@@ -19,10 +19,10 @@ namespace Yousei.Internal
             this.database = database;
         }
 
-        public object GetConnectionConfiguration(string type, string name)
+        public object? GetConnectionConfiguration(string type, string name)
             => database.GetConfiguration(type, name).GetAwaiter().GetResult();
 
-        public IObservable<(string Connector, string Name, object Configuration)> GetConnectionConfigurations()
+        public IObservable<(string Connector, string Name, object? Configuration)> GetConnectionConfigurations()
             => Observable.DeferAsync(async _ =>
             {
                 var configurations = await database.ListConfigurations();
@@ -30,10 +30,10 @@ namespace Yousei.Internal
                 return (await Task.WhenAll(tasks)).ToObservable();
             });
 
-        public FlowConfig GetFlow(string name)
+        public FlowConfig? GetFlow(string name)
             => database.GetFlow(name).GetAwaiter().GetResult();
 
-        public IObservable<(string Name, FlowConfig Config)> GetFlows()
+        public IObservable<(string Name, FlowConfig? Config)> GetFlows()
             => Observable.DeferAsync(async _ =>
             {
                 var flows = await database.ListFlows();

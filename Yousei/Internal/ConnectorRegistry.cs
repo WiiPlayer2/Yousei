@@ -43,7 +43,7 @@ namespace YouseiReloaded.Internal
             Register(new RssConnector());
         }
 
-        public IConnector Get(string name) => connectors.GetValueOrDefault(name);
+        public IConnector? Get(string name) => connectors.GetValueOrDefault(name);
 
         public void Register(IConnector connector) => connectors.TryAdd(connector.Name, connector);
 

@@ -20,7 +20,7 @@ namespace Yousei.Serialization.Yaml
                 .WithTagMapping("!e", typeof(ExpressionParameter))
                 .Build();
 
-        public static bool TryDeserialize<T>(this IDeserializer deserializer, string input, out T deserializedObject)
+        public static bool TryDeserialize<T>(this IDeserializer deserializer, string input, out T? deserializedObject)
         {
             deserializedObject = default;
             try

@@ -7,7 +7,7 @@ using Yousei.Shared;
 
 namespace Yousei.Api.Types
 {
-    public record FlowConfigInput(BlockConfigInput Trigger, BlockConfigInput[] Actions = default)
+    public record FlowConfigInput(BlockConfigInput Trigger, BlockConfigInput[]? Actions = default)
     {
         public FlowConfig Map()
             => new()

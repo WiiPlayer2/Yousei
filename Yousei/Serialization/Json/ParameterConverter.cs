@@ -22,26 +22,26 @@ namespace YouseiReloaded.Serialization.Json
         public override bool CanConvert(Type objectType)
             => objectType.IsAssignableTo(typeof(IParameter));
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             var jtoken = JToken.ReadFrom(reader);
-            if (!jtoken.TryToObject<Dto>(out var dto))
+            if (!jtoken.TryToObject<Dto>(out var dto) || dto is null)
             {
                 return new ConstantParameter(jtoken);
             }
 
             var parameter = dto.Type.Match<IParameter>(
                 () => new ConstantParameter(dto.Config),
-                () => new VariableParameter(dto.Config.ToObject<string>()),
-                () => new ExpressionParameter(dto.Config.ToObject<string>()));
+                () => new VariableParameter(dto.Config.ToObject<string>() ?? string.Empty),
+                () => new ExpressionParameter(dto.Config.ToObject<string>() ?? string.Empty));
             return parameter;
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
             var dto = value switch
             {
-                ConstantParameter constantParameter => new Dto(ParameterType.Constant, constantParameter.Value.Map<JToken>()),
+                ConstantParameter constantParameter => new Dto(ParameterType.Constant, constantParameter.Value.Map<JToken>() ?? JValue.CreateNull()),
                 VariableParameter variableParameter => new Dto(ParameterType.Variable, variableParameter.Path),
                 ExpressionParameter expressionParameter => new Dto(ParameterType.Expression, expressionParameter.Code),
                 _ => throw new NotImplementedException(),

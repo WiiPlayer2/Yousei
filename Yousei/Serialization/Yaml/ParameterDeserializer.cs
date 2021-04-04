@@ -8,7 +8,7 @@ namespace YouseiReloaded.Serialization.Yaml
 {
     internal class ParameterDeserializer : INodeDeserializer
     {
-        public bool Deserialize(IParser reader, Type expectedType, Func<IParser, Type, object> nestedObjectDeserializer, out object value)
+        public bool Deserialize(IParser reader, Type expectedType, Func<IParser, Type, object?> nestedObjectDeserializer, out object? value)
         {
             value = default;
             if (expectedType != typeof(VariableParameter) && expectedType != typeof(ExpressionParameter))

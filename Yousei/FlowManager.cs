@@ -29,7 +29,7 @@ namespace Yousei
 
         private readonly ILogger logger;
 
-        private IDisposable flowSubscription;
+        private IDisposable? flowSubscription;
 
         public FlowManager(
             ILogger<FlowManager> logger,
@@ -48,7 +48,7 @@ namespace Yousei
 
         public void CancelSubscriptions()
         {
-            flowSubscription.Dispose();
+            flowSubscription?.Dispose();
             foreach (var subscription in flowSubscriptions.Values)
             {
                 subscription.Dispose();

@@ -13,6 +13,14 @@ namespace Yousei.Internal
         Justification = "This is a special exception that's always based on another exception (for now).")]
     internal class FlowException : Exception
     {
+        public FlowException(string message, IFlowContext context)
+            : base(message)
+        {
+            Flow = context.Flow;
+            Context = context.AsObject().GetAwaiter().GetResult();
+            FlowStackTrace = context.GetStackTrace();
+        }
+
         public FlowException(string message, IFlowContext context, Exception innerException)
             : base(message, innerException)
         {
