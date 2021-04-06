@@ -26,8 +26,8 @@ namespace Yousei.Shared
 
         Task<object?> GetData(string path);
 
-        Task SetData(object data);
+        Task SetData(object? data);
 
-        Task SetData(string path, object data);
+        Task SetData(string path, object? data);
     }
 }

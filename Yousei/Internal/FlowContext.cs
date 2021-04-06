@@ -71,7 +71,7 @@ namespace YouseiReloaded.Internal
             return Task.FromResult<object?>(value);
         }
 
-        public Task SetData(string path, object data)
+        public Task SetData(string path, object? data)
         {
             if (string.IsNullOrEmpty(path))
                 throw new InvalidOperationException();
@@ -96,7 +96,7 @@ namespace YouseiReloaded.Internal
             return Task.CompletedTask;
         }
 
-        public Task SetData(object data)
+        public Task SetData(object? data)
             => SetData(CurrentType, data);
     }
 }
