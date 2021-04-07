@@ -15,8 +15,8 @@ namespace Yousei.Connectors.Http
             this.httpConnection = httpConnection;
         }
 
-        protected override IObservable<object> GetEvents(IFlowContext context, WebhookArguments arguments)
+        protected override IObservable<object> GetEvents(IFlowContext context, WebhookArguments? arguments)
             => httpConnection.HttpRequests
-                .Where(o => string.IsNullOrEmpty(arguments.Path) || o.Url.AbsolutePath.StartsWith(arguments.Path));
+                .Where(o => string.IsNullOrEmpty(arguments?.Path) || (o.Url?.AbsolutePath.StartsWith(arguments.Path) ?? false));
     }
 }

@@ -2,6 +2,6 @@
 {
     internal record WebhookArguments
     {
-        public string Path { get; }
+        public string Path { get; } = string.Empty;
     }
 }

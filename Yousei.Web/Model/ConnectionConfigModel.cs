@@ -23,14 +23,10 @@ namespace Yousei.Web.Model
         public override Task Delete()
             => Database.SetConfiguration(connector, name, null);
 
-        public override async Task<SourceConfig> Load()
-        {
-            return await Database.GetConfigurationSource(connector, name);
-        }
+        public override Task<SourceConfig?> Load()
+            => Database.GetConfigurationSource(connector, name);
 
-        public override async Task Save(SourceConfig source)
-        {
-            await Database.SetConfiguration(connector, name, source);
-        }
+        public override Task Save(SourceConfig source)
+            => Database.SetConfiguration(connector, name, source);
     }
 }

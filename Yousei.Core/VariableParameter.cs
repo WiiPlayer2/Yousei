@@ -13,9 +13,10 @@ namespace Yousei.Core
 
         public string Path { get; }
 
-        public async Task<T> Resolve<T>(IFlowContext context)
+        public async Task<T?> Resolve<T>(IFlowContext context)
             => (await context.GetData(Path)).Map<T>();
 
-        public override string ToString() => $"-> {Path}";
+        public override string ToString()
+            => $"-> {Path}";
     }
 }

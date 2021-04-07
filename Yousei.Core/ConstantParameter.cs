@@ -5,16 +5,17 @@ namespace Yousei.Core
 {
     public class ConstantParameter : IParameter
     {
-        public ConstantParameter(object value)
+        public ConstantParameter(object? value)
         {
             Value = value;
         }
 
-        public object Value { get; }
+        public object? Value { get; }
 
-        public Task<T> Resolve<T>(IFlowContext context)
+        public Task<T?> Resolve<T>(IFlowContext context)
             => Task.FromResult(Value.Map<T>());
 
-        public override string ToString() => Value?.ToString() ?? string.Empty;
+        public override string ToString()
+            => $"{Value}";
     }
 }

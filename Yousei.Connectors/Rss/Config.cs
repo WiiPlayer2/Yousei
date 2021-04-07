@@ -4,8 +4,8 @@ namespace Yousei.Connectors.Rss
 {
     public record Config
     {
-        public Uri Url { get; init; }
+        public Uri? Url { get; init; }
 
-        public TimeSpan Interval { get; init; }
+        public TimeSpan Interval { get; init; } = TimeSpan.FromHours(1);
     }
 }

@@ -12,19 +12,31 @@ namespace Yousei.Connectors.Http
 {
     internal record HttpResponse
     {
-        public string BodyText { get; init; }
-        public string CharacterSet { get; init; }
-        public string ContentEncoding { get; init; }
+        public string BodyText { get; init; } = string.Empty;
+
+        public string? CharacterSet { get; init; }
+
+        public string ContentEncoding { get; init; } = string.Empty;
+
         public long ContentLength { get; init; }
-        public string ContentType { get; init; }
-        public CookieCollection Cookies { get; init; }
-        public Dictionary<string, string> Headers { get; init; }
-        public string Method { get; init; }
-        public Version ProtocolVersion { get; init; }
-        public Uri ResponseUri { get; init; }
-        public string Server { get; init; }
+
+        public string ContentType { get; init; } = string.Empty;
+
+        public CookieCollection Cookies { get; init; } = new();
+
+        public Dictionary<string, string> Headers { get; init; } = new();
+
+        public string Method { get; init; } = string.Empty;
+
+        public Version ProtocolVersion { get; init; } = new();
+
+        public Uri? ResponseUri { get; init; }
+
+        public string Server { get; init; } = string.Empty;
+
         public HttpStatusCode StatusCode { get; init; }
-        public string StatusDescription { get; init; }
+
+        public string StatusDescription { get; init; } = string.Empty;
 
         public static async Task<HttpResponse> FromResponse(HttpWebResponse response)
         {
@@ -53,7 +65,7 @@ namespace Yousei.Connectors.Http
             Dictionary<string, string> ToDictionary(NameValueCollection nameValueCollection)
                 => nameValueCollection
                     .Cast<string>()
-                    .ToDictionary(o => o, o => nameValueCollection[o]);
+                    .ToDictionary(o => o, o => nameValueCollection[o] ?? string.Empty);
         }
     }
 }

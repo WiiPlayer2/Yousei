@@ -2,6 +2,6 @@
 {
     internal record OnValueConfiguration
     {
-        public string Topic { get; init; }
+        public string Topic { get; init; } = string.Empty;
     }
 }

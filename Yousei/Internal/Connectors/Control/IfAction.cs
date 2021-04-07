@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Shared;
 
@@ -6,8 +7,11 @@ namespace YouseiReloaded.Internal.Connectors.Control
 {
     internal class IfAction : FlowAction<IfArguments>
     {
-        protected override async Task Act(IFlowContext context, IfArguments arguments)
+        protected override async Task Act(IFlowContext context, IfArguments? arguments)
         {
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
+
             var condition = await arguments.If.Resolve<bool>(context);
 
             if (condition)

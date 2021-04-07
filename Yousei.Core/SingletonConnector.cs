@@ -21,7 +21,7 @@ namespace Yousei.Core
 
         public string Name { get; }
 
-        public IConnection GetConnection(object configuration)
+        public IConnection? GetConnection(object? configuration)
             => lazyConnection.Value;
 
         public Task Reset() => Task.CompletedTask;

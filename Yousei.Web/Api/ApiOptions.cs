@@ -7,6 +7,6 @@ namespace Yousei.Web.Api
 {
     public record ApiOptions
     {
-        public Uri Url { get; init; }
+        public Uri? Url { get; init; }
     }
 }

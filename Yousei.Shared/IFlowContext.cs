@@ -24,10 +24,10 @@ namespace Yousei.Shared
 
         Task<bool> ExistsData(string path);
 
-        Task<object> GetData(string path);
+        Task<object?> GetData(string path);
 
-        Task SetData(object data);
+        Task SetData(object? data);
 
-        Task SetData(string path, object data);
+        Task SetData(string path, object? data);
     }
 }

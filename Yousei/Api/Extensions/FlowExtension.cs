@@ -19,7 +19,7 @@ namespace Yousei.Api.Extensions
             this.api = api;
         }
 
-        public Task<SourceConfig> GetConfig(
+        public Task<SourceConfig?> GetConfig(
             [Parent] Flow flow)
             => api.ConfigurationDatabase.GetFlowSource(flow.Name);
     }

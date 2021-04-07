@@ -26,7 +26,7 @@ namespace Yousei.Connectors.Telegram
         public IObservable<UpdateEventArgs> OnUpdate { get; }
 
         private IObservable<Unit> CreateConnectionObservable(TelegramBotClient telegramBotClient)
-            => Observable.Create<Unit>(async (observer, cancellationToken) =>
+            => Observable.Create<Unit>(async (_, cancellationToken) =>
                 {
                     telegramBotClient.StartReceiving(cancellationToken: cancellationToken);
                     await Task.Delay(-1, cancellationToken);
@@ -35,10 +35,13 @@ namespace Yousei.Connectors.Telegram
                 .RefCount(TimeSpan.FromSeconds(1));
 
         private IObservable<T> WrapEvent<T>(IObservable<Unit> connectionObservable, object target, string eventName)
-                    where T : class
-        {
-            var eventObservable = Observable.FromEventPattern<T>(target, eventName).Select(o => o.EventArgs);
-            return Observable.Merge(connectionObservable.Select(_ => default(T)), eventObservable);
-        }
+            where T : class
+            => Observable.DeferAsync(cancellationToken =>
+                {
+                    var subscription = connectionObservable.Subscribe(_ => { });
+                    cancellationToken.Register(subscription.Dispose);
+                    var eventObservable = Observable.FromEventPattern<T>(target, eventName).Select(o => o.EventArgs);
+                    return Task.FromResult(eventObservable);
+                });
     }
 }

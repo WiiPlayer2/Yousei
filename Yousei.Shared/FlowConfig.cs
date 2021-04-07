@@ -7,6 +7,6 @@ namespace Yousei.Shared
     {
         public List<BlockConfig> Actions { get; init; } = new();
 
-        public BlockConfig Trigger { get; init; }
+        public BlockConfig? Trigger { get; init; }
     }
 }

@@ -17,10 +17,11 @@ namespace Yousei.Core
 
         public string Name { get; }
 
-        public IConnection GetConnection(object configuration) => GetConnection(configuration.SafeCast<TConfiguration>());
+        public IConnection? GetConnection(object? configuration)
+            => GetConnection(configuration.SafeCast<TConfiguration>());
 
         public abstract Task Reset();
 
-        protected abstract IConnection GetConnection(TConfiguration configuration);
+        protected abstract IConnection? GetConnection(TConfiguration? configuration);
     }
 }

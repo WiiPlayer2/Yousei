@@ -13,7 +13,7 @@ namespace Yousei.Api.Extensions
     [ExtendObjectType(nameof(BlockConfig))]
     public class BlockConfigExtension
     {
-        public JToken GetArguments(
+        public JToken? GetArguments(
             [Parent] BlockConfig blockConfig)
             => blockConfig.Arguments.Map<JToken>();
     }

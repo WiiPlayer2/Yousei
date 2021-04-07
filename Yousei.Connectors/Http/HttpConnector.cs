@@ -16,7 +16,7 @@ namespace Yousei.Connectors.Http
             DefaultConnection = new HttpConnection(default);
         }
 
-        protected override IConnection CreateConnection(Config configuration)
+        protected override IConnection? CreateConnection(Config configuration)
         {
             if (!configuration.Prefixes.Any())
             {

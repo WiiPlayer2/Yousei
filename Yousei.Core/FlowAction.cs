@@ -11,9 +11,9 @@ namespace Yousei.Core
     {
         public Type ArgumentsType { get; } = typeof(TArguments);
 
-        public Task Act(IFlowContext context, object arguments)
+        public Task Act(IFlowContext context, object? arguments)
             => Act(context, arguments.SafeCast<TArguments>());
 
-        protected abstract Task Act(IFlowContext context, TArguments arguments);
+        protected abstract Task Act(IFlowContext context, TArguments? arguments);
     }
 }

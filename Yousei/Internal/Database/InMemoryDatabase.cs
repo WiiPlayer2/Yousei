@@ -12,11 +12,11 @@ namespace Yousei.Internal.Database
 {
     public class InMemoryDatabase : IConfigurationDatabase
     {
-        private readonly Dictionary<string, Dictionary<string, (object Config, SourceConfig Source)>> configs = new();
+        private readonly Dictionary<string, Dictionary<string, (object? Config, SourceConfig Source)>> configs = new();
 
         private readonly IDeserializer deserializer;
 
-        private readonly Dictionary<string, (FlowConfig Flow, SourceConfig Source)> flows = new();
+        private readonly Dictionary<string, (FlowConfig? Flow, SourceConfig Source)> flows = new();
 
         private readonly IConfigurationProviderNotifier notifier;
 
@@ -28,16 +28,16 @@ namespace Yousei.Internal.Database
 
         public Task<bool> IsReadOnly { get; } = Task.FromResult(false);
 
-        public Task<object> GetConfiguration(string connector, string name)
+        public Task<object?> GetConfiguration(string connector, string name)
             => Task.FromResult(GetConfigurationTuple(connector, name).Data);
 
-        public Task<SourceConfig> GetConfigurationSource(string connector, string name)
+        public Task<SourceConfig?> GetConfigurationSource(string connector, string name)
             => Task.FromResult(GetConfigurationTuple(connector, name).Source);
 
-        public Task<FlowConfig> GetFlow(string name)
+        public Task<FlowConfig?> GetFlow(string name)
             => Task.FromResult(GetFlowTuple(name).Flow);
 
-        public Task<SourceConfig> GetFlowSource(string name)
+        public Task<SourceConfig?> GetFlowSource(string name)
             => Task.FromResult(GetFlowTuple(name).Source);
 
         public Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> ListConfigurations()
@@ -47,7 +47,7 @@ namespace Yousei.Internal.Database
         public Task<IReadOnlyList<string>> ListFlows()
             => Task.FromResult<IReadOnlyList<string>>(flows.Keys.ToList());
 
-        public Task SetConfiguration(string connector, string name, SourceConfig source)
+        public Task SetConfiguration(string connector, string name, SourceConfig? source)
         {
             if (configs.TryGetValue(connector, out var connections))
             {
@@ -71,7 +71,7 @@ namespace Yousei.Internal.Database
             return Task.CompletedTask;
         }
 
-        public Task SetFlow(string name, SourceConfig source)
+        public Task SetFlow(string name, SourceConfig? source)
         {
             var flowConfig = default(FlowConfig);
             if (source is null)
@@ -88,7 +88,7 @@ namespace Yousei.Internal.Database
             return Task.CompletedTask;
         }
 
-        private (object Data, SourceConfig Source) GetConfigurationTuple(string connector, string name)
+        private (object? Data, SourceConfig? Source) GetConfigurationTuple(string connector, string name)
         {
             if (!configs.TryGetValue(connector, out var connections)
                 || !connections.TryGetValue(name, out var config))
@@ -96,7 +96,7 @@ namespace Yousei.Internal.Database
             return config;
         }
 
-        private (FlowConfig Flow, SourceConfig Source) GetFlowTuple(string name)
+        private (FlowConfig? Flow, SourceConfig? Source) GetFlowTuple(string name)
         {
             if (!flows.TryGetValue(name, out var flow))
                 return default;

@@ -21,7 +21,7 @@ namespace Yousei.Api.Extensions
             this.api = api;
         }
 
-        public async Task<SourceConfig> GetConfig(
+        public async Task<SourceConfig?> GetConfig(
             [Parent] Configuration configuration)
             => await api.ConfigurationDatabase.GetConfigurationSource(configuration.Connector, configuration.Name);
     }

@@ -7,9 +7,9 @@ namespace Yousei.Connectors.Http
 {
     internal class HttpConnection : SimpleConnection
     {
-        private readonly HttpListener listener;
+        private readonly HttpListener? listener;
 
-        public HttpConnection(HttpListener listener)
+        public HttpConnection(HttpListener? listener)
         {
             this.listener = listener;
             HttpRequests = GetHttpRequests();
@@ -23,6 +23,9 @@ namespace Yousei.Connectors.Http
         private IObservable<HttpRequest> GetHttpRequests()
             => Observable.Create<HttpRequest>(async (observer, cancellationToken) =>
             {
+                if (listener is null)
+                    throw new InvalidOperationException($"HttpListener is not available.");
+
                 listener.Start();
                 cancellationToken.Register(listener.Stop);
                 while (!cancellationToken.IsCancellationRequested)

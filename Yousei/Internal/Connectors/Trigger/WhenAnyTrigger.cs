@@ -8,17 +8,22 @@ namespace YouseiReloaded.Internal.Connectors.Trigger
 {
     internal class WhenAnyTrigger : FlowTrigger<WhenAnyArguments>
     {
-        protected override IObservable<object> GetEvents(IFlowContext context, WhenAnyArguments arguments)
-            => Observable.Defer(() =>
-            {
-                var observables = arguments.Triggers
-                    .Select(trigger => context.Actor.GetTrigger(trigger, context)
-                        .Select(o => new
-                        {
-                            Source = trigger.Type,
-                            Data = o,
-                        }));
-                return observables.Merge();
-            });
+        protected override IObservable<object> GetEvents(IFlowContext context, WhenAnyArguments? arguments)
+        {
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
+
+            return Observable.Defer(() =>
+                {
+                    var observables = arguments.Triggers
+                        .Select(trigger => context.Actor.GetTrigger(trigger, context)
+                            .Select(o => new
+                            {
+                                Source = trigger.Type,
+                                Data = o,
+                            }));
+                    return observables.Merge();
+                });
+        }
     }
 }

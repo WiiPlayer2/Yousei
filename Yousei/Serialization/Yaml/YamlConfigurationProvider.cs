@@ -24,27 +24,25 @@ namespace YouseiReloaded.Serialization.Yaml
             config = deserializer.Deserialize<YamlConfig>(reader) ?? new YamlConfig();
         }
 
-        public object GetConnectionConfiguration(string type, string name)
+        public object? GetConnectionConfiguration(string type, string name)
             => config.Connections.TryGetValue(type, out var configurations)
                 && configurations.TryGetValue(name, out var configuration)
                 ? configuration
                 : default;
 
-        public IObservable<(string, string, object)> GetConnectionConfigurations()
-        {
-            return config.Connections
-                .SelectMany(o => o.Value, (name, conn) => (name.Key, conn.Key, conn.Value))
+        public IObservable<(string, string, object?)> GetConnectionConfigurations()
+            => config.Connections
+                .SelectMany(o => o.Value, (name, conn) => (name.Key, conn.Key, (object?)conn.Value))
                 .ToObservable();
-        }
 
-        public FlowConfig GetFlow(string name)
-                    => config.Flows.TryGetValue(name, out var flow)
+        public FlowConfig? GetFlow(string name)
+            => config.Flows.TryGetValue(name, out var flow)
                 ? flow
                 : default;
 
-        public IObservable<(string Name, FlowConfig Config)> GetFlows()
+        public IObservable<(string Name, FlowConfig? Config)> GetFlows()
             => config.Flows
-                .Select(o => (o.Key, o.Value))
+                .Select(o => (o.Key, (FlowConfig?)o.Value))
                 .ToObservable();
     }
 }

@@ -5,7 +5,7 @@ namespace Yousei.Connectors.Http
 {
     internal record RequestArguments
     {
-        public IParameter Url { get; init; }
+        public IParameter Url { get; init; } = DefaultParameter.Instance;
 
         public IParameter Method { get; init; } = "GET".ToConstantParameter();
 

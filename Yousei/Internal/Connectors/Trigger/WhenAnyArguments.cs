@@ -5,6 +5,6 @@ namespace YouseiReloaded.Internal.Connectors.Trigger
 {
     internal record WhenAnyArguments
     {
-        public List<BlockConfig> Triggers { get; init; }
+        public List<BlockConfig> Triggers { get; init; } = new();
     }
 }

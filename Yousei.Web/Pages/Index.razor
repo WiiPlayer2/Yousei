@@ -52,9 +52,9 @@
 
     private Dictionary<string, List<string>> configurations = new();
 
-    private MonacoEditor editor;
+    private MonacoEditor? editor;
 
-    private ConfigModel currentConfig = null;
+    private ConfigModel? currentConfig = null;
 
     private bool isReadOnly = true;
 
@@ -77,7 +77,9 @@
 
     private async Task Save()
     {
-        if (currentConfig is null || isReadOnly)
+        if (editor is null
+            || currentConfig is null
+            || isReadOnly)
             return;
 
         try
@@ -96,7 +98,9 @@
 
     private async Task Delete()
     {
-        if (currentConfig is null || isReadOnly)
+        if (editor is null
+            || currentConfig is null
+            || isReadOnly)
             return;
 
         await currentConfig.Delete();
@@ -105,13 +109,16 @@
 
     private async Task SetConfig(ConfigModel configModel)
     {
-        string content = default;
+        if (editor is null)
+            return;
+
+        string? content = default;
         try
         {
             var sourceConfig = await configModel.Load();
-            content = sourceConfig.Content;
+            content = sourceConfig?.Content;
             var model = await editor.GetModel();
-            await js.InvokeVoidAsync("blazorMonaco.editor.setModelLanguage", editor.Id, model.Id, sourceConfig.Language ?? string.Empty);
+            await js.InvokeVoidAsync("blazorMonaco.editor.setModelLanguage", editor.Id, model.Id, sourceConfig?.Language ?? string.Empty);
         }
         catch (Exception e)
         {

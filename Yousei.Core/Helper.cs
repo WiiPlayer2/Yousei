@@ -13,13 +13,14 @@ namespace Yousei.Core
         public static string GetStackTrace(this IFlowContext context)
             => string.Join("\n", context.ExecutionStack.Select(o => $"@ {o}"));
 
-        public static TTarget Map<TTarget>(this object source)
-                    => (TTarget)source.Map(typeof(TTarget));
+        public static TTarget? Map<TTarget>(this object? source)
+            => (TTarget?)source.Map(typeof(TTarget));
 
-        public static object Map(this object source, Type targetType)
+        public static object? Map(this object? source, Type targetType)
             => source is null ? null : JToken.FromObject(source).ToObject(targetType);
 
-        public static T SafeCast<T>(this object obj) => obj is T castObj ? castObj : default;
+        public static T? SafeCast<T>(this object? obj)
+            => obj is T castObj ? castObj : default;
 
         public static IDisposable ScopeStack(this IFlowContext context, string frameDescription)
         {
@@ -45,7 +46,7 @@ namespace Yousei.Core
         public static ConstantParameter ToConstantParameter(this object obj)
             => new ConstantParameter(obj);
 
-        public static bool TryToObject<T>(this JToken jtoken, out T result)
+        public static bool TryToObject<T>(this JToken jtoken, out T? result)
         {
             try
             {

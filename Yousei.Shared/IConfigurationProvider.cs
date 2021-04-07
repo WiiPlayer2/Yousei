@@ -5,12 +5,12 @@ namespace Yousei.Shared
 {
     public interface IConfigurationProvider
     {
-        object GetConnectionConfiguration(string type, string name);
+        object? GetConnectionConfiguration(string type, string name);
 
-        IObservable<(string Connector, string Name, object Configuration)> GetConnectionConfigurations();
+        IObservable<(string Connector, string Name, object? Configuration)> GetConnectionConfigurations();
 
-        FlowConfig GetFlow(string name);
+        FlowConfig? GetFlow(string name);
 
-        IObservable<(string Name, FlowConfig Config)> GetFlows();
+        IObservable<(string Name, FlowConfig? Config)> GetFlows();
     }
 }

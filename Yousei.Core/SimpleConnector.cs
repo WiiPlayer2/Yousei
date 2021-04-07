@@ -5,14 +5,15 @@ using Yousei.Shared;
 namespace Yousei.Core
 {
     public abstract class SimpleConnector<TConfiguration> : Connector<TConfiguration>
+        where TConfiguration : notnull
     {
-        private readonly Dictionary<TConfiguration, IConnection> connections = new();
+        private readonly Dictionary<TConfiguration, IConnection?> connections = new();
 
         protected SimpleConnector(string name) : base(name)
         {
         }
 
-        protected IConnection DefaultConnection { get; set; }
+        protected IConnection? DefaultConnection { get; set; }
 
         public override Task Reset()
         {
@@ -21,9 +22,9 @@ namespace Yousei.Core
             return Task.CompletedTask;
         }
 
-        protected abstract IConnection CreateConnection(TConfiguration configuration);
+        protected abstract IConnection? CreateConnection(TConfiguration configuration);
 
-        protected override IConnection GetConnection(TConfiguration configuration)
+        protected override IConnection? GetConnection(TConfiguration? configuration)
         {
             if (configuration is null)
                 return DefaultConnection;

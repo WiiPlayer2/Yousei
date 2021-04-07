@@ -21,13 +21,13 @@ namespace YouseiReloaded.Internal
         private FlowContext(FlowContext from)
             : this(from.Actor, from.Flow)
         {
-            data = from.data.DeepClone() as JObject;
+            data = (JObject)from.data.DeepClone();
             ExecutionStack = new Stack<string>(from.ExecutionStack);
         }
 
         public IFlowActor Actor { get; }
 
-        public string CurrentType { get; set; }
+        public string CurrentType { get; set; } = string.Empty;
 
         public Stack<string> ExecutionStack { get; } = new Stack<string>();
 
@@ -44,8 +44,8 @@ namespace YouseiReloaded.Internal
             var segments = path.SplitPath();
             var relevantObject = segments
                 .Take(segments.Length - 1)
-                .Aggregate(data, (current, segment) => current[segment] as JObject);
-            relevantObject.Remove(segments.Last());
+                .Aggregate((JObject?)data, (current, segment) => current?.Value<JObject>(segment));
+            relevantObject?.Remove(segments.Last());
         }
 
         public IFlowContext Clone() => new FlowContext(this);
@@ -64,14 +64,14 @@ namespace YouseiReloaded.Internal
             return Task.FromResult(true);
         }
 
-        public Task<object> GetData(string path)
+        public Task<object?> GetData(string path)
         {
             var value = path.SplitPath()
-                .Aggregate(data as JToken, (data, segment) => data[segment]);
-            return Task.FromResult<object>(value);
+                .Aggregate((JToken?)data, (data, segment) => data?.Value<JToken>(segment));
+            return Task.FromResult<object?>(value);
         }
 
-        public Task SetData(string path, object data)
+        public Task SetData(string path, object? data)
         {
             if (string.IsNullOrEmpty(path))
                 throw new InvalidOperationException();
@@ -83,9 +83,11 @@ namespace YouseiReloaded.Internal
                 var segment = segments[i];
                 if (i < segments.Length - 1)
                 {
-                    if (current[segment] is not JObject)
-                        current[segment] = new JObject();
-                    current = current[segment];
+                    var next = current[segment];
+                    if (next is not JObject)
+                        next = new JObject();
+                    current[segment] = next;
+                    current = next;
                     continue;
                 }
 
@@ -94,7 +96,7 @@ namespace YouseiReloaded.Internal
             return Task.CompletedTask;
         }
 
-        public Task SetData(object data)
+        public Task SetData(object? data)
             => SetData(CurrentType, data);
     }
 }
