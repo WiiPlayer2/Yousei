@@ -37,7 +37,7 @@ namespace Yousei.Web.Api
             var request = new GraphQLRequest
             {
                 Query = @"
-query Configuration($connector: String, $name: String) {
+query Configuration($connector: String!, $name: String!) {
   database {
     configuration(connector: $connector, name: $name) {
       config {
@@ -53,11 +53,10 @@ query Configuration($connector: String, $name: String) {
                     name,
                 },
             };
-            var response = await requestHandler.Query<JToken>(request, logger);
-            return response?
-                .Value<JToken>("database")?
-                .Value<JToken>("configuration")?
-                .Value<SourceConfig>("config");
+            var response = await requestHandler.Query<Query>(request, logger);
+            return response.Database?
+                .Configuration?
+                .Config;
         }
 
         public Task<FlowConfig?> GetFlow(string name)
@@ -70,7 +69,7 @@ query Configuration($connector: String, $name: String) {
             var request = new GraphQLRequest
             {
                 Query = @"
-query Flow($name: String) {
+query Flow($name: String!) {
   database {
     flow(name: $name) {
       config {
@@ -85,11 +84,10 @@ query Flow($name: String) {
                     name = name,
                 },
             };
-            var response = await requestHandler.Query<JToken>(request, logger);
-            return response?
-                .Value<JToken>("database")?
-                .Value<JToken>("flow")?
-                .Value<SourceConfig>("config");
+            var response = await requestHandler.Query<Query>(request, logger);
+            return response.Database?
+                .Flow?
+                .Config;
         }
 
         public async Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> ListConfigurations()
@@ -105,11 +103,15 @@ query {
     }
   }
 }");
-            var response = await requestHandler.Query<JToken>(request, logger);
-            return response?
-                .Value<JToken>("database")?
-                .Value<List<ConnectionOutput>>("connections")?
-                .ToDictionary(o => o.Id, o => (IReadOnlyList<string>)o.Configurations.Select(o => o.Name).ToList())
+            var response = await requestHandler.Query<Query>(request, logger);
+            return response.Database?
+                .Connections?
+                .ToDictionary(
+                    o => o.Id ?? string.Empty,
+                    o => o.Configurations?
+                        .Select(o => o.Name ?? string.Empty)?
+                        .ToList()
+                        ?? (IReadOnlyList<string>)Array.Empty<string>())
                 ?? new Dictionary<string, IReadOnlyList<string>>();
         }
 
@@ -123,11 +125,10 @@ query {
     }
   }
 }");
-            var response = await requestHandler.Query<JToken>(request, logger);
-            return response?
-                .Value<JToken>("database")?
-                .Value<List<FlowOutput>>("flows")?
-                .Select(o => o.Name)
+            var response = await requestHandler.Query<Query>(request, logger);
+            return response.Database?
+                .Flows?
+                .Select(o => o.Name ?? string.Empty)?
                 .ToList()
                 ?? (IReadOnlyList<string>)Array.Empty<string>();
         }
@@ -137,7 +138,7 @@ query {
             var request = new GraphQLRequest
             {
                 Query = @"
-mutation SetConfiguration($connector: String, $name: String, $source: SourceConfigInput) {
+mutation SetConfiguration($connector: String!, $name: String!, $source: SourceConfigInput) {
   setConfiguration(connector: $connector, name: $name, source: $source) {
     name
   }
@@ -157,7 +158,7 @@ mutation SetConfiguration($connector: String, $name: String, $source: SourceConf
             var request = new GraphQLRequest
             {
                 Query = @"
-mutation SetFlow($name: String, $source: SourceConfigInput) {
+mutation SetFlow($name: String!, $source: SourceConfigInput) {
   setFlow(name: $name, source: $source) {
     name
   }
@@ -182,11 +183,10 @@ query {
     }
 }",
             };
-            var response = await requestHandler.Query<JToken>(request, logger);
-            return response?
-                .Value<JToken>("database")?
-                .Value<bool>("isReadOnly")
-                ?? true;
+            var response = await requestHandler.Query<Query>(request, logger);
+            return response.Database?
+                .IsReadOnly
+                ?? false;
         }
 
         private record ConfigurationOutput(string Name);
