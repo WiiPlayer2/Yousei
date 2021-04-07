@@ -17,7 +17,7 @@ namespace Yousei.Api.Mutations
         public async Task<Configuration> SetConfiguration(
             string connector,
             string name,
-            SourceConfig source,
+            SourceConfig? source,
             [Service] IApi api)
         {
             await api.ConfigurationDatabase.SetConfiguration(connector, name, source);
@@ -26,7 +26,7 @@ namespace Yousei.Api.Mutations
 
         public async Task<Flow> SetFlow(
             string name,
-            SourceConfig source,
+            SourceConfig? source,
             [Service] IApi api)
         {
             await api.ConfigurationDatabase.SetFlow(name, source);
