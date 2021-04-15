@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yousei.Connectors", "Yousei
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yousei.Web", "Yousei.Web\Yousei.Web.csproj", "{A38A515C-871E-4F08-9383-44A89E116D14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yousei.SourceGen", "Yousei.SourceGen\Yousei.SourceGen.csproj", "{5B5E7E3E-3A74-4AC5-96FF-9265B112429F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yousei.SourceGen", "Yousei.SourceGen\Yousei.SourceGen.csproj", "{5B5E7E3E-3A74-4AC5-96FF-9265B112429F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yousei.Core.Test", "Yousei.Core.Test\Yousei.Core.Test.csproj", "{A5F7D3C5-F1AD-4D70-B54D-C82BBFAE47EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{5B5E7E3E-3A74-4AC5-96FF-9265B112429F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B5E7E3E-3A74-4AC5-96FF-9265B112429F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B5E7E3E-3A74-4AC5-96FF-9265B112429F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5F7D3C5-F1AD-4D70-B54D-C82BBFAE47EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5F7D3C5-F1AD-4D70-B54D-C82BBFAE47EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5F7D3C5-F1AD-4D70-B54D-C82BBFAE47EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5F7D3C5-F1AD-4D70-B54D-C82BBFAE47EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
