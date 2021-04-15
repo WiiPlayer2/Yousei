@@ -8,7 +8,7 @@ namespace Yousei.Core.Test
     public class ActionDisposableTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void ExecuteActionWhenDisposed()
         {
             // Arrange
             var flag = false;
