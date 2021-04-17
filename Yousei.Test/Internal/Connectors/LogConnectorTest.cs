@@ -37,9 +37,6 @@ namespace Yousei.Test.Internal.Connectors
                 It.IsAny<Func<It.IsAnyType, Exception, string>>()));
         }
 
-        protected override IConnection? CreateConnection(object? configuration = default)
-            => CreateConnector().GetConnection(configuration);
-
         protected override IConnector CreateConnector()
             => new LogConnector(loggerMock.Object);
     }

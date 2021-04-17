@@ -16,7 +16,8 @@ namespace Yousei.Test.Internal.Connectors
         protected Task Act(string name, object? arguments = default, object? configuration = default)
             => CreateConnection(configuration)?.CreateAction(name)?.Act(flowContextMock.Object, arguments) ?? Task.CompletedTask;
 
-        protected abstract IConnection? CreateConnection(object? configuration = default);
+        protected IConnection? CreateConnection(object? configuration = default)
+            => CreateConnector().GetConnection(configuration);
 
         protected abstract IConnector CreateConnector();
     }
