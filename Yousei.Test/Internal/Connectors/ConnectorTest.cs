@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Shared;
@@ -20,5 +21,8 @@ namespace Yousei.Test.Internal.Connectors
             => CreateConnector().GetConnection(configuration);
 
         protected abstract IConnector CreateConnector();
+
+        protected IObservable<object> Trigger(string name, object? arguments = default, object? configuration = default)
+                            => CreateConnection(configuration)?.CreateTrigger(name)?.GetEvents(flowContextMock.Object, arguments) ?? Observable.Empty<object>();
     }
 }
