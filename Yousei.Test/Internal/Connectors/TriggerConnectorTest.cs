@@ -35,6 +35,7 @@ namespace Yousei.Test.Internal.Connectors
             var trigger = Trigger("distinct", arguments).Observe();
 
             // Assert
+            trigger.Should().Push(5);
             trigger.RecordedMessages.Should().BeEquivalentTo(1, 2, 3, 4, 1);
         }
 
@@ -103,6 +104,7 @@ namespace Yousei.Test.Internal.Connectors
             subject3.OnNext(3);
 
             // Assert
+            trigger.Should().Push(6);
             trigger.RecordedMessages.Should().BeEquivalentTo(
                 new { Source = "testing.test1", Data = 1 },
                 new { Source = "testing.test2", Data = 2 },
