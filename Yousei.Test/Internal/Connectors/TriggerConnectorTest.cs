@@ -9,7 +9,7 @@ using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 using Yousei.Shared;
-using YouseiReloaded.Internal.Connectors.Trigger;
+using Yousei.Internal.Connectors.Trigger;
 
 namespace Yousei.Test.Internal.Connectors
 {

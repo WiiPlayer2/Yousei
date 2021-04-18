@@ -8,8 +8,7 @@ using Yousei;
 using Yousei.Core;
 using Yousei.Internal;
 using Yousei.Shared;
-using YouseiReloaded.Internal;
-using YouseiReloaded.Internal.Connectors.Internal;
+using Yousei.Internal.Connectors.Internal;
 
 namespace Yousei
 {

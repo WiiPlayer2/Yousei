@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using Yousei.Core;
-using YouseiReloaded.Serialization.Yaml;
+using Yousei.Serialization.Yaml;
 
 namespace Yousei.Serialization.Yaml
 {

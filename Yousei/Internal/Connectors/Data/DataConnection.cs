@@ -1,6 +1,6 @@
 ﻿using Yousei.Core;
 
-namespace YouseiReloaded.Internal.Connectors.Data
+namespace Yousei.Internal.Connectors.Data
 {
     internal class DataConnection : SimpleConnection
     {

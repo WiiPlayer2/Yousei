@@ -11,13 +11,13 @@ using Yousei.Connectors.Transmission;
 using Yousei.Connectors.Rss;
 using Yousei.Shared;
 using YouseiRelaoded.Internal.Connectors.Log;
-using YouseiReloaded.Internal.Connectors.Control;
-using YouseiReloaded.Internal.Connectors.Data;
-using YouseiReloaded.Internal.Connectors.Internal;
-using YouseiReloaded.Internal.Connectors.Trigger;
+using Yousei.Internal.Connectors.Control;
+using Yousei.Internal.Connectors.Data;
+using Yousei.Internal.Connectors.Internal;
+using Yousei.Internal.Connectors.Trigger;
 using Yousei.Internal.Connectors.Debug;
 
-namespace YouseiReloaded.Internal
+namespace Yousei.Internal
 {
     internal class ConnectorRegistry : IConnectorRegistry
     {

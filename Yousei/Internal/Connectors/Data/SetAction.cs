@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Data
+namespace Yousei.Internal.Connectors.Data
 {
     internal class SetAction : FlowAction<SetArguments>
     {

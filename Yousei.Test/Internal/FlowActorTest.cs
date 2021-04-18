@@ -8,7 +8,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Yousei.Shared;
-using YouseiReloaded.Internal;
+using Yousei.Internal;
 
 namespace Yousei.Test.Internal
 {

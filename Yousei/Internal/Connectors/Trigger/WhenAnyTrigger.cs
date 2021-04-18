@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using Yousei.Core;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Trigger
+namespace Yousei.Internal.Connectors.Trigger
 {
     internal class WhenAnyTrigger : FlowTrigger<WhenAnyArguments>
     {

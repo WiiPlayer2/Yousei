@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Shared;
-using YouseiReloaded.Internal.Connectors.Internal;
+using Yousei.Internal.Connectors.Internal;
 
 namespace Yousei.Test.Internal.Connectors
 {

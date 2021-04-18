@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal
+namespace Yousei.Internal
 {
     internal class FlowContext : IFlowContext
     {

@@ -10,7 +10,7 @@ using Yousei.Serialization.Yaml;
 using Yousei.Shared;
 using IConfigurationProvider = Yousei.Shared.IConfigurationProvider;
 
-namespace YouseiReloaded.Serialization.Yaml
+namespace Yousei.Serialization.Yaml
 {
     internal class YamlConfigurationProvider : IConfigurationProvider
     {

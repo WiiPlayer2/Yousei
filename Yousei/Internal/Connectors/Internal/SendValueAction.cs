@@ -4,7 +4,7 @@ using Yousei.Shared;
 using System.Threading.Tasks;
 using System;
 
-namespace YouseiReloaded.Internal.Connectors.Internal
+namespace Yousei.Internal.Connectors.Internal
 {
     internal class SendValueAction : FlowAction<SendValueArguments>
     {
