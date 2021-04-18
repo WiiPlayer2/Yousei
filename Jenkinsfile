@@ -68,8 +68,10 @@ pipeline {
 
         stage('Test') {
             steps {
-                docker.image('mcr.microsoft.com/dotnet/sdk:5.0').inside {
-                    sh 'dotnet test ./Yousei.sln --configuration Release --collect:"XPlat Code Coverage" --logger "console;verbosity=detailed" --logger trx'
+                script {
+                    docker.image('mcr.microsoft.com/dotnet/sdk:5.0').inside {
+                        sh 'dotnet test ./Yousei.sln --configuration Release --collect:"XPlat Code Coverage" --logger "console;verbosity=detailed" --logger trx'
+                    }
                 }
                 mstest testResultsFile:"**/*.trx", keepLongStdio: true
                 cobertura autoUpdateHealth: false,
