@@ -66,6 +66,31 @@ pipeline {
             }
         }
 
+        stage('Test') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/dotnet/sdk:5.0'
+                }
+            }
+            steps {
+                sh 'dotnet test ./Yousei.sln --configuration Release --collect:"XPlat Code Coverage" --logger "console;verbosity=detailed" --logger trx'
+                mstest testResultsFile:"**/*.trx", keepLongStdio: true
+                cobertura autoUpdateHealth: false,
+                    autoUpdateStability: false,
+                    coberturaReportFile: '**/coverage.cobertura.xml',
+                    conditionalCoverageTargets: '70, 0, 0',
+                    enableNewApi: true,
+                    failUnhealthy: false,
+                    failUnstable: false,
+                    lineCoverageTargets: '80, 0, 0',
+                    maxNumberOfBuilds: 0,
+                    methodCoverageTargets: '80, 0, 0',
+                    onlyStable: false,
+                    sourceEncoding: 'ASCII',
+                    zoomCoverageChart: false
+            }
+        }
+
         stage('Publish') {
             when { branch pattern: "main|dev", comparator: "REGEXP" }
             parallel {
