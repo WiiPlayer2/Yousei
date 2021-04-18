@@ -147,15 +147,6 @@ namespace Yousei.Test.Internal.Connectors
 
         #region Factory etc.
 
-        private Mock<IFlowActor> flowActorMock = new Mock<IFlowActor>();
-
-        [TestInitialize]
-        public void Initialize()
-        {
-            flowContextMock.Setup(o => o.Actor).Returns(flowActorMock.Object);
-            flowContextMock.Setup(o => o.ExecutionStack).Returns(new Stack<string>());
-        }
-
         protected override IConnector CreateConnector()
             => new ControlConnector();
 
