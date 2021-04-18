@@ -69,7 +69,8 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh "find . -name '**/TestResults/*' -delete"
+                sh "find . -name '*.trx' -delete"
+                sh "find . -name 'coverage.cobertura.xml' -delete"
                 script {
                     docker.image('mcr.microsoft.com/dotnet/sdk:5.0').inside {
                         sh 'dotnet test ./Yousei.sln --configuration Release --collect:"XPlat Code Coverage" --logger "console;verbosity=detailed" --logger trx'
