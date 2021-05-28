@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 using Yousei.Serialization.Yaml;
 using Yousei.Shared;
-using YouseiReloaded.Serialization.Yaml;
 
 namespace Yousei.Internal.Database
 {

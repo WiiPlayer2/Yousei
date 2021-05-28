@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Trigger
+namespace Yousei.Internal.Connectors.Trigger
 {
     internal class PeriodicTrigger : FlowTrigger<PeriodicArguments>
     {

@@ -5,7 +5,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using Yousei;
 
-namespace YouseiReloaded.Internal.Connectors.Internal
+namespace Yousei.Internal.Connectors.Internal
 {
     internal class InternalConnection : SimpleConnection
     {

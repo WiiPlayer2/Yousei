@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace YouseiReloaded.Internal.Connectors.Internal
+namespace Yousei.Internal.Connectors.Internal
 {
     [JsonConverter(typeof(StringEnumConverter))]
     internal enum InternalEvent

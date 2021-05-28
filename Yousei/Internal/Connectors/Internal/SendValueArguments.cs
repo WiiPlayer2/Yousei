@@ -1,7 +1,7 @@
 ﻿using Yousei.Core;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Internal
+namespace Yousei.Internal.Connectors.Internal
 {
     internal record SendValueArguments
     {

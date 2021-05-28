@@ -1,6 +1,6 @@
 ﻿using Yousei.Core;
 
-namespace YouseiReloaded.Internal.Connectors.Control
+namespace Yousei.Internal.Connectors.Control
 {
     internal class ControlConnection : SimpleConnection
     {

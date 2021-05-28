@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Serialization.Yaml
+namespace Yousei.Serialization.Yaml
 {
     internal class YamlConfig
     {

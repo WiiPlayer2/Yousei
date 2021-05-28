@@ -1,6 +1,6 @@
 ﻿using Yousei.Core;
 
-namespace YouseiReloaded.Internal.Connectors.Trigger
+namespace Yousei.Internal.Connectors.Trigger
 {
     internal class TriggerConnection : SimpleConnection
     {

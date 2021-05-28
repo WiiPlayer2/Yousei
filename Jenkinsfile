@@ -8,6 +8,7 @@ pipeline {
 
     environment {
         CLEAN_GIT_BRANCH = "${env.GIT_BRANCH.replaceAll('/', '_')}"
+        DOTNET_CLI_HOME = "/tmp/DOTNET_CLI_HOME"
     }
 
     stages {
@@ -62,6 +63,32 @@ pipeline {
                             built_web = true;
                         }
                     }
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh "find . -name '*.trx' -delete"
+                sh "find . -name 'coverage.cobertura.xml' -delete"
+                script {
+                    docker.image('mcr.microsoft.com/dotnet/sdk:5.0').inside {
+                        sh 'dotnet test ./Yousei.sln --configuration Release --collect:"XPlat Code Coverage" --logger "console;verbosity=detailed" --logger trx'
+                    }
+                }
+            }
+            post {
+                always {
+                    mstest testResultsFile:"**/*.trx", keepLongStdio: true
+                    cobertura autoUpdateHealth: true,
+                        autoUpdateStability: true,
+                        coberturaReportFile: '**/coverage.cobertura.xml',
+                        enableNewApi: true,
+                        failUnhealthy: true,
+                        conditionalCoverageTargets: '70, 50, 0',
+                        lineCoverageTargets: '80, 60, 0',
+                        methodCoverageTargets: '80, 60, 0',
+                        zoomCoverageChart: false
                 }
             }
         }

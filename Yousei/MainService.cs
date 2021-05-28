@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Yousei;
-using YouseiReloaded.Internal.Connectors.Internal;
+using Yousei.Internal.Connectors.Internal;
 
 namespace Yousei
 {

@@ -8,7 +8,7 @@ using System.Reactive;
 using Yousei.Shared;
 using Yousei;
 
-namespace YouseiReloaded.Internal.Connectors.Internal
+namespace Yousei.Internal.Connectors.Internal
 {
     internal class InternalConnector : SingletonConnector
     {

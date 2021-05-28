@@ -1,4 +1,4 @@
-﻿namespace YouseiReloaded.Internal.Connectors.Internal
+﻿namespace Yousei.Internal.Connectors.Internal
 {
     internal record OnValueConfiguration
     {

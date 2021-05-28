@@ -1,4 +1,4 @@
-﻿namespace YouseiReloaded.Serialization.Yaml
+﻿namespace Yousei.Serialization.Yaml
 {
     internal class Options
     {

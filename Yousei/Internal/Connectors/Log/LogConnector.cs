@@ -7,9 +7,9 @@ namespace YouseiRelaoded.Internal.Connectors.Log
 {
     internal class LogConnector : SingletonConnector
     {
-        private readonly ILogger<LogConnector> logger;
+        private readonly ILogger logger;
 
-        public LogConnector(ILogger<LogConnector> logger) : base("log")
+        public LogConnector(ILogger logger) : base("log")
         {
             this.logger = logger;
         }

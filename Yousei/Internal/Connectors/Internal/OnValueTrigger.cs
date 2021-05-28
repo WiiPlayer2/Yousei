@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using Yousei.Shared;
 using System.Reactive;
 
-namespace YouseiReloaded.Internal.Connectors.Internal
+namespace Yousei.Internal.Connectors.Internal
 {
     internal class OnValueTrigger : FlowTrigger<OnValueConfiguration>
     {

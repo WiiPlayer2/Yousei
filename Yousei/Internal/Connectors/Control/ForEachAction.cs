@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Control
+namespace Yousei.Internal.Connectors.Control
 {
     internal class ForEachAction : FlowAction<ForEachArguments>
     {

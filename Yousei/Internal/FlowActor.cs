@@ -6,7 +6,7 @@ using Yousei.Core;
 using Yousei.Internal;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal
+namespace Yousei.Internal
 {
     internal class FlowActor : IFlowActor
     {

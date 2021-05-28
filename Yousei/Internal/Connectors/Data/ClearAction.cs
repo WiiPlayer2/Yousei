@@ -4,7 +4,7 @@ using Yousei.Core;
 using Yousei.Internal;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Data
+namespace Yousei.Internal.Connectors.Data
 {
     internal class ClearAction : FlowAction<ClearArguments>
     {

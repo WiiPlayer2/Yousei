@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yousei.Shared;
-using YouseiReloaded.Internal;
+using Yousei.Internal;
 using System.Reactive.Linq;
 using HotChocolate.Types;
 using Yousei.Api.Types;
