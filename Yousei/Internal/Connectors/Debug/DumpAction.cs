@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.CodeDom.Compiler;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
@@ -26,62 +26,97 @@ namespace Yousei.Internal.Connectors.Debug
         protected override async Task Act(IFlowContext context, Unit arguments)
         {
             var contextObj = await context.AsObject();
-            var str = GetStringRepresentation(contextObj);
+            var str = GetString(() => contextObj);
             global::System.Diagnostics.Debug.WriteLine(str);
             logger.LogDebug(str);
         }
 
-        private string GetStringRepresentation(object? obj)
+        private static string GetString(Func<object?> getObj)
         {
-            var stringWriter = new StringWriter();
-            var writer = new IndentedTextWriter(stringWriter);
-            WriteString(obj);
-            writer.Flush();
-            return stringWriter.ToString();
-
-            void WriteString(object? obj)
+            try
             {
+                var obj = getObj();
                 if (obj is null)
-                    return;
+                    return string.Empty;
+                if (obj.GetType().IsPrimitive || obj is string)
+                    return obj.ToString() ?? string.Empty;
+                if (obj is ExpandoObject expandoObject)
+                    return GetString(expandoObject);
+                if (obj is IEnumerable enumerable)
+                    return GetString(enumerable);
 
-                try
+                var str = obj.ToString();
+                if (str != obj.GetType().FullName)
+                    return str ?? string.Empty;
+
+                return GetString(obj);
+            }
+            catch (Exception e)
+            {
+                return $"[{e.GetType().FullName}: {e.Message}]";
+            }
+        }
+
+        private static string GetString(ExpandoObject obj)
+        {
+            if (obj.Any())
+            {
+                var stringWriter = new StringWriter();
+                var writer = new IndentedTextWriter(stringWriter);
+                writer.WriteLine("{");
+                using (writer.Indent())
                 {
-                    try
-                    {
-                        var str = obj.ToString();
-                        if (str != obj.GetType().FullName)
-                        {
-                            writer.WriteLine(str);
-                            return;
-                        }
-                    }
-                    catch { }
-
-                    if (obj is ExpandoObject && obj is IDictionary<string, object?> expandoDict)
-                    {
-                        writer.WriteLine("{");
-
-                        // Indent
-                        writer.Indent++;
-                        foreach (var (key, value) in expandoDict)
-                        {
-                            writer.Write($"{key}: ");
-                            WriteString(value);
-                        }
-                        // Unindent
-                        writer.Indent--;
-
-                        writer.WriteLine("}");
-                    }
-                    else
-                    {
-                        writer.WriteLine(obj.GetType().FullName);
-                    }
+                    writer.WriteLine(string.Join("," + writer.NewLine, obj.Select(kv => $"{kv.Key}: {GetString(() => kv.Value)}")));
                 }
-                catch (Exception e)
+                writer.Write("}");
+                return stringWriter.ToString();
+            }
+            else
+            {
+                return "{}";
+            }
+        }
+
+        private static string GetString(IEnumerable obj)
+        {
+            var items = obj.Cast<object?>().ToList();
+            if (items.Any())
+            {
+                var stringWriter = new StringWriter();
+                var writer = new IndentedTextWriter(stringWriter);
+                writer.WriteLine("[");
+                using (writer.Indent())
                 {
-                    writer.WriteLine($"[{e.GetType().FullName}: {e.Message}]");
+                    writer.WriteLine(string.Join("," + writer.NewLine, items.Select(v => GetString(() => v))));
                 }
+                writer.Write("]");
+                return stringWriter.ToString();
+            }
+            else
+            {
+                return "[]";
+            }
+        }
+
+        private static string GetString(object obj)
+        {
+            var type = obj.GetType();
+            var properties = type.GetProperties();
+            if (properties.Any())
+            {
+                var stringWriter = new StringWriter();
+                var writer = new IndentedTextWriter(stringWriter);
+                writer.WriteLine($"{type.FullName} {{");
+                using (writer.Indent())
+                {
+                    writer.WriteLine(string.Join("," + writer.NewLine, properties.Select(prop => $"{prop.Name}: {GetString(() => prop.GetValue(obj))}")));
+                }
+                writer.Write("}");
+                return stringWriter.ToString();
+            }
+            else
+            {
+                return type.FullName ?? obj.ToString() ?? string.Empty;
             }
         }
     }
