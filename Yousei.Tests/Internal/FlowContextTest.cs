@@ -28,6 +28,7 @@ namespace Yousei.Test.Internal
             // Assert
             using (new AssertionScope())
             {
+                result.Should().NotBeSameAs(context);
                 result.Should().BeEquivalentTo(context);
                 (await result.AsObject()).Should().BeEquivalentTo(await context.AsObject());
             }

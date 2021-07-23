@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -45,6 +46,18 @@ namespace Yousei.Core
 
         public static ConstantParameter ToConstantParameter(this object obj)
             => new ConstantParameter(obj);
+
+        public static bool TryGetValue(this IDictionary dictionary, object key, out object? value)
+        {
+            if (dictionary.Contains(key))
+            {
+                value = dictionary[key];
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
 
         public static bool TryToObject<T>(this JToken jtoken, out T? result)
         {
