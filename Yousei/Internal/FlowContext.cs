@@ -26,7 +26,7 @@ namespace Yousei.Internal
         private FlowContext(FlowContext from)
             : this(from.Actor, from.Flow)
         {
-            data = from.data; // TODO implement
+            data = Clone(from.data);
             ExecutionStack = new Stack<string>(from.ExecutionStack);
         }
 
@@ -69,6 +69,17 @@ namespace Yousei.Internal
             var segments = path.SplitPath();
             Set(this.data, segments, data);
             return Task.CompletedTask;
+        }
+
+        private ExpandoObject Clone(ExpandoObject obj)
+        {
+            var ret = new ExpandoObject();
+            var retDict = ret as IDictionary<string, object?>;
+            foreach (var (key, value) in obj)
+            {
+                retDict[key] = value is ExpandoObject expandoValue ? Clone(expandoValue) : value;
+            }
+            return ret;
         }
 
         private bool Exists(object obj, string[] path)
