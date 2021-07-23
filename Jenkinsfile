@@ -81,7 +81,7 @@ pipeline {
                 always {
                     mstest testResultsFile:"**/*.trx", keepLongStdio: true
                     cobertura autoUpdateHealth: true,
-                        autoUpdateStability: true,
+                        autoUpdateStability: false,
                         coberturaReportFile: '**/coverage.cobertura.xml',
                         enableNewApi: true,
                         failUnhealthy: true,
