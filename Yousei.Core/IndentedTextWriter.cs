@@ -15,7 +15,7 @@ namespace Yousei.Core
 
         private int indentLevel = 0;
 
-        private bool indentNextTime = false;
+        private bool indentNextTime = true;
 
         public IndentedTextWriter(TextWriter baseWriter, int indentLength = 4)
         {
