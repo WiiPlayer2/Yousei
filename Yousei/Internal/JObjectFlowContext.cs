@@ -77,26 +77,28 @@ namespace Yousei.Internal
                 throw new InvalidOperationException();
 
             var segments = path.SplitPath();
-            JToken current = this.data;
-            for (var i = 0; i < segments.Length; i++)
-            {
-                var segment = segments[i];
-                if (i < segments.Length - 1)
-                {
-                    var next = current[segment];
-                    if (next is not JObject)
-                        next = new JObject();
-                    current[segment] = next;
-                    current = next;
-                    continue;
-                }
-
-                current[segment] = data.Map<JToken>();
-            }
+            SetData(this.data, segments, data);
             return Task.CompletedTask;
         }
 
         public Task SetData(object? data)
             => SetData(CurrentType, data);
+
+        private void SetData(JToken current, string[] segments, object? data)
+        {
+            if (segments.Length == 1)
+            {
+                current[segments[0]] = data.Map<JToken>();
+                return;
+            }
+
+            var next = current[segments[0]];
+            if (next is null || next is not JObject)
+            {
+                next = new JObject();
+                current[segments[0]] = next;
+            }
+            SetData(next, segments.Skip(1).ToArray(), data);
+        }
     }
 }
