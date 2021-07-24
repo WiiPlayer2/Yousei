@@ -26,30 +26,32 @@ namespace Yousei.Internal.Connectors.Debug
         protected override async Task Act(IFlowContext context, Unit arguments)
         {
             var contextObj = await context.AsObject();
-            var str = GetString(() => contextObj);
+            var str = GetString(() => contextObj, new HashSet<object>());
             global::System.Diagnostics.Debug.WriteLine(str);
             logger.LogDebug(str);
         }
 
-        private static string GetString(Func<object?> getObj)
+        private static string GetString(Func<object?> getObj, ISet<object> seenObjects)
         {
             try
             {
                 var obj = getObj();
                 if (obj is null)
                     return string.Empty;
-                if (obj.GetType().IsPrimitive || obj is string)
+                if (obj.GetType().IsPrimitive
+                    || obj is string
+                    || obj is DateTime
+                    || obj is DateTimeOffset
+                    || !seenObjects.Add(obj))
                     return obj.ToString() ?? string.Empty;
+
+                if (obj is IEnumerable<byte> byteEnumberable)
+                    return GetString(byteEnumberable);
                 if (obj is ExpandoObject expandoObject)
-                    return GetString(expandoObject);
+                    return GetString(expandoObject, seenObjects);
                 if (obj is IEnumerable enumerable)
-                    return GetString(enumerable);
-
-                var str = obj.ToString();
-                if (str != obj.GetType().FullName)
-                    return str ?? string.Empty;
-
-                return GetString(obj);
+                    return GetString(enumerable, seenObjects);
+                return GetString(obj, seenObjects);
             }
             catch (Exception e)
             {
@@ -57,7 +59,10 @@ namespace Yousei.Internal.Connectors.Debug
             }
         }
 
-        private static string GetString(ExpandoObject obj)
+        private static string GetString(IEnumerable<byte> obj)
+            => string.Concat(obj.Select(o => o.ToString("X2")));
+
+        private static string GetString(ExpandoObject obj, ISet<object> seenObjects)
         {
             if (obj.Any())
             {
@@ -66,7 +71,7 @@ namespace Yousei.Internal.Connectors.Debug
                 writer.WriteLine("{");
                 using (writer.Indent())
                 {
-                    writer.WriteLine(string.Join("," + writer.NewLine, obj.Select(kv => $"{kv.Key}: {GetString(() => kv.Value)}")));
+                    writer.WriteLine(string.Join("," + writer.NewLine, obj.Select(kv => $"{kv.Key}: {GetString(() => kv.Value, seenObjects)}")));
                 }
                 writer.Write("}");
                 return stringWriter.ToString();
@@ -77,7 +82,7 @@ namespace Yousei.Internal.Connectors.Debug
             }
         }
 
-        private static string GetString(IEnumerable obj)
+        private static string GetString(IEnumerable obj, ISet<object> seenObjects)
         {
             var items = obj.Cast<object?>().ToList();
             if (items.Any())
@@ -87,7 +92,7 @@ namespace Yousei.Internal.Connectors.Debug
                 writer.WriteLine("[");
                 using (writer.Indent())
                 {
-                    writer.WriteLine(string.Join("," + writer.NewLine, items.Select(v => GetString(() => v))));
+                    writer.WriteLine(string.Join("," + writer.NewLine, items.Select(v => GetString(() => v, seenObjects))));
                 }
                 writer.Write("]");
                 return stringWriter.ToString();
@@ -98,10 +103,10 @@ namespace Yousei.Internal.Connectors.Debug
             }
         }
 
-        private static string GetString(object obj)
+        private static string GetString(object obj, ISet<object> seenObjects)
         {
             var type = obj.GetType();
-            var properties = type.GetProperties();
+            var properties = type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
             if (properties.Any())
             {
                 var stringWriter = new StringWriter();
@@ -109,14 +114,14 @@ namespace Yousei.Internal.Connectors.Debug
                 writer.WriteLine($"{type.FullName} {{");
                 using (writer.Indent())
                 {
-                    writer.WriteLine(string.Join("," + writer.NewLine, properties.Select(prop => $"{prop.Name}: {GetString(() => prop.GetValue(obj))}")));
+                    writer.WriteLine(string.Join("," + writer.NewLine, properties.Select(prop => $"{prop.Name}: {GetString(() => prop.GetValue(obj), seenObjects)}")));
                 }
                 writer.Write("}");
                 return stringWriter.ToString();
             }
             else
             {
-                return type.FullName ?? obj.ToString() ?? string.Empty;
+                return obj.ToString() ?? type.FullName ?? string.Empty;
             }
         }
     }
