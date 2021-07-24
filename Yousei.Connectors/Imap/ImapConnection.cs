@@ -16,6 +16,7 @@ using Yousei.Shared;
 
 namespace Yousei.Connectors.Imap
 {
+    // TODO: use a single ImapClient instance for this connection and dispose it on connection disposing (is not implemented yet)
     internal class ImapConnection : SimpleConnection
     {
         private readonly ImapConfiguration config;
