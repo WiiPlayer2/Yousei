@@ -2,18 +2,13 @@
 using FluentAssertions.Execution;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Yousei.Shared;
-using Yousei.Internal;
 
 namespace Yousei.Test.Internal
 {
     [TestClass]
-    public class FlowContextTest
+    public abstract class FlowContextTest
     {
         [TestMethod]
         public async Task CloneReturnsEquivalentContext()
@@ -21,17 +16,36 @@ namespace Yousei.Test.Internal
             // Arrange
             var context = CreateContext();
             await context.SetData("testing", "test");
+            var sourceObject = await context.AsObject();
 
             // Act
             var result = context.Clone();
+            var resultObject = await result.AsObject();
 
             // Assert
             using (new AssertionScope())
             {
                 result.Should().NotBeSameAs(context);
                 result.Should().BeEquivalentTo(context);
-                (await result.AsObject()).Should().BeEquivalentTo(await context.AsObject());
+                resultObject.Should().NotBeSameAs(sourceObject);
+                resultObject.Should().BeEquivalentTo(sourceObject);
             }
+        }
+
+        [TestMethod]
+        public async Task OverwritingDataActuallyOverwritesData()
+        {
+            // Arrange
+            var context = CreateContext();
+            await context.SetData("testing.test", 123);
+
+            // Act
+            await context.SetData("testing.test", 456);
+
+            // Assert
+            dynamic data = await context.AsObject();
+            int value = data.testing.test;
+            value.Should().Be(456);
         }
 
         [TestMethod]
@@ -51,10 +65,9 @@ namespace Yousei.Test.Internal
 
         #region Factory etc.
 
-        private readonly Mock<IFlowActor> flowActorMock = new();
+        protected readonly Mock<IFlowActor> flowActorMock = new();
 
-        private FlowContext CreateContext()
-            => new FlowContext(flowActorMock.Object, "testing");
+        protected abstract IFlowContext CreateContext();
 
         #endregion Factory etc.
     }

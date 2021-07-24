@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using System;
-using System.CodeDom.Compiler;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
@@ -26,62 +27,103 @@ namespace Yousei.Internal.Connectors.Debug
         protected override async Task Act(IFlowContext context, Unit arguments)
         {
             var contextObj = await context.AsObject();
-            var str = GetStringRepresentation(contextObj);
+            var str = GetString(() => contextObj, new HashSet<object>());
             global::System.Diagnostics.Debug.WriteLine(str);
             logger.LogDebug(str);
         }
 
-        private string GetStringRepresentation(object? obj)
+        private static string GetString(Func<object?> getObj, ISet<object> seenObjects)
         {
-            var stringWriter = new StringWriter();
-            var writer = new IndentedTextWriter(stringWriter);
-            WriteString(obj);
-            writer.Flush();
-            return stringWriter.ToString();
-
-            void WriteString(object? obj)
+            try
             {
+                var obj = getObj();
                 if (obj is null)
-                    return;
+                    return string.Empty;
+                if (obj.GetType().IsPrimitive
+                    || obj is string
+                    || obj is DateTime
+                    || obj is DateTimeOffset
+                    || obj is JToken
+                    || !seenObjects.Add(obj))
+                    return obj.ToString() ?? string.Empty;
 
-                try
+                if (obj is IEnumerable<byte> byteEnumberable)
+                    return GetString(byteEnumberable);
+                if (obj is ExpandoObject expandoObject)
+                    return GetString(expandoObject, seenObjects);
+                if (obj is IEnumerable enumerable)
+                    return GetString(enumerable, seenObjects);
+                return GetString(obj, seenObjects);
+            }
+            catch (Exception e)
+            {
+                return $"[{e.GetType().FullName}: {e.Message}]";
+            }
+        }
+
+        private static string GetString(IEnumerable<byte> obj)
+            => string.Concat(obj.Select(o => o.ToString("X2")));
+
+        private static string GetString(ExpandoObject obj, ISet<object> seenObjects)
+        {
+            if (obj.Any())
+            {
+                var stringWriter = new StringWriter();
+                var writer = new IndentedTextWriter(stringWriter);
+                writer.WriteLine("{");
+                using (writer.Indent())
                 {
-                    try
-                    {
-                        var str = obj.ToString();
-                        if (str != obj.GetType().FullName)
-                        {
-                            writer.WriteLine(str);
-                            return;
-                        }
-                    }
-                    catch { }
-
-                    if (obj is ExpandoObject && obj is IDictionary<string, object?> expandoDict)
-                    {
-                        writer.WriteLine("{");
-
-                        // Indent
-                        writer.Indent++;
-                        foreach (var (key, value) in expandoDict)
-                        {
-                            writer.Write($"{key}: ");
-                            WriteString(value);
-                        }
-                        // Unindent
-                        writer.Indent--;
-
-                        writer.WriteLine("}");
-                    }
-                    else
-                    {
-                        writer.WriteLine(obj.GetType().FullName);
-                    }
+                    writer.WriteLine(string.Join("," + writer.NewLine, obj.Select(kv => $"{kv.Key}: {GetString(() => kv.Value, seenObjects)}")));
                 }
-                catch (Exception e)
+                writer.Write("}");
+                return stringWriter.ToString();
+            }
+            else
+            {
+                return "{}";
+            }
+        }
+
+        private static string GetString(IEnumerable obj, ISet<object> seenObjects)
+        {
+            var items = obj.Cast<object?>().ToList();
+            if (items.Any())
+            {
+                var stringWriter = new StringWriter();
+                var writer = new IndentedTextWriter(stringWriter);
+                writer.WriteLine("[");
+                using (writer.Indent())
                 {
-                    writer.WriteLine($"[{e.GetType().FullName}: {e.Message}]");
+                    writer.WriteLine(string.Join("," + writer.NewLine, items.Select(v => GetString(() => v, seenObjects))));
                 }
+                writer.Write("]");
+                return stringWriter.ToString();
+            }
+            else
+            {
+                return "[]";
+            }
+        }
+
+        private static string GetString(object obj, ISet<object> seenObjects)
+        {
+            var type = obj.GetType();
+            var properties = type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            if (properties.Any())
+            {
+                var stringWriter = new StringWriter();
+                var writer = new IndentedTextWriter(stringWriter);
+                writer.WriteLine($"{type.FullName} {{");
+                using (writer.Indent())
+                {
+                    writer.WriteLine(string.Join("," + writer.NewLine, properties.Select(prop => $"{prop.Name}: {GetString(() => prop.GetValue(obj), seenObjects)}")));
+                }
+                writer.Write("}");
+                return stringWriter.ToString();
+            }
+            else
+            {
+                return obj.ToString() ?? type.FullName ?? string.Empty;
             }
         }
     }

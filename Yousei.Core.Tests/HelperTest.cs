@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Yousei.Core.Tests
@@ -14,6 +15,21 @@ namespace Yousei.Core.Tests
     [TestClass]
     public class HelperTest
     {
+        [TestMethod]
+        public async Task IgnoreCancellation_DoesNotThrowWhenCancelled()
+        {
+            // Arrange
+            using var cts = new CancellationTokenSource();
+            var task = Task.Delay(10000, cts.Token);
+            cts.Cancel();
+
+            // Act
+            var act = new Func<Task>(() => task.IgnoreCancellation());
+
+            // Assert
+            await act.Should().NotThrowAsync<OperationCanceledException>();
+        }
+
         [DataRow("asdf.qwertz", "asdf", "qwertz")]
         [DataTestMethod]
         public void SplitType_ReturnsSplitTypeIfValid(string type, string expectedConnectorName, string expectedName)
