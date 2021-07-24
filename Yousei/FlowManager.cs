@@ -24,6 +24,8 @@ namespace Yousei
 
         private readonly Dictionary<string, FlowConfig> flowConfigs = new();
 
+        private readonly IFlowContextFactory flowContextFactory;
+
         private readonly Dictionary<string, IDisposable> flowSubscriptions = new();
 
         private readonly ILogger logger;
@@ -34,6 +36,7 @@ namespace Yousei
             ILogger<FlowManager> logger,
             IConfigurationProvider configurationProvider,
             IFlowActor flowActor,
+            IFlowContextFactory flowContextFactory,
             IConnectorRegistry connectorRegistry,
             EventHub eventHub)
         {
@@ -43,6 +46,7 @@ namespace Yousei
             this.connectorRegistry = connectorRegistry;
             this.eventHub = eventHub;
             eventHub.Reload.Subscribe(async _ => await Reload());
+            this.flowContextFactory = flowContextFactory;
         }
 
         public void CancelSubscriptions()
@@ -85,7 +89,7 @@ namespace Yousei
                         if (tuple.Config.Trigger is null)
                             return;
 
-                        var flowContext = new FlowContext(flowActor, tuple.Name);
+                        var flowContext = flowContextFactory.Create(flowActor, tuple.Name);
                         flowContext.ExecutionStack.Push($"-> {tuple.Name}");
                         var triggerEvents = flowActor.GetTrigger(tuple.Config.Trigger, flowContext);
                         flowSubscriptions[tuple.Name] = triggerEvents

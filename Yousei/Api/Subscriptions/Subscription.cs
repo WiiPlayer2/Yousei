@@ -16,8 +16,9 @@ namespace Yousei.Api.Subscriptions
         [SubscribeAndResolve]
         public IAsyncEnumerable<object> OnTrigger(
             BlockConfigInput config,
-            [Service] IFlowActor flowActor)
-            => flowActor.GetTrigger(config.Map(), new FlowContext(flowActor, $"<api subscription>"))
+            [Service] IFlowActor flowActor,
+            [Service] IFlowContextFactory flowContextFactory)
+            => flowActor.GetTrigger(config.Map(), flowContextFactory.Create(flowActor, $"<api subscription>"))
                 .ToAsyncEnumerable();
     }
 }

@@ -51,6 +51,7 @@ namespace Yousei
             services.AddSingleton<EventHub>();
             services.AddSingleton<FlowManager>();
             services.AddSingleton<InternalConnector>();
+            services.AddSingleton<IFlowContextFactory>(new GenericFlowContextFactory((actor, flowName) => new JObjectFlowContext(actor, flowName)));
             services.AddHostedService<MainService>();
 
             // Api

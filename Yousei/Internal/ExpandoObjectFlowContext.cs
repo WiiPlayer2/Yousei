@@ -13,17 +13,17 @@ using Binder = Microsoft.CSharp.RuntimeBinder.Binder;
 
 namespace Yousei.Internal
 {
-    internal class FlowContext : IFlowContext
+    internal class ExpandoObjectFlowContext : IFlowContext
     {
         private ExpandoObject data = new ExpandoObject();
 
-        public FlowContext(IFlowActor actor, string flowName)
+        public ExpandoObjectFlowContext(IFlowActor actor, string flowName)
         {
             Actor = actor;
             Flow = flowName;
         }
 
-        private FlowContext(FlowContext from)
+        private ExpandoObjectFlowContext(ExpandoObjectFlowContext from)
             : this(from.Actor, from.Flow)
         {
             data = Clone(from.data);
@@ -47,7 +47,7 @@ namespace Yousei.Internal
             return Task.CompletedTask;
         }
 
-        public IFlowContext Clone() => new FlowContext(this);
+        public IFlowContext Clone() => new ExpandoObjectFlowContext(this);
 
         public Task<bool> ExistsData(string path)
         {

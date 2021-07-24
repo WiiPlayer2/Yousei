@@ -2,18 +2,13 @@
 using FluentAssertions.Execution;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Yousei.Shared;
-using Yousei.Internal;
 
 namespace Yousei.Test.Internal
 {
     [TestClass]
-    public class FlowContextTest
+    public abstract class FlowContextTest
     {
         [TestMethod]
         public async Task CloneReturnsEquivalentContext()
@@ -51,10 +46,9 @@ namespace Yousei.Test.Internal
 
         #region Factory etc.
 
-        private readonly Mock<IFlowActor> flowActorMock = new();
+        protected readonly Mock<IFlowActor> flowActorMock = new();
 
-        private FlowContext CreateContext()
-            => new FlowContext(flowActorMock.Object, "testing");
+        protected abstract IFlowContext CreateContext();
 
         #endregion Factory etc.
     }
