@@ -16,20 +16,29 @@ using Yousei.Shared;
 
 namespace Yousei.Connectors.Imap
 {
-
     internal class ImapConnection : SimpleConnection
     {
+        private readonly ImapConfiguration config;
+
         public ImapConnection(ImapConfiguration config)
         {
-            AddTrigger("subscribe", new ObservableTrigger(CreateSubscribeObservable(config)));
+            AddTrigger("subscribe", new ObservableTrigger(CreateSubscribeObservable()));
+            AddAction("delete", new DeleteAction(Connect));
+            this.config = config;
         }
 
-        private IObservable<object> CreateSubscribeObservable(ImapConfiguration config)
+        private async Task<ImapClient> Connect(CancellationToken cancellationToken)
+        {
+            var client = new ImapClient();
+            await client.ConnectAsync(config.Host, config.Port, cancellationToken: cancellationToken);
+            await client.AuthenticateAsync(config.Username, config.Password, cancellationToken: cancellationToken);
+            return client;
+        }
+
+        private IObservable<object> CreateSubscribeObservable()
             => Observable.Create<object>(async (observer, cancellationToken) =>
                 {
-                    using var client = new ImapClient();
-                    await client.ConnectAsync(config.Host, config.Port, cancellationToken: cancellationToken);
-                    await client.AuthenticateAsync(config.Username, config.Password, cancellationToken: cancellationToken);
+                    using var client = await Connect(cancellationToken);
 
                     await client.Inbox.OpenAsync(FolderAccess.ReadWrite, cancellationToken);
 
