@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,6 +43,7 @@ namespace Yousei.Internal.Connectors.Debug
                     || obj is string
                     || obj is DateTime
                     || obj is DateTimeOffset
+                    || obj is JToken
                     || !seenObjects.Add(obj))
                     return obj.ToString() ?? string.Empty;
 
