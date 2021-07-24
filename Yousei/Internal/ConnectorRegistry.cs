@@ -16,6 +16,7 @@ using Yousei.Internal.Connectors.Data;
 using Yousei.Internal.Connectors.Internal;
 using Yousei.Internal.Connectors.Trigger;
 using Yousei.Internal.Connectors.Debug;
+using Yousei.Connectors.Imap;
 
 namespace Yousei.Internal
 {
@@ -41,11 +42,16 @@ namespace Yousei.Internal
             Register(new TransmissionConnector());
             Register(new TelegramConnector());
             Register(new RssConnector());
+            Register<ImapConnector>();
         }
 
         public IConnector? Get(string name) => connectors.GetValueOrDefault(name);
 
         public void Register(IConnector connector) => connectors.TryAdd(connector.Name, connector);
+
+        public void Register<T>()
+            where T : IConnector, new()
+            => Register(new T());
 
         public Task ResetAll() => Task.WhenAll(connectors.Values.Select(o => o.Reset()));
 
