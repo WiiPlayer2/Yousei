@@ -6,9 +6,11 @@ using Yousei.Shared;
 
 namespace Yousei.Internal.Connectors.Data
 {
-    internal class ClearAction : FlowAction<ClearArguments>
+    internal class ClearAction : FlowAction<UnitConnection, ClearArguments>
     {
-        protected override async Task Act(IFlowContext context, ClearArguments? arguments)
+        public override string Name { get; } = "clear";
+
+        protected override async Task Act(IFlowContext context, UnitConnection _, ClearArguments? arguments)
         {
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));

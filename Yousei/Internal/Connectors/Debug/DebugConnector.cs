@@ -11,17 +11,14 @@ using Yousei.Shared;
 
 namespace Yousei.Internal.Connectors.Debug
 {
-
     internal class DebugConnector : SingletonConnector
     {
-        private readonly ILogger logger;
-
-        public DebugConnector(ILogger logger) : base("debug")
+        public DebugConnector(ILogger logger)
         {
-            this.logger = logger;
+            AddAction(new DumpAction(logger));
+            AddAction(new InvokeAction("break", Debugger.Break));
         }
 
-        protected override IConnection CreateConnection()
-            => new DebugConnection(logger);
+        public override string Name { get; } = "debug";
     }
 }

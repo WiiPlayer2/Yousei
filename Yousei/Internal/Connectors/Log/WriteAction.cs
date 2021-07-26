@@ -6,7 +6,7 @@ using System;
 
 namespace YouseiRelaoded.Internal.Connectors.Log
 {
-    internal class WriteAction : FlowAction<WriteArguments>
+    internal class WriteAction : FlowAction<UnitConnection, WriteArguments>
     {
         private readonly ILogger logger;
 
@@ -15,7 +15,9 @@ namespace YouseiRelaoded.Internal.Connectors.Log
             this.logger = logger;
         }
 
-        protected override async Task Act(IFlowContext context, WriteArguments? arguments)
+        public override string Name { get; } = "write";
+
+        protected override async Task Act(IFlowContext context, UnitConnection _, WriteArguments? arguments)
         {
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));

@@ -14,10 +14,6 @@ namespace Yousei.Core
 
         private readonly Dictionary<string, IFlowTrigger> triggers = new();
 
-        protected SimpleConnector(string name) : base(name)
-        {
-        }
-
         protected TConnection? DefaultConnection { get; set; }
 
         public sealed override IFlowAction? GetAction(string name)

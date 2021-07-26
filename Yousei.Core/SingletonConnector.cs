@@ -8,18 +8,24 @@ using Yousei.Shared;
 
 namespace Yousei.Core
 {
+    public abstract class SingletonConnector : SingletonConnector<UnitConnection>
+    {
+        protected sealed override UnitConnection CreateConnection()
+            => UnitConnection.Default;
+    }
+
     public abstract class SingletonConnector<TConnection> : SimpleConnector<TConnection, Unit>
         where TConnection : IConnection
     {
         private readonly Lazy<TConnection> lazyConnection;
 
-        protected SingletonConnector(string name) : base(name)
+        protected SingletonConnector()
         {
             lazyConnection = new Lazy<TConnection>(CreateConnection);
         }
 
         protected override TConnection? CreateConnection(Unit configuration)
-            => CreateConnection();
+            => lazyConnection.Value;
 
         protected abstract TConnection CreateConnection();
     }

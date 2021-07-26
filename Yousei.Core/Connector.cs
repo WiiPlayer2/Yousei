@@ -9,14 +9,9 @@ namespace Yousei.Core
     public abstract class Connector<TConnection, TConfiguration> : IConnector
         where TConnection : IConnection
     {
-        public Connector(string name)
-        {
-            Name = name;
-        }
-
         public Type ConfigurationType { get; } = typeof(TConfiguration);
 
-        public string Name { get; }
+        public abstract string Name { get; }
 
         public abstract IFlowAction? GetAction(string name);
 
