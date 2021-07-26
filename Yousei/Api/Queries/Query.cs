@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HotChocolate;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,5 +16,10 @@ namespace Yousei.Api.Queries
         }
 
         public Database Database { get; }
+
+        public ConnectorInfo? GetConnector(
+            string name,
+            [Service] IConnectorRegistry connectorRegistry)
+            => ConnectorInfo.From(connectorRegistry.Get(name));
     }
 }

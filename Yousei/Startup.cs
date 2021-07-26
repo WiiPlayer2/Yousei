@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Reactive;
 using Yousei.Api.Extensions;
 using Yousei.Api.Mutations;
 using Yousei.Api.Queries;
 using Yousei.Api.SchemaType;
 using Yousei.Api.Subscriptions;
+using Yousei.Api.Types;
 using Yousei.Internal;
 using Yousei.Internal.Connectors.Internal;
 using Yousei.Internal.Database;
@@ -52,6 +54,8 @@ namespace Yousei
             services.AddSingleton<IApi, InternalApi>();
             services.AddGraphQLServer()
                 .AddInMemorySubscriptions()
+
+                // JSON types
                 .AddType<JsonType>()
                 .AddTypeConverter<JObject, JToken>(from => from)
                 .AddTypeConverter<JArray, JToken>(from => from)
@@ -59,15 +63,27 @@ namespace Yousei
                 .BindRuntimeType<JObject, JsonType>()
                 .BindRuntimeType<JArray, JsonType>()
                 .BindRuntimeType<JValue, JsonType>()
+
+                // Misc. types
                 .BindRuntimeType<Unit, AnyType>()
                 .BindRuntimeType<object, AnyType>()
+                .AddType<WrapperType<Type, TypeInfo>>()
+                .AddType<WrapperType<IConnector, ConnectorInfo>>()
+
+                // Query
                 .AddQueryType<Query>()
                 .AddType<ConfigurationExtension>()
                 .AddType<FlowExtension>()
                 .AddType<BlockConfigExtension>()
+
+                // Mutation
                 .AddMutationType<Mutation>()
                 .AddType<DatabaseMutation>()
+
+                // Subscriptions
                 .AddSubscriptionType<Subscription>()
+
+                // Misc.
                 .ModifyRequestOptions(options =>
                 {
                     options.IncludeExceptionDetails = true;
