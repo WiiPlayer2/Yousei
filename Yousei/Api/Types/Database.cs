@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Yousei.Api.Types;
 using Yousei.Shared;
 
-namespace Yousei.Api
+namespace Yousei.Api.Types
 {
     public class Database
     {

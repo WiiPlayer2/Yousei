@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Yousei.Api.Types;
 using Yousei.Shared;
 
-namespace Yousei.Api
+namespace Yousei.Api.Queries
 {
     public class Query
     {
