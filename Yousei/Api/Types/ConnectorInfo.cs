@@ -3,6 +3,7 @@ using HotChocolate.Types;
 using HotChocolate.Types.Descriptors.Definitions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Yousei.Api.Types;
@@ -20,6 +21,7 @@ namespace Yousei.Api.Types
 
         public string Name => Wrapped.Name;
 
+        [return: NotNullIfNotNull("connector")]
         public static ConnectorInfo? From(IConnector? connector)
             => connector is not null
                 ? new ConnectorInfo(connector)

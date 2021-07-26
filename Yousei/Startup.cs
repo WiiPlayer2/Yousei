@@ -16,6 +16,7 @@ using Yousei.Internal;
 using Yousei.Internal.Connectors.Internal;
 using Yousei.Internal.Database;
 using Yousei.Shared;
+using CLRPropertyInfo = System.Reflection.PropertyInfo;
 
 namespace Yousei
 {
@@ -68,6 +69,7 @@ namespace Yousei
                 .BindRuntimeType<Unit, AnyType>()
                 .BindRuntimeType<object, AnyType>()
                 .AddType<WrapperType<Type, TypeInfo>>()
+                .AddType<WrapperType<CLRPropertyInfo, PropertyInfo>>()
                 .AddType<WrapperType<IConnector, ConnectorInfo>>()
 
                 // Query
