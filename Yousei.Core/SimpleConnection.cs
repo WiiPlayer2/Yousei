@@ -27,6 +27,10 @@ namespace Yousei.Core
             return default;
         }
 
+        public virtual void Dispose()
+        {
+        }
+
         protected void AddAction<T>(string name)
             where T : IFlowAction
             => AddAction(name, Activator.CreateInstance<T>());

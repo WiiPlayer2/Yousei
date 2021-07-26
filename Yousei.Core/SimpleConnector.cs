@@ -17,7 +17,8 @@ namespace Yousei.Core
 
         public override Task Reset()
         {
-            // TODO: maybe force subclass to check each connection if it needs to be handled.
+            foreach (var connection in connections.Values)
+                connection?.Dispose();
             connections.Clear();
             return Task.CompletedTask;
         }

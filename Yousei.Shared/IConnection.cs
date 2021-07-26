@@ -1,6 +1,8 @@
-﻿namespace Yousei.Shared
+﻿using System;
+
+namespace Yousei.Shared
 {
-    public interface IConnection
+    public interface IConnection : IDisposable
     {
         IFlowAction? CreateAction(string name);
 

@@ -57,6 +57,11 @@ namespace Yousei.Internal
 
         public Task ResetAll() => Task.WhenAll(connectors.Values.Select(o => o.Reset()));
 
-        public void Unregister(IConnector connector) => connectors.TryRemove(connector.Name, out var _);
+        // TODO should make it return a task
+        public async void Unregister(IConnector connector)
+        {
+            if (connectors.TryRemove(connector.Name, out var _))
+                await (connector?.Reset() ?? Task.CompletedTask);
+        }
     }
 }
