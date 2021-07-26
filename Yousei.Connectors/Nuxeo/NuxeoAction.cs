@@ -18,7 +18,7 @@ namespace Yousei.Connectors.Nuxeo
             this.config = config;
         }
 
-        protected override async Task Act(IFlowContext context, T? arguments)
+        protected sealed override async Task Act(IFlowContext context, T? arguments)
         {
             using var client = new Client(config.Url, new(config.Username, config.Password));
             await Act(context, arguments, client);

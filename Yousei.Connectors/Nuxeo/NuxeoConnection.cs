@@ -1,23 +1,17 @@
-﻿using Newtonsoft.Json.Linq;
-using NuxeoClient;
-using NuxeoClient.Adapters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Yousei.Core;
-using Yousei.Shared;
+﻿using Yousei.Core;
 
 namespace Yousei.Connectors.Nuxeo
 {
-
     internal class NuxeoConnection : SimpleConnection
     {
         public NuxeoConnection(NuxeoConfig config)
         {
-            AddAction("get_document", new DocumentGetAction(config));
-            AddAction("rest", new RestAction(config));
+            AddAction("document_get", new DocumentGetAction(config));
+            AddAction("request", new RequestAction(config));
+            AddAction("batch_create", new BatchCreateAction(config));
+            AddAction("batch_info", new BatchInfoAction(config));
+            AddAction("batch_upload", new BatchUploadAction(config));
+            AddAction("batch_drop", new BatchDropAction(config));
         }
     }
 }

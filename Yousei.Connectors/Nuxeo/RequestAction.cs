@@ -11,7 +11,7 @@ using Yousei.Shared;
 
 namespace Yousei.Connectors.Nuxeo
 {
-    internal record RestArguments
+    internal record RequestArguments
     {
         public IParameter Method { get; init; } = "GET".ToConstantParameter();
 
@@ -26,12 +26,12 @@ namespace Yousei.Connectors.Nuxeo
         public IParameter Parameters { get; init; } = DefaultParameter.Instance;
     }
 
-    internal class RestAction : NuxeoAction<RestArguments>
+    internal class RequestAction : NuxeoAction<RequestArguments>
     {
-        public RestAction(NuxeoConfig config) : base(config)
+        public RequestAction(NuxeoConfig config) : base(config)
         { }
 
-        protected override async Task Act(IFlowContext context, RestArguments? arguments, Client client)
+        protected override async Task Act(IFlowContext context, RequestArguments? arguments, Client client)
         {
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
