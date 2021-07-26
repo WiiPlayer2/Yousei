@@ -17,6 +17,7 @@ using Yousei.Internal.Connectors.Internal;
 using Yousei.Internal.Connectors.Trigger;
 using Yousei.Internal.Connectors.Debug;
 using Yousei.Connectors.Imap;
+using Yousei.Connectors.Nuxeo;
 
 namespace Yousei.Internal
 {
@@ -43,6 +44,7 @@ namespace Yousei.Internal
             Register(new TelegramConnector());
             Register(new RssConnector());
             Register<ImapConnector>();
+            Register<NuxeoConnector>();
         }
 
         public IConnector? Get(string name) => connectors.GetValueOrDefault(name);
