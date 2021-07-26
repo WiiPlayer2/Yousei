@@ -17,7 +17,7 @@ namespace Yousei.Serialization.Json
             Expression,
         }
 
-        private record Dto(ParameterType Type, JToken Config);
+        private record Dto(ParameterType? Type, JToken Config);
 
         public override bool CanConvert(Type objectType)
             => objectType.IsAssignableTo(typeof(IParameter));
@@ -25,12 +25,12 @@ namespace Yousei.Serialization.Json
         public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             var jtoken = JToken.ReadFrom(reader);
-            if (!jtoken.TryToObject<Dto>(out var dto) || dto is null)
+            if (!jtoken.TryToObject<Dto>(out var dto) || dto is null || dto.Type is null)
             {
                 return new ConstantParameter(jtoken);
             }
 
-            var parameter = dto.Type.Match<IParameter>(
+            var parameter = dto.Type.Value.Match<IParameter>(
                 () => new ConstantParameter(dto.Config),
                 () => new VariableParameter(dto.Config.ToObject<string>() ?? string.Empty),
                 () => new ExpressionParameter(dto.Config.ToObject<string>() ?? string.Empty));
