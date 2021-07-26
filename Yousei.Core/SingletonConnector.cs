@@ -1,31 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
 using Yousei.Shared;
 
 namespace Yousei.Core
 {
-    public abstract class SingletonConnector : IConnector
+    public abstract class SingletonConnector<TConnection> : SimpleConnector<TConnection, Unit>
+        where TConnection : IConnection
     {
-        private readonly Lazy<IConnection> lazyConnection;
+        private readonly Lazy<TConnection> lazyConnection;
 
-        protected SingletonConnector(string name)
+        protected SingletonConnector(string name) : base(name)
         {
-            Name = name;
-            lazyConnection = new Lazy<IConnection>(CreateConnection);
+            lazyConnection = new Lazy<TConnection>(CreateConnection);
         }
 
-        public Type ConfigurationType { get; } = typeof(object);
+        protected override TConnection? CreateConnection(Unit configuration)
+            => CreateConnection();
 
-        public string Name { get; }
-
-        public IConnection? GetConnection(object? configuration)
-            => lazyConnection.Value;
-
-        public Task Reset() => Task.CompletedTask;
-
-        protected abstract IConnection CreateConnection();
+        protected abstract TConnection CreateConnection();
     }
 }

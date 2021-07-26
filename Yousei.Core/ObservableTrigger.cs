@@ -11,14 +11,17 @@ namespace Yousei.Core
     {
         private readonly IObservable<object> observable;
 
-        public ObservableTrigger(IObservable<object> observable)
+        public ObservableTrigger(string name, IObservable<object> observable)
         {
+            Name = name;
             this.observable = observable;
         }
 
         public Type ArgumentsType { get; } = typeof(object);
 
-        public IObservable<object> GetEvents(IFlowContext context, object? arguments)
+        public string Name { get; }
+
+        public IObservable<object> GetEvents(IFlowContext context, IConnection connection, object? arguments)
             => observable;
     }
 }

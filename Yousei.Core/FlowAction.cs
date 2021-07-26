@@ -7,13 +7,16 @@ using Yousei.Shared;
 
 namespace Yousei.Core
 {
-    public abstract class FlowAction<TArguments> : IFlowAction
+    public abstract class FlowAction<TConnection, TArguments> : IFlowAction
+        where TConnection : IConnection
     {
         public Type ArgumentsType { get; } = typeof(TArguments);
 
-        public Task Act(IFlowContext context, object? arguments)
-            => Act(context, arguments.SafeCast<TArguments>());
+        public abstract string Name { get; }
 
-        protected abstract Task Act(IFlowContext context, TArguments? arguments);
+        public Task Act(IFlowContext context, IConnection connection, object? arguments)
+            => Act(context, (TConnection)connection, arguments.SafeCast<TArguments>());
+
+        protected abstract Task Act(IFlowContext context, TConnection connection, TArguments? arguments);
     }
 }
