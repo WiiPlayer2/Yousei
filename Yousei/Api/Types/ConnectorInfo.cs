@@ -26,5 +26,9 @@ namespace Yousei.Api.Types
             => connector is not null
                 ? new ConnectorInfo(connector)
                 : null;
+
+        public FlowActionInfo? GetAction(string name) => FlowActionInfo.From(Wrapped.GetAction(name));
+
+        public FlowTriggerInfo? GetTrigger(string name) => FlowTriggerInfo.From(Wrapped.GetTrigger(name));
     }
 }

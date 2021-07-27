@@ -71,6 +71,8 @@ namespace Yousei
                 .AddType<WrapperType<Type, TypeInfo>>()
                 .AddType<WrapperType<CLRPropertyInfo, PropertyInfo>>()
                 .AddType<WrapperType<IConnector, ConnectorInfo>>()
+                .AddType<WrapperType<IFlowAction, FlowActionInfo>>()
+                .AddType<WrapperType<IFlowTrigger, FlowTriggerInfo>>()
 
                 // Query
                 .AddQueryType<Query>()
