@@ -6,7 +6,7 @@ using System;
 
 namespace Yousei.Internal.Connectors.Internal
 {
-    internal class SendValueAction : FlowAction<SendValueArguments>
+    internal class SendValueAction : FlowAction<UnitConnection, SendValueArguments>
     {
         private readonly ISubject<(string, object?)> valueSubject;
 
@@ -15,7 +15,9 @@ namespace Yousei.Internal.Connectors.Internal
             this.valueSubject = valueSubject;
         }
 
-        protected override async Task Act(IFlowContext context, SendValueArguments? arguments)
+        public override string Name { get; } = "sendvalue";
+
+        protected override async Task Act(IFlowContext context, UnitConnection _, SendValueArguments? arguments)
         {
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));

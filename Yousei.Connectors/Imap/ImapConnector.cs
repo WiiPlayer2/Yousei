@@ -18,10 +18,15 @@ namespace Yousei.Connectors.Imap
 {
     public class ImapConnector : SimpleConnector<ImapConfiguration>
     {
-        public ImapConnector() : base("imap")
+        public ImapConnector()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            AddTrigger(new ObservableTrigger<ImapConnection>("subscribe", c => c.CreateSubscribeObservable()));
+            AddAction<DeleteAction>();
         }
+
+        public override string Name { get; } = "imap";
 
         protected override IConnection? CreateConnection(ImapConfiguration configuration)
             => new ImapConnection(configuration);

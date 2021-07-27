@@ -6,9 +6,11 @@ using Yousei.Shared;
 
 namespace Yousei.Internal.Connectors.Trigger
 {
-    internal class WhenAnyTrigger : FlowTrigger<WhenAnyArguments>
+    internal class WhenAnyTrigger : FlowTrigger<UnitConnection, WhenAnyArguments>
     {
-        protected override IObservable<object> GetEvents(IFlowContext context, WhenAnyArguments? arguments)
+        public override string Name { get; } = "whenany";
+
+        protected override IObservable<object> GetEvents(IFlowContext context, UnitConnection _, WhenAnyArguments? arguments)
         {
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));

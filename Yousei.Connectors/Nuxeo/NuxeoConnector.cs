@@ -22,11 +22,19 @@ namespace Yousei.Connectors.Nuxeo
 
     public class NuxeoConnector : SimpleConnector<NuxeoConfig>
     {
-        public NuxeoConnector() : base("nuxeo")
+        public NuxeoConnector()
         {
+            AddAction<DocumentGetAction>();
+            AddAction<RequestAction>();
+            AddAction<BatchCreateAction>();
+            AddAction<BatchInfoAction>();
+            AddAction<BatchUploadAction>();
+            AddAction<BatchDropAction>();
         }
 
+        public override string Name { get; } = "nuxeo";
+
         protected override IConnection? CreateConnection(NuxeoConfig configuration)
-            => new NuxeoConnection(configuration);
+            => ObjectConnection.From(configuration);
     }
 }

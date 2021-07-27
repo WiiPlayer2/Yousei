@@ -9,17 +9,11 @@ using Yousei.Shared;
 
 namespace Yousei.Connectors.Nuxeo
 {
-    internal abstract class NuxeoAction<T> : FlowAction<T>
+    internal abstract class NuxeoAction<T> : FlowAction<ObjectConnection<NuxeoConfig>, T>
     {
-        private readonly NuxeoConfig config;
-
-        public NuxeoAction(NuxeoConfig config)
+        protected sealed override async Task Act(IFlowContext context, ObjectConnection<NuxeoConfig> connection, T? arguments)
         {
-            this.config = config;
-        }
-
-        protected sealed override async Task Act(IFlowContext context, T? arguments)
-        {
+            var config = connection.Object;
             using var client = new Client(config.Url, new(config.Username, config.Password));
             await Act(context, arguments, client);
         }

@@ -11,10 +11,12 @@ namespace Yousei.Internal.Connectors.Data
 {
     internal class DataConnector : SingletonConnector
     {
-        public DataConnector() : base("data")
+        public DataConnector()
         {
+            AddAction<SetAction>();
+            AddAction<ClearAction>();
         }
 
-        protected override IConnection CreateConnection() => new DataConnection();
+        public override string Name { get; } = "data";
     }
 }

@@ -32,17 +32,17 @@ namespace Yousei.Internal
         {
             // Internal connectors
             Register(internalConnector);
-            Register(new ControlConnector());
-            Register(new DataConnector());
             Register(new LogConnector(logConnectorLogger));
-            Register(new TriggerConnector());
             Register(new DebugConnector(debugConnectorLogger));
+            Register<ControlConnector>();
+            Register<DataConnector>();
+            Register<TriggerConnector>();
 
             // External connectors
-            Register(new HttpConnector());
-            Register(new TransmissionConnector());
-            Register(new TelegramConnector());
-            Register(new RssConnector());
+            Register<HttpConnector>();
+            Register<TransmissionConnector>();
+            Register<TelegramConnector>();
+            Register<RssConnector>();
             Register<ImapConnector>();
             Register<NuxeoConnector>();
         }
@@ -59,6 +59,11 @@ namespace Yousei.Internal
 
         public Task ResetAll() => Task.WhenAll(connectors.Values.Select(o => o.Reset()));
 
-        public void Unregister(IConnector connector) => connectors.TryRemove(connector.Name, out var _);
+        // TODO should make it return a task
+        public async void Unregister(IConnector connector)
+        {
+            if (connectors.TryRemove(connector.Name, out var _))
+                await (connector?.Reset() ?? Task.CompletedTask);
+        }
     }
 }

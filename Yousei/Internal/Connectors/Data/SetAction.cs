@@ -5,9 +5,11 @@ using Yousei.Shared;
 
 namespace Yousei.Internal.Connectors.Data
 {
-    internal class SetAction : FlowAction<SetArguments>
+    internal class SetAction : FlowAction<UnitConnection, SetArguments>
     {
-        protected override async Task Act(IFlowContext context, SetArguments? arguments)
+        public override string Name { get; } = "set";
+
+        protected override async Task Act(IFlowContext context, UnitConnection _, SetArguments? arguments)
         {
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));

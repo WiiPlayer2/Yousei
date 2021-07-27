@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot;
@@ -11,9 +12,14 @@ namespace Yousei.Connectors.Telegram
 {
     public class TelegramConnector : SimpleConnector<Config>
     {
-        public TelegramConnector() : base("telegram")
+        public TelegramConnector()
         {
+            AddTrigger(new ObservableTrigger<TelegramConnection>("onmessage", c => c.OnMessage.Select(o => o.Message)));
+            AddTrigger(new ObservableTrigger<TelegramConnection>("onupdate", c => c.OnUpdate.Select(o => o.Update)));
+            AddAction<SendAction>();
         }
+
+        public override string Name { get; } = "telegram";
 
         protected override IConnection CreateConnection(Config configuration)
         {

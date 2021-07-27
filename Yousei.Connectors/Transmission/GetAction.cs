@@ -6,16 +6,11 @@ using Yousei.Shared;
 
 namespace Yousei.Connectors.Transmission
 {
-    internal class GetAction : FlowAction<GetArguments>
+    internal class GetAction : FlowAction<ObjectConnection<Client>, GetArguments>
     {
-        private readonly Client client;
+        public override string Name { get; } = "get";
 
-        public GetAction(Client client)
-        {
-            this.client = client;
-        }
-
-        protected override async Task Act(IFlowContext context, GetArguments? arguments)
+        protected override async Task Act(IFlowContext context, ObjectConnection<Client> connection, GetArguments? arguments)
         {
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
@@ -23,7 +18,7 @@ namespace Yousei.Connectors.Transmission
             var fields = await arguments.Fields.Resolve<string[]>(context);
             var ids = await arguments.Ids.Resolve<int[]>(context);
 
-            var torrents = await client.TorrentGetAsync(fields, ids);
+            var torrents = await connection.Object.TorrentGetAsync(fields, ids);
             await context.SetData(torrents);
         }
     }

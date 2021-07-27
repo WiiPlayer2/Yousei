@@ -10,11 +10,13 @@ namespace Yousei.Internal.Connectors.Trigger
 {
     internal class TriggerConnector : SingletonConnector
     {
-        public TriggerConnector() : base("trigger")
+        public TriggerConnector()
         {
+            AddTrigger<DistinctTrigger>();
+            AddTrigger<PeriodicTrigger>();
+            AddTrigger<WhenAnyTrigger>();
         }
 
-        protected override IConnection CreateConnection()
-            => new TriggerConnection();
+        public override string Name { get; } = "trigger";
     }
 }

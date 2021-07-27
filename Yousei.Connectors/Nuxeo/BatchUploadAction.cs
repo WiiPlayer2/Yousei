@@ -25,9 +25,7 @@ namespace Yousei.Connectors.Nuxeo
 
     internal class BatchUploadAction : BatchAction<BatchUploadArguments>
     {
-        public BatchUploadAction(NuxeoConfig config) : base(config)
-        {
-        }
+        public override string Name { get; } = "batch_upload";
 
         protected override async Task Act(IFlowContext context, BatchUploadArguments arguments, Batch batch, int? fileIndex)
         {

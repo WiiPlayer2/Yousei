@@ -1,9 +1,9 @@
-﻿namespace Yousei.Shared
-{
-    public interface IConnection
-    {
-        IFlowAction? CreateAction(string name);
+﻿using System;
 
-        IFlowTrigger? CreateTrigger(string name);
+namespace Yousei.Shared
+{
+    // Kept for possible extension purposes (and also to distinguish it from other IDisposables)
+    public interface IConnection : IDisposable
+    {
     }
 }

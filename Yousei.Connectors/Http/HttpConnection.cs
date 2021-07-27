@@ -2,10 +2,11 @@
 using Yousei.Core;
 using System.Net;
 using System.Reactive.Linq;
+using Yousei.Shared;
 
 namespace Yousei.Connectors.Http
 {
-    internal class HttpConnection : SimpleConnection
+    internal class HttpConnection : IConnection
     {
         private readonly HttpListener? listener;
 
@@ -13,12 +14,13 @@ namespace Yousei.Connectors.Http
         {
             this.listener = listener;
             HttpRequests = GetHttpRequests();
-
-            AddTrigger("webhook", new WebhookTrigger(this));
-            AddAction<RequestAction>("request");
         }
 
         public IObservable<HttpRequest> HttpRequests { get; }
+
+        public void Dispose()
+        {
+        }
 
         private IObservable<HttpRequest> GetHttpRequests()
             => Observable.Create<HttpRequest>(async (observer, cancellationToken) =>

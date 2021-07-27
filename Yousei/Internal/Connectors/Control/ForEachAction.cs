@@ -6,9 +6,11 @@ using Yousei.Shared;
 
 namespace Yousei.Internal.Connectors.Control
 {
-    internal class ForEachAction : FlowAction<ForEachArguments>
+    internal class ForEachAction : FlowAction<UnitConnection, ForEachArguments>
     {
-        protected override async Task Act(IFlowContext context, ForEachArguments? arguments)
+        public override string Name { get; } = "foreach";
+
+        protected override async Task Act(IFlowContext context, UnitConnection _, ForEachArguments? arguments)
         {
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));

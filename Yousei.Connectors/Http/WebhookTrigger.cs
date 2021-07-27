@@ -6,17 +6,12 @@ using Yousei.Shared;
 
 namespace Yousei.Connectors.Http
 {
-    internal class WebhookTrigger : FlowTrigger<WebhookArguments>
+    internal class WebhookTrigger : FlowTrigger<HttpConnection, WebhookArguments>
     {
-        private readonly HttpConnection httpConnection;
+        public override string Name { get; } = "webhook";
 
-        public WebhookTrigger(HttpConnection httpConnection)
-        {
-            this.httpConnection = httpConnection;
-        }
-
-        protected override IObservable<object> GetEvents(IFlowContext context, WebhookArguments? arguments)
-            => httpConnection.HttpRequests
+        protected override IObservable<object> GetEvents(IFlowContext context, HttpConnection connection, WebhookArguments? arguments)
+            => connection.HttpRequests
                 .Where(o => string.IsNullOrEmpty(arguments?.Path) || (o.Url?.AbsolutePath.StartsWith(arguments.Path) ?? false));
     }
 }

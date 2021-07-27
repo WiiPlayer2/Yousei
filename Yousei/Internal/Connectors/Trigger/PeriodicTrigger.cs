@@ -7,9 +7,11 @@ using Yousei.Shared;
 
 namespace Yousei.Internal.Connectors.Trigger
 {
-    internal class PeriodicTrigger : FlowTrigger<PeriodicArguments>
+    internal class PeriodicTrigger : FlowTrigger<UnitConnection, PeriodicArguments>
     {
-        protected override IObservable<object> GetEvents(IFlowContext context, PeriodicArguments? arguments)
+        public override string Name { get; } = "periodic";
+
+        protected override IObservable<object> GetEvents(IFlowContext context, UnitConnection _, PeriodicArguments? arguments)
         {
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));

@@ -15,7 +15,7 @@ using Yousei.Shared;
 
 namespace Yousei.Internal.Connectors.Debug
 {
-    internal class DumpAction : FlowAction<Unit>
+    internal class DumpAction : FlowAction<UnitConnection, Unit>
     {
         private ILogger logger;
 
@@ -24,7 +24,9 @@ namespace Yousei.Internal.Connectors.Debug
             this.logger = logger;
         }
 
-        protected override async Task Act(IFlowContext context, Unit arguments)
+        public override string Name { get; } = "dump";
+
+        protected override async Task Act(IFlowContext context, UnitConnection _, Unit arguments)
         {
             var contextObj = await context.AsObject();
             var str = GetString(() => contextObj, new HashSet<object>());

@@ -16,9 +16,7 @@ namespace Yousei.Connectors.Nuxeo
 {
     internal class BatchDropAction : BatchAction<BatchArguments>
     {
-        public BatchDropAction(NuxeoConfig config) : base(config)
-        {
-        }
+        public override string Name { get; } = "batch_drop";
 
         protected override async Task Act(IFlowContext context, BatchArguments arguments, Batch batch, int? fileIndex)
         {

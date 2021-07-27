@@ -5,25 +5,29 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Yousei.Core;
+using Yousei.Shared;
 
 namespace Yousei.Connectors.Telegram
 {
-    internal class TelegramConnection : SimpleConnection
+    internal class TelegramConnection : IConnection
     {
         public TelegramConnection(TelegramBotClient telegramBotClient)
         {
             var connectObservable = CreateConnectionObservable(telegramBotClient);
             OnMessage = WrapEvent<MessageEventArgs>(connectObservable, telegramBotClient, nameof(TelegramBotClient.OnMessage));
             OnUpdate = WrapEvent<UpdateEventArgs>(connectObservable, telegramBotClient, nameof(TelegramBotClient.OnUpdate));
-
-            AddTrigger("onmessage", new ObservableTrigger(OnMessage.Select(o => o.Message)));
-            AddTrigger("onupdate", new ObservableTrigger(OnUpdate.Select(o => o.Update)));
-            AddAction("sendtextmessage", new SendAction(telegramBotClient));
+            TelegramBotClient = telegramBotClient;
         }
 
         public IObservable<MessageEventArgs> OnMessage { get; }
 
         public IObservable<UpdateEventArgs> OnUpdate { get; }
+
+        public TelegramBotClient TelegramBotClient { get; }
+
+        public void Dispose()
+        {
+        }
 
         private IObservable<Unit> CreateConnectionObservable(TelegramBotClient telegramBotClient)
             => Observable.Create<Unit>(async (_, cancellationToken) =>

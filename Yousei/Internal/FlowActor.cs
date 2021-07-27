@@ -38,15 +38,15 @@ namespace Yousei.Internal
         {
             try
             {
-                var (connection, name) = GetConnection(trigger, context);
+                var (connector, connection, name) = GetConnection(trigger, context);
 
-                var flowTrigger = connection.CreateTrigger(name);
+                var flowTrigger = connector.GetTrigger(name);
                 if (flowTrigger is null)
                     throw new FlowException($"Unable to acquire trigger \"{trigger.Type}\".", context);
 
                 var flowTriggerConfiguration = trigger.Arguments.Map(flowTrigger.ArgumentsType);
 
-                return flowTrigger.GetEvents(context, flowTriggerConfiguration);
+                return flowTrigger.GetEvents(context, connection, flowTriggerConfiguration);
             }
             catch (Exception e) when (e is not FlowException)
             {
@@ -58,16 +58,16 @@ namespace Yousei.Internal
         {
             try
             {
-                var (connection, name) = GetConnection(action, context);
+                var (connector, connection, name) = GetConnection(action, context);
 
-                var flowAction = connection.CreateAction(name);
+                var flowAction = connector.GetAction(name);
                 if (flowAction is null)
                     throw new FlowException($"Unable to acquire action \"{action.Type}\".", context);
 
                 var flowActionConfiguration = action.Arguments.Map(flowAction.ArgumentsType);
 
                 context.CurrentType = action.Type;
-                await flowAction.Act(context, flowActionConfiguration);
+                await flowAction.Act(context, connection, flowActionConfiguration);
             }
             catch (Exception e) when (e is not FlowException)
             {
@@ -75,7 +75,7 @@ namespace Yousei.Internal
             }
         }
 
-        private (IConnection Connection, string Name) GetConnection(BlockConfig config, IFlowContext context)
+        private (IConnector Connector, IConnection Connection, string Name) GetConnection(BlockConfig config, IFlowContext context)
         {
             var (connectorName, name) = config.Type.SplitType();
             var connector = connectorRegistry.Get(connectorName);
@@ -89,7 +89,7 @@ namespace Yousei.Internal
             if (connection is null)
                 throw new FlowException($"Unable to acquire connection for \"{connectorName}\" and configuration {{{connectionConfiguration}}}.", context);
 
-            return (connection, name);
+            return (connector, connection, name);
         }
     }
 }

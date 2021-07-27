@@ -10,11 +10,14 @@ namespace Yousei.Connectors.Rss
     {
         private readonly FeedReader feedReader = new FeedReader();
 
-        public RssConnector() : base("rss")
+        public RssConnector()
         {
+            AddTrigger(new FeedTrigger(feedReader));
         }
 
+        public override string Name { get; } = "rss";
+
         protected override IConnection CreateConnection(Config configuration)
-            => new RssConnection(feedReader, configuration);
+            => ObjectConnection.From(configuration);
     }
 }
