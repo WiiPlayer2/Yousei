@@ -28,8 +28,7 @@ namespace Yousei.Connectors.Nuxeo
 
     internal class RequestAction : NuxeoAction<RequestArguments>
     {
-        public RequestAction(NuxeoConfig config) : base(config)
-        { }
+        public override string Name { get; } = "request";
 
         protected override async Task Act(IFlowContext context, RequestArguments? arguments, Client client)
         {

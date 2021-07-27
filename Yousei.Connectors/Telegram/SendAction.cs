@@ -7,16 +7,11 @@ using Yousei.Shared;
 
 namespace Yousei.Connectors.Telegram
 {
-    internal class SendAction : FlowAction<SendArguments>
+    internal class SendAction : FlowAction<TelegramConnection, SendArguments>
     {
-        private readonly TelegramBotClient telegramBotClient;
+        public override string Name { get; } = "sendtextmessage";
 
-        public SendAction(TelegramBotClient telegramBotClient)
-        {
-            this.telegramBotClient = telegramBotClient;
-        }
-
-        protected override async Task Act(IFlowContext context, SendArguments? arguments)
+        protected override async Task Act(IFlowContext context, TelegramConnection connection, SendArguments? arguments)
         {
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
@@ -24,7 +19,7 @@ namespace Yousei.Connectors.Telegram
             var chatId = await arguments.ChatId.Resolve<ChatId>(context);
             var text = await arguments.Text.Resolve<string>(context);
 
-            var message = await telegramBotClient.SendTextMessageAsync(chatId, text);
+            var message = await connection.TelegramBotClient.SendTextMessageAsync(chatId, text);
             await context.SetData(message);
         }
     }

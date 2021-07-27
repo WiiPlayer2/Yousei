@@ -5,9 +5,11 @@ using Yousei.Shared;
 
 namespace Yousei.Internal.Connectors.Control
 {
-    internal class WhileAction : FlowAction<WhileArguments>
+    internal class WhileAction : FlowAction<UnitConnection, WhileArguments>
     {
-        protected override async Task Act(IFlowContext context, WhileArguments? arguments)
+        public override string Name { get; } = "while";
+
+        protected override async Task Act(IFlowContext context, UnitConnection _, WhileArguments? arguments)
         {
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));

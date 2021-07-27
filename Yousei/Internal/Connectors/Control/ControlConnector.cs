@@ -6,10 +6,14 @@ namespace Yousei.Internal.Connectors.Control
 {
     internal class ControlConnector : SingletonConnector
     {
-        public ControlConnector() : base("control")
+        public ControlConnector()
         {
+            AddAction<IfAction>();
+            AddAction<ForEachAction>();
+            AddAction<WhileAction>();
+            AddAction<SwitchAction>();
         }
 
-        protected override IConnection CreateConnection() => new ControlConnection();
+        public override string Name { get; } = "control";
     }
 }

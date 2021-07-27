@@ -5,9 +5,11 @@ using Yousei.Shared;
 
 namespace Yousei.Internal.Connectors.Control
 {
-    internal class SwitchAction : FlowAction<SwitchArguments>
+    internal class SwitchAction : FlowAction<UnitConnection, SwitchArguments>
     {
-        protected override async Task Act(IFlowContext context, SwitchArguments? arguments)
+        public override string Name { get; } = "switch";
+
+        protected override async Task Act(IFlowContext context, UnitConnection _, SwitchArguments? arguments)
         {
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));

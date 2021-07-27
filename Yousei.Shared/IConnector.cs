@@ -9,7 +9,11 @@ namespace Yousei.Shared
 
         string Name { get; }
 
+        IFlowAction? GetAction(string name);
+
         IConnection? GetConnection(object? configuration);
+
+        IFlowTrigger? GetTrigger(string name);
 
         Task Reset();
     }

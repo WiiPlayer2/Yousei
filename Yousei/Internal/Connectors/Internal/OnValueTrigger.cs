@@ -6,7 +6,7 @@ using System.Reactive;
 
 namespace Yousei.Internal.Connectors.Internal
 {
-    internal class OnValueTrigger : FlowTrigger<OnValueConfiguration>
+    internal class OnValueTrigger : FlowTrigger<UnitConnection, OnValueConfiguration>
     {
         public readonly IObservable<(string Topic, object? Value)> valueObservable;
 
@@ -15,7 +15,9 @@ namespace Yousei.Internal.Connectors.Internal
             this.valueObservable = valueObservable;
         }
 
-        protected override IObservable<object> GetEvents(IFlowContext context, OnValueConfiguration? arguments)
+        public override string Name { get; } = "onvalue";
+
+        protected override IObservable<object> GetEvents(IFlowContext context, UnitConnection _, OnValueConfiguration? arguments)
         {
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));

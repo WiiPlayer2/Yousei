@@ -16,19 +16,17 @@ using Yousei.Shared;
 
 namespace Yousei.Connectors.Imap
 {
-    // TODO: use a single ImapClient instance for this connection and dispose it on connection disposing (is not implemented yet)
-    internal class ImapConnection : SimpleConnection
+    // TODO: use a single ImapClient instance for this connection and dispose it on connection disposing
+    internal class ImapConnection : IConnection
     {
         private readonly ImapConfiguration config;
 
         public ImapConnection(ImapConfiguration config)
         {
-            AddTrigger("subscribe", new ObservableTrigger(CreateSubscribeObservable()));
-            AddAction("delete", new DeleteAction(Connect));
             this.config = config;
         }
 
-        private async Task<ImapClient> Connect(CancellationToken cancellationToken)
+        public async Task<ImapClient> Connect(CancellationToken cancellationToken)
         {
             var client = new ImapClient();
             await client.ConnectAsync(config.Host, config.Port, cancellationToken: cancellationToken);
@@ -36,7 +34,7 @@ namespace Yousei.Connectors.Imap
             return client;
         }
 
-        private IObservable<object> CreateSubscribeObservable()
+        public IObservable<object> CreateSubscribeObservable()
             => Observable.Create<object>(async (observer, cancellationToken) =>
                 {
                     using var client = await Connect(cancellationToken);
@@ -82,5 +80,9 @@ namespace Yousei.Connectors.Imap
                 })
                 .Publish()
                 .RefCount();
+
+        public void Dispose()
+        {
+        }
     }
 }
