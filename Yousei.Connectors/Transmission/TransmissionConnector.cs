@@ -7,9 +7,14 @@ namespace Yousei.Connectors.Transmission
 {
     public class TransmissionConnector : SimpleConnector<TransmissionConfiguration>
     {
-        public TransmissionConnector() : base("transmission")
+        public TransmissionConnector()
         {
+            AddAction<AddAction>();
+            AddAction<GetAction>();
+            AddAction<RemoveAction>();
         }
+
+        public override string Name { get; } = "transmission";
 
         protected override IConnection CreateConnection(TransmissionConfiguration configuration)
         {
@@ -22,7 +27,7 @@ namespace Yousei.Connectors.Transmission
                 password: configuration.Password
             );
 
-            return new TransmissionConnection(client);
+            return ObjectConnection.From(client);
         }
     }
 }

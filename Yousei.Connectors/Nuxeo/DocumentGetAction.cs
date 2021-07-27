@@ -20,9 +20,7 @@ namespace Yousei.Connectors.Nuxeo
 
     internal class DocumentGetAction : NuxeoAction<DocumentGetArguments>
     {
-        public DocumentGetAction(NuxeoConfig config) : base(config)
-        {
-        }
+        public override string Name { get; } = "document_get";
 
         protected override async Task Act(IFlowContext context, DocumentGetArguments? arguments, Client client)
         {

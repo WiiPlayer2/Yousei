@@ -12,6 +12,8 @@ namespace Yousei.Connectors.Http
     {
         private static readonly Encoding defaultEncoding = new UTF8Encoding(false);
 
+        public override string Name { get; } = "request";
+
         protected override async Task Act(IFlowContext context, RequestArguments? arguments)
         {
             if (arguments is null)

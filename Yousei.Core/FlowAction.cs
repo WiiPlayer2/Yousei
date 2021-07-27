@@ -1,12 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
 using Yousei.Shared;
 
 namespace Yousei.Core
 {
+    public abstract class FlowAction : FlowAction<Unit>
+    {
+        protected abstract Task Act(IFlowContext context);
+
+        protected sealed override Task Act(IFlowContext context, Unit arguments)
+            => Act(context);
+    }
+
+    public abstract class FlowAction<TArguments> : FlowAction<UnitConnection, TArguments>
+    {
+        protected sealed override Task Act(IFlowContext context, UnitConnection connection, TArguments? arguments)
+            => Act(context, arguments);
+
+        protected abstract Task Act(IFlowContext context, TArguments? arguments);
+    }
+
     public abstract class FlowAction<TConnection, TArguments> : IFlowAction
         where TConnection : IConnection
     {

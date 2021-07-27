@@ -4,6 +4,10 @@ using Yousei.Shared;
 
 namespace Yousei.Core
 {
+    public abstract class SimpleConnector<TConfiguration> : SimpleConnector<IConnection, TConfiguration>
+        where TConfiguration : notnull
+    { }
+
     public abstract class SimpleConnector<TConnection, TConfiguration> : Connector<TConnection, TConfiguration>
         where TConnection : IConnection
         where TConfiguration : notnull

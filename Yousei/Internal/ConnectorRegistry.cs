@@ -32,17 +32,17 @@ namespace Yousei.Internal
         {
             // Internal connectors
             Register(internalConnector);
-            Register(new ControlConnector());
-            Register(new DataConnector());
             Register(new LogConnector(logConnectorLogger));
-            Register(new TriggerConnector());
             Register(new DebugConnector(debugConnectorLogger));
+            Register<ControlConnector>();
+            Register<DataConnector>();
+            Register<TriggerConnector>();
 
             // External connectors
-            Register(new HttpConnector());
-            Register(new TransmissionConnector());
-            Register(new TelegramConnector());
-            Register(new RssConnector());
+            Register<HttpConnector>();
+            Register<TransmissionConnector>();
+            Register<TelegramConnector>();
+            Register<RssConnector>();
             Register<ImapConnector>();
             Register<NuxeoConnector>();
         }

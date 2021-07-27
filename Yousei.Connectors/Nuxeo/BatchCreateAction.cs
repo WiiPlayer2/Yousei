@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
 using Yousei.Core;
@@ -14,13 +15,11 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Yousei.Connectors.Nuxeo
 {
-    internal class BatchCreateAction : NuxeoAction<object>
+    internal class BatchCreateAction : NuxeoAction<Unit>
     {
-        public BatchCreateAction(NuxeoConfig config) : base(config)
-        {
-        }
+        public override string Name { get; } = "batch_create";
 
-        protected override async Task Act(IFlowContext context, object? arguments, Client client)
+        protected override async Task Act(IFlowContext context, Unit _, Client client)
         {
             var batch = await client.Batch();
             await context.SetData(batch);

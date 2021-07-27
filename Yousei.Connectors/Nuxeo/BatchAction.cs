@@ -24,10 +24,6 @@ namespace Yousei.Connectors.Nuxeo
     internal abstract class BatchAction<T> : NuxeoAction<T>
         where T : BatchArguments
     {
-        protected BatchAction(NuxeoConfig config) : base(config)
-        {
-        }
-
         protected sealed override async Task Act(IFlowContext context, T? arguments, Client client)
         {
             if (arguments is null)

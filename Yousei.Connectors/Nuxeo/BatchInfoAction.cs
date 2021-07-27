@@ -16,9 +16,7 @@ namespace Yousei.Connectors.Nuxeo
 {
     internal class BatchInfoAction : BatchAction<BatchArguments>
     {
-        public BatchInfoAction(NuxeoConfig config) : base(config)
-        {
-        }
+        public override string Name { get; } = "batch_info";
 
         protected override async Task Act(IFlowContext context, BatchArguments arguments, Batch batch, int? fileIndex)
         {

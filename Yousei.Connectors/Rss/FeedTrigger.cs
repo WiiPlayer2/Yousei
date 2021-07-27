@@ -8,10 +8,10 @@ using Yousei.Core;
 
 namespace Yousei.Connectors.Rss
 {
-    internal class FeedTrigger : ObservableTrigger
+    internal class FeedTrigger : ObservableTrigger<ObjectConnection<Config>>
     {
-        public FeedTrigger(FeedReader feedReader, Config config)
-            : base(CreateObservable(feedReader, config))
+        public FeedTrigger(FeedReader feedReader)
+            : base("feed", c => CreateObservable(feedReader, c.Object))
         {
         }
 

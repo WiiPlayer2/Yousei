@@ -16,21 +16,16 @@ using Yousei.Shared;
 
 namespace Yousei.Connectors.Imap
 {
-    internal class DeleteAction : FlowAction<DeleteArguments>
+    internal class DeleteAction : FlowAction<ImapConnection, DeleteArguments>
     {
-        private readonly Func<CancellationToken, Task<ImapClient>> createClient;
+        public override string Name { get; } = "delete";
 
-        public DeleteAction(Func<CancellationToken, Task<ImapClient>> createClient)
-        {
-            this.createClient = createClient;
-        }
-
-        protected override async Task Act(IFlowContext context, DeleteArguments? arguments)
+        protected override async Task Act(IFlowContext context, ImapConnection connection, DeleteArguments? arguments)
         {
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            using var client = await createClient(default);
+            using var client = await connection.Connect(default);
             var folderPath = await arguments.Folder.Resolve<string>(context);
             var id = await arguments.ID.Resolve<uint>(context);
 

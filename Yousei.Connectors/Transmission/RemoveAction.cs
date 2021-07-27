@@ -6,16 +6,11 @@ using Yousei.Shared;
 
 namespace Yousei.Connectors.Transmission
 {
-    internal class RemoveAction : FlowAction<RemoveArguments>
+    internal class RemoveAction : FlowAction<ObjectConnection<Client>, RemoveArguments>
     {
-        private readonly Client client;
+        public override string Name { get; } = "remove";
 
-        public RemoveAction(Client client)
-        {
-            this.client = client;
-        }
-
-        protected override async Task Act(IFlowContext context, RemoveArguments? arguments)
+        protected override async Task Act(IFlowContext context, ObjectConnection<Client> connection, RemoveArguments? arguments)
         {
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
@@ -23,7 +18,7 @@ namespace Yousei.Connectors.Transmission
             var ids = await arguments.Ids.Resolve<int[]>(context);
             var deleteData = await arguments.DeleteData.Resolve<bool>(context);
 
-            client.TorrentRemoveAsync(ids, deleteData);
+            connection.Object.TorrentRemoveAsync(ids, deleteData);
         }
     }
 }
