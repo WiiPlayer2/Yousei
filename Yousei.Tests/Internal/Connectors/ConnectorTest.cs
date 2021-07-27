@@ -25,7 +25,18 @@ namespace Yousei.Test.Internal.Connectors
         }
 
         protected Task Act(string name, object? arguments = default, object? configuration = default)
-            => CreateConnection(configuration)?.CreateAction(name)?.Act(flowContextMock.Object, arguments) ?? Task.CompletedTask;
+        {
+            var connector = CreateConnector();
+            var connection = CreateConnection(configuration);
+            if (connection is null)
+                return Task.CompletedTask;
+
+            var action = connector.GetAction(name);
+            if (action is null)
+                return Task.CompletedTask;
+
+            return action.Act(flowContextMock.Object, connection, arguments);
+        }
 
         protected IConnection? CreateConnection(object? configuration = default)
             => CreateConnector().GetConnection(configuration);
@@ -33,6 +44,17 @@ namespace Yousei.Test.Internal.Connectors
         protected abstract IConnector CreateConnector();
 
         protected IObservable<object> Trigger(string name, object? arguments = default, object? configuration = default)
-                            => CreateConnection(configuration)?.CreateTrigger(name)?.GetEvents(flowContextMock.Object, arguments) ?? Observable.Empty<object>();
+        {
+            var connector = CreateConnector();
+            var connection = CreateConnection(configuration);
+            if (connection is null)
+                return Observable.Empty<object>();
+
+            var trigger = connector.GetTrigger(name);
+            if (trigger is null)
+                return Observable.Empty<object>();
+
+            return trigger.GetEvents(flowContextMock.Object, connection, arguments);
+        }
     }
 }
