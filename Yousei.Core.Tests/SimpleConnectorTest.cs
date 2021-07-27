@@ -5,6 +5,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
 using Yousei.Shared;
@@ -67,12 +68,68 @@ namespace Yousei.Core.Test
             }
         }
 
-        private class TestConnector : SimpleConnector<object>
+        [TestMethod]
+        public void ReturnsActionForNameWhenAvailable()
         {
-            public TestConnector() : base("test")
-            {
-            }
+            // Arrange
+            var action = Mock.Of<IFlowAction>(o => o.Name == "test");
+            var connector = new TestConnector();
 
+            // Act
+            connector.AddAction(action);
+            var result = connector.GetAction("test");
+
+            // Assert
+            result.Should().BeSameAs(action);
+        }
+
+        [TestMethod]
+        public void ReturnsNullAsActionForNameWhenUnavailable()
+        {
+            // Arrange
+            var action = Mock.Of<IFlowAction>(o => o.Name == "test");
+            var connector = new TestConnector();
+
+            // Act
+            var result = connector.GetAction("test");
+
+            // Assert
+            result.Should().BeNull();
+        }
+
+        [TestMethod]
+        public void ReturnsNullAsTriggerForNameWhenUnavailable()
+        {
+            // Arrange
+            var trigger = Mock.Of<IFlowTrigger>(o => o.Name == "test");
+            var connector = new TestConnector();
+
+            // Act
+            var result = connector.GetTrigger("test");
+
+            // Assert
+            result.Should().BeNull();
+        }
+
+        [TestMethod]
+        public void ReturnsTriggerForNameWhenAvailable()
+        {
+            // Arrange
+            var trigger = Mock.Of<IFlowTrigger>(o => o.Name == "test");
+            var connector = new TestConnector();
+
+            // Act
+            connector.AddTrigger(trigger);
+            var result = connector.GetTrigger("test");
+
+            // Assert
+            result.Should().BeSameAs(trigger);
+        }
+
+        #region Factory etc.
+
+        private class TestConnector : SimpleConnector<IConnection, object>
+        {
             public new IConnection? DefaultConnection
             {
                 get => base.DefaultConnection;
@@ -81,11 +138,21 @@ namespace Yousei.Core.Test
 
             public (int Received, object? Configuration) LastReceived { get; private set; }
 
-            protected override IConnection? CreateConnection(object configuration)
+            public override string Name { get; } = "test";
+
+            public new void AddAction(IFlowAction instance)
+                => base.AddAction(instance);
+
+            public new void AddTrigger(IFlowTrigger instance)
+                => base.AddTrigger(instance);
+
+            protected override IConnection CreateConnection(object configuration)
             {
                 LastReceived = (LastReceived.Received + 1, configuration);
                 return Mock.Of<IConnection>();
             }
         }
+
+        #endregion Factory etc.
     }
 }
