@@ -14,7 +14,7 @@ namespace Yousei.Internal.Connectors.Control
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            var value = await arguments.Value.Resolve<object>(context);
+            var value = await arguments.Value.Resolve(context);
 
             foreach (var (@case, actions) in arguments.Cases)
             {

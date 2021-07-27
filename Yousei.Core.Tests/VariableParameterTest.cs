@@ -18,11 +18,11 @@ namespace Yousei.Core.Test
         {
             // Arrange
             var path = "testing.test";
-            var parameter = new VariableParameter(path);
+            var parameter = new VariableParameter<int>(path);
             var flowContext = Mock.Of<IFlowContext>(o => o.GetData(path).Result == (object)69420);
 
             // Act
-            var result = await parameter.Resolve<int>(flowContext);
+            var result = await parameter.Resolve(flowContext);
 
             // Assert
             result.Should().Be(69420);

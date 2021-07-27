@@ -19,9 +19,9 @@ namespace Yousei.Connectors.Http
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            var url = await arguments.Url.Resolve<string>(context);
-            var method = await arguments.Method.Resolve<string>(context);
-            var body = await arguments.Body.Resolve<string>(context);
+            var url = await arguments.Url.Resolve(context);
+            var method = await arguments.Method.Resolve(context);
+            var body = await arguments.Body.Resolve(context);
 
             if (url is null)
                 throw new ArgumentNullException(nameof(arguments.Url));

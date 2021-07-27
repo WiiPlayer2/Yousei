@@ -6,7 +6,7 @@ namespace Yousei.Internal.Connectors.Control
 {
     internal record WhileArguments
     {
-        public IParameter Condition { get; init; } = DefaultParameter.Instance;
+        public IParameter<bool> Condition { get; init; } = DefaultParameter<bool>.Instance;
 
         public List<BlockConfig> Actions { get; init; } = new();
     }

@@ -57,8 +57,8 @@ namespace Yousei.Core
             return (splits[0], splits[1]);
         }
 
-        public static ConstantParameter ToConstantParameter(this object obj)
-            => new ConstantParameter(obj);
+        public static ConstantParameter<T> ToConstantParameter<T>(this T obj)
+            => new ConstantParameter<T>(obj);
 
         public static async Task<List<T>> ToList<T>(this IEnumerable<Task<T>> sequence)
         {

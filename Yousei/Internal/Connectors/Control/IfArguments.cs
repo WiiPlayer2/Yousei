@@ -8,7 +8,7 @@ namespace Yousei.Internal.Connectors.Control
     {
         public List<BlockConfig> Else { get; init; } = new();
 
-        public IParameter If { get; init; } = DefaultParameter.Instance;
+        public IParameter<bool> If { get; init; } = DefaultParameter<bool>.Instance;
 
         public List<BlockConfig> Then { get; init; } = new();
     }

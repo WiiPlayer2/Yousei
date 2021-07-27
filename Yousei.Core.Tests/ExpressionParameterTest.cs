@@ -18,11 +18,11 @@ namespace Yousei.Core.Test
         {
             // Arrange
             var expression = "return 1337;";
-            var parameter = new ExpressionParameter(expression);
+            var parameter = new ExpressionParameter<int>(expression);
             var flowContext = Mock.Of<IFlowContext>();
 
             // Act
-            var result = await parameter.Resolve<int>(flowContext);
+            var result = await parameter.Resolve(flowContext);
 
             // Assert
             result.Should().Be(1337);
