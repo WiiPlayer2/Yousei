@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,10 +16,14 @@ namespace Yousei.Core
 
         public abstract IFlowAction? GetAction(string name);
 
+        public abstract IEnumerable<IFlowAction> GetActions();
+
         public IConnection? GetConnection(object? configuration)
             => GetConnection(configuration.SafeCast<TConfiguration>());
 
         public abstract IFlowTrigger? GetTrigger(string name);
+
+        public abstract IEnumerable<IFlowTrigger> GetTriggers();
 
         public abstract Task Reset();
 

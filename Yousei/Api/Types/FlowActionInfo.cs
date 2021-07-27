@@ -11,7 +11,6 @@ using Yousei.Shared;
 
 namespace Yousei.Api.Types
 {
-
     public class FlowActionInfo : Wrapper<IFlowAction>
     {
         public FlowActionInfo(IFlowAction wrapped) : base(wrapped)
@@ -22,7 +21,7 @@ namespace Yousei.Api.Types
 
         public string Name => Wrapped.Name;
 
-        [return: NotNullIfNotNull("connector")]
+        [return: NotNullIfNotNull("action")]
         public static FlowActionInfo? From(IFlowAction? action)
            => action is not null
                ? new FlowActionInfo(action)

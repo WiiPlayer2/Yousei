@@ -29,6 +29,10 @@ namespace Yousei.Api.Types
 
         public FlowActionInfo? GetAction(string name) => FlowActionInfo.From(Wrapped.GetAction(name));
 
+        public IEnumerable<FlowActionInfo> GetActions() => Wrapped.GetActions().Select(o => FlowActionInfo.From(o));
+
         public FlowTriggerInfo? GetTrigger(string name) => FlowTriggerInfo.From(Wrapped.GetTrigger(name));
+
+        public IEnumerable<FlowTriggerInfo> GetTriggers() => Wrapped.GetTriggers().Select(o => FlowTriggerInfo.From(o));
     }
 }

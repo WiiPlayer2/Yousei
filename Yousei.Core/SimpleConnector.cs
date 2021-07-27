@@ -23,8 +23,14 @@ namespace Yousei.Core
         public sealed override IFlowAction? GetAction(string name)
             => actions.GetValueOrDefault(name);
 
+        public sealed override IEnumerable<IFlowAction> GetActions()
+            => actions.Values;
+
         public sealed override IFlowTrigger? GetTrigger(string name)
-            => triggers.GetValueOrDefault(name);
+                    => triggers.GetValueOrDefault(name);
+
+        public sealed override IEnumerable<IFlowTrigger> GetTriggers()
+            => triggers.Values;
 
         public sealed override Task Reset()
         {

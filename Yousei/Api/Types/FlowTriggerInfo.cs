@@ -11,7 +11,6 @@ using Yousei.Shared;
 
 namespace Yousei.Api.Types
 {
-
     public class FlowTriggerInfo : Wrapper<IFlowTrigger>
     {
         public FlowTriggerInfo(IFlowTrigger wrapped) : base(wrapped)
@@ -22,10 +21,10 @@ namespace Yousei.Api.Types
 
         public string Name => Wrapped.Name;
 
-        [return: NotNullIfNotNull("connector")]
-        public static FlowTriggerInfo? From(IFlowTrigger? action)
-           => action is not null
-               ? new FlowTriggerInfo(action)
+        [return: NotNullIfNotNull("trigger")]
+        public static FlowTriggerInfo? From(IFlowTrigger? trigger)
+           => trigger is not null
+               ? new FlowTriggerInfo(trigger)
                : null;
     }
 }
