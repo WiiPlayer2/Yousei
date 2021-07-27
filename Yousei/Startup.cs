@@ -68,7 +68,12 @@ namespace Yousei
                 // Misc. types
                 .BindRuntimeType<Unit, AnyType>()
                 .BindRuntimeType<object, AnyType>()
-                .AddType<WrapperType<Type, TypeInfo>>()
+                .AddType<SubTypeInfoType<ObjectTypeInfo>>()
+                .AddType<SubTypeInfoType<ListTypeInfo>>()
+                .AddType<SubTypeInfoType<AnyTypeInfo>>()
+                .AddType<SubTypeInfoType<ParameterTypeInfo>>()
+                .AddType<SubTypeInfoType<DictionaryTypeInfo>>()
+                .AddType<SubTypeInfoType<ScalarTypeInfo>>()
                 .AddType<WrapperType<CLRPropertyInfo, PropertyInfo>>()
                 .AddType<WrapperType<IConnector, ConnectorInfo>>()
                 .AddType<WrapperType<IFlowAction, FlowActionInfo>>()

@@ -21,7 +21,7 @@ namespace Yousei.Api.Types
 
         public string Name => Wrapped.Name;
 
-        public TypeInfo PropertyType => Wrapped.PropertyType;
+        public TypeInfo PropertyType => (TypeInfo)Wrapped.PropertyType;
 
         public static implicit operator PropertyInfo(CLRPropertyInfo propertyInfo)
             => new PropertyInfo(propertyInfo);

@@ -17,7 +17,7 @@ namespace Yousei.Api.Types
         {
         }
 
-        public TypeInfo ConfigurationType => Wrapped.ConfigurationType;
+        public TypeInfo ConfigurationType => (TypeInfo)Wrapped.ConfigurationType;
 
         public string Name => Wrapped.Name;
 
