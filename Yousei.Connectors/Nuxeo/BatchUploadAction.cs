@@ -16,11 +16,11 @@ namespace Yousei.Connectors.Nuxeo
 {
     internal record BatchUploadArguments : BatchArguments
     {
-        public IParameter Filename { get; init; } = DefaultParameter.Instance;
+        public IParameter<string> Filename { get; init; } = DefaultParameter<string>.Instance;
 
-        public IParameter Raw { get; init; } = DefaultParameter.Instance;
+        public IParameter<byte[]> Raw { get; init; } = DefaultParameter<byte[]>.Instance;
 
-        public IParameter Text { get; init; } = DefaultParameter.Instance;
+        public IParameter<string> Text { get; init; } = DefaultParameter<string>.Instance;
     }
 
     internal class BatchUploadAction : BatchAction<BatchUploadArguments>
@@ -33,14 +33,14 @@ namespace Yousei.Connectors.Nuxeo
                 throw new ArgumentNullException(nameof(fileIndex));
 
             using var tempFile = Temp.File(out var fileInfo);
-            var filename = await arguments.Filename.Resolve<string>(context);
+            var filename = await arguments.Filename.Resolve(context);
             if (string.IsNullOrWhiteSpace(filename))
                 throw new ArgumentException($"\"{filename}\" is not a valid filename.");
 
-            var content = await arguments.Raw.Resolve<byte[]>(context);
+            var content = await arguments.Raw.Resolve(context);
             if (content is null)
             {
-                var contentText = await arguments.Text.Resolve<string>(context);
+                var contentText = await arguments.Text.Resolve(context);
                 if (contentText is null)
                     throw new ArgumentException($"No payload provided. Either Raw or Text must be set.");
 

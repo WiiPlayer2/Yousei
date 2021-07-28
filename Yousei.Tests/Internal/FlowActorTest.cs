@@ -53,7 +53,7 @@ namespace Yousei.Test.Internal
             var testConnectorMock = new Mock<IConnector>();
             var testConnectionMock = new Mock<IConnection>();
             var testTriggerMock = new Mock<IFlowTrigger>();
-            var testObservable = Observable.Empty<object>();
+            var testObservable = Observable.Return("henlo dere");
             connectorRegistryMock.Setup(o => o.Get("testing")).Returns(testConnectorMock.Object);
             testConnectorMock.Setup(o => o.GetConnection(It.IsAny<object?>())).Returns(testConnectionMock.Object);
             testConnectorMock.Setup(o => o.GetTrigger("test")).Returns(testTriggerMock.Object);
@@ -63,8 +63,8 @@ namespace Yousei.Test.Internal
             var result = actor.GetTrigger(trigger, flowContextMock.Object);
 
             // Assert
+            result.ToEnumerable().Should().BeEquivalentTo(testObservable.ToEnumerable());
             testTriggerMock.Verify(o => o.GetEvents(flowContextMock.Object, testConnectionMock.Object, It.IsAny<object?>()));
-            result.Should().BeSameAs(testObservable);
         }
 
         #region Factory etc.

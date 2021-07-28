@@ -15,7 +15,7 @@ namespace Yousei.Internal.Connectors.Control
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            var condition = await arguments.If.Resolve<bool>(context);
+            var condition = await arguments.If.Resolve(context);
 
             if (condition)
                 using (context.ScopeStack("IF"))

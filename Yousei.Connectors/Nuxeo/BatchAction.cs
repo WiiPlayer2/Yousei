@@ -16,9 +16,9 @@ namespace Yousei.Connectors.Nuxeo
 {
     internal record BatchArguments
     {
-        public IParameter ID { get; init; } = DefaultParameter.Instance;
+        public IParameter<string> ID { get; init; } = DefaultParameter<string>.Instance;
 
-        public IParameter FileIndex { get; init; } = DefaultParameter.Instance;
+        public IParameter<int?> FileIndex { get; init; } = DefaultParameter<int?>.Instance;
     }
 
     internal abstract class BatchAction<T> : NuxeoAction<T>
@@ -29,10 +29,10 @@ namespace Yousei.Connectors.Nuxeo
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            var fileIndex = await arguments.FileIndex.Resolve<int?>(context);
+            var fileIndex = await arguments.FileIndex.Resolve(context);
             var batch = new Batch
             {
-                BatchId = await arguments.ID.Resolve<string>(context),
+                BatchId = await arguments.ID.Resolve(context),
                 FileIndex = fileIndex ?? 0,
             }.SetClient(client);
 

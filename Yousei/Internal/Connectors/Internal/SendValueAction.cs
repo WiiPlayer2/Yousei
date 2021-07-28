@@ -22,8 +22,8 @@ namespace Yousei.Internal.Connectors.Internal
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            var topic = await arguments.Topic.Resolve<string>(context);
-            var value = await arguments.Value.Resolve<object>(context);
+            var topic = await arguments.Topic.Resolve(context);
+            var value = await arguments.Value.Resolve(context);
 
             if (topic is null)
                 throw new ArgumentNullException(nameof(arguments.Topic));

@@ -8,7 +8,14 @@ using Yousei.Shared;
 
 namespace Yousei.Core
 {
-    public class ExpressionParameter : IParameter
+    public class ExpressionParameter : ExpressionParameter<object?>
+    {
+        public ExpressionParameter(string expressionCode) : base(expressionCode)
+        {
+        }
+    }
+
+    public class ExpressionParameter<T> : IParameter<T>
     {
         public record ScriptGlobals(dynamic Context);
 
@@ -30,7 +37,7 @@ namespace Yousei.Core
 
         public string Code { get; }
 
-        public async Task<T?> Resolve<T>(IFlowContext context)
+        public async Task<T?> Resolve(IFlowContext context)
         {
             var contextObj = await context.AsObject();
             var globals = new ScriptGlobals(contextObj);
@@ -38,6 +45,9 @@ namespace Yousei.Core
                 globals: globals);
             return result.ReturnValue.Map<T>();
         }
+
+        async Task<object?> IParameter.Resolve(IFlowContext context)
+            => await Resolve(context);
 
         public override string ToString()
             => $"=> {Code}";

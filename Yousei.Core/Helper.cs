@@ -2,7 +2,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +16,23 @@ namespace Yousei.Core
     {
         public static string GetStackTrace(this IFlowContext context)
             => string.Join("\n", context.ExecutionStack.Select(o => $"@ {o}"));
+
+        public static Type GetValueType(this Type parameterType)
+        {
+            if (!parameterType.IsAssignableTo(typeof(IParameter)))
+                throw new ArgumentException();
+
+            var interfaceTypes = parameterType.GetInterfaces().ToList();
+            if (parameterType.IsInterface)
+                interfaceTypes.Add(parameterType);
+
+            var genericInterface = interfaceTypes
+                .FirstOrDefault(o => o.IsGenericType && o.GetGenericTypeDefinition() == typeof(IParameter<>));
+
+            return genericInterface is not null
+                ? genericInterface.GenericTypeArguments[0]
+                : typeof(object);
+        }
 
         public static async Task IgnoreCancellation(this Task task, CancellationToken? cancellationToken = default)
         {
@@ -29,6 +48,23 @@ namespace Yousei.Core
 
         public static object? Map(this object? source, Type targetType)
             => source is null ? null : JToken.FromObject(source).ToObject(targetType);
+
+        public static IParameter Map(this IParameter parameter, Type targetType)
+        {
+            if (targetType == typeof(object))
+                return parameter;
+
+            var mappedParameterType = typeof(MappedParameter<>).MakeGenericType(targetType);
+            var constructor = mappedParameterType.GetConstructor(new[] { typeof(IParameter) });
+            if (constructor is null)
+                throw new InvalidOperationException();
+
+            var expression = Expression.Lambda<Func<IParameter>>(Expression.New(constructor, Expression.Constant(parameter)));
+            return expression.Compile()();
+        }
+
+        public static IParameter<T> Map<T>(this IParameter parameter)
+            => (IParameter<T>)parameter.Map(typeof(T));
 
         public static T? SafeCast<T>(this object? obj)
             => obj is T castObj ? castObj : default;
@@ -57,8 +93,8 @@ namespace Yousei.Core
             return (splits[0], splits[1]);
         }
 
-        public static ConstantParameter ToConstantParameter(this object obj)
-            => new ConstantParameter(obj);
+        public static ConstantParameter<T> ToConstantParameter<T>(this T obj)
+            => new ConstantParameter<T>(obj);
 
         public static async Task<List<T>> ToList<T>(this IEnumerable<Task<T>> sequence)
         {
@@ -82,12 +118,13 @@ namespace Yousei.Core
             return false;
         }
 
-        public static bool TryToObject<T>(this JToken jtoken, out T? result)
+        public static bool TryToObject<T>(this JToken jtoken, [NotNullWhen(true)] out T? result)
+            where T : notnull
         {
             try
             {
                 result = jtoken.ToObject<T>();
-                return true;
+                return result is not null;
             }
             catch
             {

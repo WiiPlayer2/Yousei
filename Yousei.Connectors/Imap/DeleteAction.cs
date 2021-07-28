@@ -26,8 +26,8 @@ namespace Yousei.Connectors.Imap
                 throw new ArgumentNullException(nameof(arguments));
 
             using var client = await connection.Connect(default);
-            var folderPath = await arguments.Folder.Resolve<string>(context);
-            var id = await arguments.ID.Resolve<uint>(context);
+            var folderPath = await arguments.Folder.Resolve(context);
+            var id = await arguments.ID.Resolve(context);
 
             var uniqueId = new UniqueId(id);
             var folder = await client.GetFolderAsync(folderPath);

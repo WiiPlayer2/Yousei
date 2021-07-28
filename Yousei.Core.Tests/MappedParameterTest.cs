@@ -11,21 +11,21 @@ using Yousei.Shared;
 namespace Yousei.Core.Test
 {
     [TestClass]
-    public class VariableParameterTest
+    public class MappedParameterTest
     {
         [TestMethod]
-        public async Task ResolveReturnsValueFromContextAtPath()
+        public async Task ResolveReturnsMappedValue()
         {
             // Arrange
-            var path = "testing.test";
-            var parameter = new VariableParameter<int>(path);
-            var flowContext = Mock.Of<IFlowContext>(o => o.GetData(path).Result == (object)69420);
+            var flowContext = Mock.Of<IFlowContext>();
+            var baseParameter = Mock.Of<IParameter>(o => o.Resolve(flowContext).Result == (object)"1337");
+            var parameter = new MappedParameter<int>(baseParameter);
 
             // Act
             var result = await parameter.Resolve(flowContext);
 
             // Assert
-            result.Should().Be(69420);
+            result.Should().Be(1337);
         }
     }
 }

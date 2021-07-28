@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Shared;
 using Yousei.Internal.Connectors.Control;
+using System.Collections;
 
 namespace Yousei.Test.Internal.Connectors
 {
@@ -25,7 +26,7 @@ namespace Yousei.Test.Internal.Connectors
                     Type = "testing.test",
                 },
             };
-            var collection = new[] { 1, 2, 3 };
+            var collection = new[] { 1, 2, 3 }.Map<ArrayList>() ?? throw new InvalidOperationException();
             var arguments = new ForEachArguments
             {
                 Collection = collection.ToConstantParameter(),
@@ -36,7 +37,7 @@ namespace Yousei.Test.Internal.Connectors
             await Act("foreach", arguments);
 
             // Assert
-            flowContextMock.Verify(o => o.SetData(It.IsIn(collection)), Times.Exactly(3));
+            flowContextMock.Verify(o => o.SetData(It.IsIn(collection.Cast<int>())), Times.Exactly(3));
             flowActorMock.Verify(o => o.Act(actions, flowContextMock.Object), Times.Exactly(3));
         }
 
@@ -119,8 +120,8 @@ namespace Yousei.Test.Internal.Connectors
         public async Task WhileActionExecutesActionsOnlyWhileConditionIsTrue()
         {
             // Arrange
-            var conditionParameterMock = new Mock<IParameter>();
-            conditionParameterMock.SetupSequence(o => o.Resolve<bool>(flowContextMock.Object))
+            var conditionParameterMock = new Mock<IParameter<bool>>();
+            conditionParameterMock.SetupSequence(o => o.Resolve(flowContextMock.Object))
                 .ReturnsAsync(true)
                 .ReturnsAsync(true)
                 .ReturnsAsync(false);
@@ -141,7 +142,7 @@ namespace Yousei.Test.Internal.Connectors
             await Act("while", arguments);
 
             // Assert
-            conditionParameterMock.Verify(o => o.Resolve<bool>(flowContextMock.Object), Times.Exactly(3));
+            conditionParameterMock.Verify(o => o.Resolve(flowContextMock.Object), Times.Exactly(3));
             flowActorMock.Verify(o => o.Act(actions, flowContextMock.Object), Times.Exactly(2));
         }
 
