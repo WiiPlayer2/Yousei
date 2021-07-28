@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Yousei.Shared;
 
 namespace Yousei.Core.Tests
 {
@@ -28,6 +29,36 @@ namespace Yousei.Core.Tests
 
             // Assert
             await act.Should().NotThrowAsync<OperationCanceledException>();
+        }
+
+        [TestMethod]
+        public void Map_ReturnsMappedParameterWithCorrectType()
+        {
+            // Arrange
+            var baseParameter = Mock.Of<IParameter>();
+
+            // Act
+            var result = baseParameter.Map<int>();
+
+            // Assert
+            using (new AssertionScope())
+            {
+                result.Should().BeOfType<MappedParameter<int>>();
+                ((MappedParameter<int>)result).Base.Should().BeSameAs(baseParameter);
+            }
+        }
+
+        [TestMethod]
+        public void Map_ReturnsParameterForObjectType()
+        {
+            // Arrange
+            var baseParameter = Mock.Of<IParameter>();
+
+            // Act
+            var result = baseParameter.Map(typeof(object));
+
+            // Assert
+            result.Should().BeSameAs(baseParameter);
         }
 
         [DataRow("asdf.qwertz", "asdf", "qwertz")]

@@ -14,7 +14,7 @@ namespace Yousei.Internal.Connectors.Control
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            while (await arguments.Condition.Resolve<bool>(context))
+            while (await arguments.Condition.Resolve(context))
             {
                 await context.Actor.Act(arguments.Actions, context);
             }

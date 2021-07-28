@@ -5,7 +5,7 @@ namespace Yousei.Internal.Connectors.Internal
 {
     internal record SendValueArguments
     {
-        public IParameter Topic { get; init; } = DefaultParameter.Instance;
+        public IParameter<string> Topic { get; init; } = DefaultParameter<string>.Instance;
 
         public IParameter Value { get; init; } = DefaultParameter.Instance;
     }

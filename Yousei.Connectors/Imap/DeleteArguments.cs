@@ -16,11 +16,10 @@ using Yousei.Shared;
 
 namespace Yousei.Connectors.Imap
 {
-
     internal record DeleteArguments
     {
-        public IParameter Folder { get; init; } = "INBOX".ToConstantParameter();
+        public IParameter<string> Folder { get; init; } = "INBOX".ToConstantParameter();
 
-        public IParameter ID { get; init; } = 0u.ToConstantParameter();
+        public IParameter<uint> ID { get; init; } = 0u.ToConstantParameter();
     }
 }

@@ -5,6 +5,6 @@ namespace Yousei.Internal.Connectors.Data
 {
     internal record ClearArguments
     {
-        public IParameter Path { get; init; } = DefaultParameter.Instance;
+        public IParameter<string> Path { get; init; } = DefaultParameter<string>.Instance;
     }
 }

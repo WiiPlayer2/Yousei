@@ -13,17 +13,17 @@ namespace Yousei.Connectors.Nuxeo
 {
     internal record RequestArguments
     {
-        public IParameter Method { get; init; } = "GET".ToConstantParameter();
+        public IParameter<string> Method { get; init; } = "GET".ToConstantParameter();
 
-        public IParameter Endpoint { get; init; } = DefaultParameter.Instance;
+        public IParameter<string> Endpoint { get; init; } = DefaultParameter<string>.Instance;
 
-        public IParameter ContentType { get; init; } = "application/json".ToConstantParameter();
+        public IParameter<string> ContentType { get; init; } = "application/json".ToConstantParameter();
 
-        public IParameter Headers { get; init; } = DefaultParameter.Instance;
+        public IParameter<Dictionary<string, string>> Headers { get; init; } = DefaultParameter<Dictionary<string, string>>.Instance;
 
-        public IParameter Data { get; init; } = DefaultParameter.Instance;
+        public IParameter<JToken> Data { get; init; } = DefaultParameter<JToken>.Instance;
 
-        public IParameter Parameters { get; init; } = DefaultParameter.Instance;
+        public IParameter<Dictionary<string, string>> Parameters { get; init; } = DefaultParameter<Dictionary<string, string>>.Instance;
     }
 
     internal class RequestAction : NuxeoAction<RequestArguments>
@@ -35,7 +35,7 @@ namespace Yousei.Connectors.Nuxeo
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            var method = await arguments.Method.Resolve<string>(context);
+            var method = await arguments.Method.Resolve(context);
             var requestType = method switch
             {
                 "GET" => Client.RequestType.GET,
@@ -44,11 +44,11 @@ namespace Yousei.Connectors.Nuxeo
                 "DELETE" => Client.RequestType.DELETE,
                 _ => throw new NotSupportedException(),
             };
-            var endpoint = await arguments.Endpoint.Resolve<string>(context);
-            var parametersDict = await arguments.Parameters.Resolve<Dictionary<string, string>>(context);
-            var data = await arguments.Data.Resolve<JToken>(context);
-            var additionalHeaders = await arguments.Headers.Resolve<Dictionary<string, string>>(context);
-            var contentType = await arguments.ContentType.Resolve<string>(context);
+            var endpoint = await arguments.Endpoint.Resolve(context);
+            var parametersDict = await arguments.Parameters.Resolve(context);
+            var data = await arguments.Data.Resolve(context);
+            var additionalHeaders = await arguments.Headers.Resolve(context);
+            var contentType = await arguments.ContentType.Resolve(context);
 
             var parameters = new QueryParams();
             if (parametersDict is not null)

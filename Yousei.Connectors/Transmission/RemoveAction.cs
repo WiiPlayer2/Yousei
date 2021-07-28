@@ -15,8 +15,8 @@ namespace Yousei.Connectors.Transmission
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            var ids = await arguments.Ids.Resolve<int[]>(context);
-            var deleteData = await arguments.DeleteData.Resolve<bool>(context);
+            var ids = await arguments.Ids.Resolve(context);
+            var deleteData = await arguments.DeleteData.Resolve(context);
 
             connection.Object.TorrentRemoveAsync(ids, deleteData);
         }

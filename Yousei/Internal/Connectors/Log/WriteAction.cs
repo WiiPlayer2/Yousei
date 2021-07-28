@@ -22,9 +22,9 @@ namespace YouseiRelaoded.Internal.Connectors.Log
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            var level = await arguments.Level.Resolve<LogLevel>(context);
-            var message = await arguments.Message.Resolve<object>(context);
-            var tag = await arguments.Tag.Resolve<string>(context);
+            var level = await arguments.Level.Resolve(context);
+            var message = await arguments.Message.Resolve(context);
+            var tag = await arguments.Tag.Resolve(context);
 
             logger.Log(level, $"[{tag}] {message}");
         }

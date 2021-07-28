@@ -163,19 +163,19 @@ namespace Yousei.SourceGen
             sb.AppendLine($"    partial {typeKind} {type.Name} {{");
             foreach (var prop in properties)
             {
-                sb.AppendLine($"        public Yousei.Shared.IParameter {prop.Name} {{ get; init; }}");
+                sb.AppendLine($"        public Yousei.Shared.IParameter<{prop.Type}> {prop.Name} {{ get; init; }}");
             }
             sb.AppendLine($"        public async System.Threading.Tasks.Task<global::{targetType}> Resolve(Yousei.Shared.IFlowContext context)");
             sb.AppendLine($"            => new() {{");
             foreach (var prop in properties)
             {
-                sb.AppendLine($"                {prop.Name} = await Resolve<{prop.Type}>({prop.Name}, context),");
+                sb.AppendLine($"                {prop.Name} = await Resolve({prop.Name}, context),");
             }
             sb.AppendLine($"            }};");
-            sb.AppendLine($"        private async System.Threading.Tasks.Task<T> Resolve<T>(Yousei.Shared.IParameter parameter, Yousei.Shared.IFlowContext context) {{");
+            sb.AppendLine($"        private async System.Threading.Tasks.Task<T> Resolve<T>(Yousei.Shared.IParameter<T> parameter, Yousei.Shared.IFlowContext context) {{");
             sb.AppendLine($"            if(parameter is null)");
             sb.AppendLine($"                return default;");
-            sb.AppendLine($"            return await parameter.Resolve<T>(context);");
+            sb.AppendLine($"            return await parameter.Resolve(context);");
             sb.AppendLine($"        }}");
             sb.AppendLine($"    }}");
             sb.AppendLine($"}}");

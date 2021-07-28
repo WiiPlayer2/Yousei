@@ -15,7 +15,7 @@ namespace Yousei.Internal.Connectors.Data
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            var path = await arguments.Path.Resolve<string>(context);
+            var path = await arguments.Path.Resolve(context);
 
             if (path is null)
                 throw new ArgumentNullException(nameof(arguments.Path));

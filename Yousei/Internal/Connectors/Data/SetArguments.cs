@@ -5,7 +5,7 @@ namespace Yousei.Internal.Connectors.Data
 {
     internal record SetArguments
     {
-        public IParameter Path { get; init; } = DefaultParameter.Instance;
+        public IParameter<string> Path { get; init; } = DefaultParameter<string>.Instance;
 
         public IParameter Value { get; init; } = DefaultParameter.Instance;
     }

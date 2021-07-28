@@ -15,7 +15,7 @@ namespace Yousei.Internal.Connectors.Control
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            var collection = await arguments.Collection.Resolve<ArrayList>(context);
+            var collection = await arguments.Collection.Resolve(context);
             if (collection is null)
                 throw new ArgumentNullException(nameof(arguments.Collection));
 

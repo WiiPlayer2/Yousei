@@ -1,11 +1,12 @@
-﻿using Yousei.Core;
+﻿using System;
+using Yousei.Core;
 using Yousei.Shared;
 
 namespace Yousei.Connectors.Transmission
 {
     internal record RemoveArguments
     {
-        public IParameter Ids { get; init; } = new ConstantParameter(System.Array.Empty<int>());
-        public IParameter DeleteData { get; init; } = new ConstantParameter(false);
+        public IParameter<int[]> Ids { get; init; } = Array.Empty<int>().ToConstantParameter();
+        public IParameter<bool> DeleteData { get; init; } = false.ToConstantParameter();
     }
 }

@@ -15,8 +15,8 @@ namespace Yousei.Connectors.Transmission
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            var fields = await arguments.Fields.Resolve<string[]>(context);
-            var ids = await arguments.Ids.Resolve<int[]>(context);
+            var fields = await arguments.Fields.Resolve(context);
+            var ids = await arguments.Ids.Resolve(context);
 
             var torrents = await connection.Object.TorrentGetAsync(fields, ids);
             await context.SetData(torrents);

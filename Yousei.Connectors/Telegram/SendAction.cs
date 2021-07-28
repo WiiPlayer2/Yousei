@@ -16,8 +16,8 @@ namespace Yousei.Connectors.Telegram
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            var chatId = await arguments.ChatId.Resolve<ChatId>(context);
-            var text = await arguments.Text.Resolve<string>(context);
+            var chatId = await arguments.ChatId.Resolve(context);
+            var text = await arguments.Text.Resolve(context);
 
             var message = await connection.TelegramBotClient.SendTextMessageAsync(chatId, text);
             await context.SetData(message);
