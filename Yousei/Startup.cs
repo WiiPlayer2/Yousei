@@ -1,25 +1,22 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using HotChocolate.Types;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Yousei.Shared;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Reactive;
+using Yousei.Api.Extensions;
+using Yousei.Api.Mutations;
+using Yousei.Api.Queries;
+using Yousei.Api.SchemaType;
+using Yousei.Api.Subscriptions;
+using Yousei.Api.Types;
 using Yousei.Internal;
 using Yousei.Internal.Connectors.Internal;
-using Yousei.Serialization.Json;
-using Yousei.Serialization.Yaml;
-using Microsoft.AspNetCore.Hosting;
-using System;
-using Microsoft.AspNetCore.Builder;
-using Yousei.Api;
-using Yousei.Api.Extensions;
-using Newtonsoft.Json.Linq;
-using HotChocolate.Utilities;
-using HotChocolate.Types;
-using Yousei.Api.SchemaType;
-using Yousei.Api.Mutations;
-using System.Reactive;
 using Yousei.Internal.Database;
-using Yousei.Api.Subscriptions;
+using Yousei.Shared;
+using CLRPropertyInfo = System.Reflection.PropertyInfo;
 
 namespace Yousei
 {
@@ -58,6 +55,8 @@ namespace Yousei
             services.AddSingleton<IApi, InternalApi>();
             services.AddGraphQLServer()
                 .AddInMemorySubscriptions()
+
+                // JSON types
                 .AddType<JsonType>()
                 .AddTypeConverter<JObject, JToken>(from => from)
                 .AddTypeConverter<JArray, JToken>(from => from)
@@ -65,15 +64,34 @@ namespace Yousei
                 .BindRuntimeType<JObject, JsonType>()
                 .BindRuntimeType<JArray, JsonType>()
                 .BindRuntimeType<JValue, JsonType>()
+
+                // Misc. types
                 .BindRuntimeType<Unit, AnyType>()
                 .BindRuntimeType<object, AnyType>()
+                .AddType<SubTypeInfoType<ObjectTypeInfo>>()
+                .AddType<SubTypeInfoType<ListTypeInfo>>()
+                .AddType<SubTypeInfoType<AnyTypeInfo>>()
+                .AddType<SubTypeInfoType<DictionaryTypeInfo>>()
+                .AddType<SubTypeInfoType<ScalarTypeInfo>>()
+                .AddType<WrapperType<CLRPropertyInfo, PropertyInfo>>()
+                .AddType<WrapperType<IConnector, ConnectorInfo>>()
+                .AddType<WrapperType<IFlowAction, FlowActionInfo>>()
+                .AddType<WrapperType<IFlowTrigger, FlowTriggerInfo>>()
+
+                // Query
                 .AddQueryType<Query>()
                 .AddType<ConfigurationExtension>()
                 .AddType<FlowExtension>()
                 .AddType<BlockConfigExtension>()
+
+                // Mutation
                 .AddMutationType<Mutation>()
                 .AddType<DatabaseMutation>()
+
+                // Subscriptions
                 .AddSubscriptionType<Subscription>()
+
+                // Misc.
                 .ModifyRequestOptions(options =>
                 {
                     options.IncludeExceptionDetails = true;

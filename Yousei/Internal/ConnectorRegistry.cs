@@ -49,6 +49,8 @@ namespace Yousei.Internal
 
         public IConnector? Get(string name) => connectors.GetValueOrDefault(name);
 
+        public IEnumerable<IConnector> GetAll() => connectors.Values;
+
         public void Register(IConnector connector) => connectors.TryAdd(connector.Name, connector);
 
         public void Register<T>()
