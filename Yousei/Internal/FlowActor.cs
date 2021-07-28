@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Internal;
@@ -44,15 +46,47 @@ namespace Yousei.Internal
                 if (flowTrigger is null)
                     throw new FlowException($"Unable to acquire trigger \"{trigger.Type}\".", context);
 
-                var flowTriggerConfiguration = trigger.Arguments.Map(flowTrigger.ArgumentsType);
+                return Observable.DeferAsync(async _ =>
+                {
+                    var flowTriggerConfiguration = await Resolve(trigger.Arguments, flowTrigger.ArgumentsType, context);
 
-                return flowTrigger.GetEvents(context, connection, flowTriggerConfiguration);
+                    return flowTrigger.GetEvents(context, connection, flowTriggerConfiguration);
+                });
             }
             catch (Exception e) when (e is not FlowException)
             {
                 throw new FlowException($"Error while getting trigger \"{trigger.Type}\".", context, e);
             }
         }
+
+        private static async Task<JToken> Resolve(JToken token, IFlowContext context)
+        {
+            if (token is JObject jobj)
+                return await ResolveObject(jobj);
+
+            if (token is JArray jarr)
+                return new JArray(await Task.WhenAll(jarr.Select(o => Resolve(o, context))));
+
+            return token;
+
+            async Task<JToken> ResolveObject(JObject jobject)
+            {
+                if (jobject.TryToObject<IParameter>(out var parameter))
+                {
+                    var resolvedValue = await parameter.Resolve(context);
+                    return resolvedValue is not null
+                        ? JToken.FromObject(resolvedValue)
+                        : JValue.CreateNull();
+                }
+
+                return new JObject(await Task.WhenAll(jobject.Properties().Select(async prop => new JProperty(prop.Name, await Resolve(prop.Value, context)))));
+            }
+        }
+
+        private static async Task<object?> Resolve(object? obj, Type targetType, IFlowContext context)
+            => obj is not null
+                ? (await Resolve(JToken.FromObject(obj), context)).Map(targetType)
+                : default;
 
         private async Task Act(BlockConfig action, IFlowContext context)
         {
@@ -64,7 +98,7 @@ namespace Yousei.Internal
                 if (flowAction is null)
                     throw new FlowException($"Unable to acquire action \"{action.Type}\".", context);
 
-                var flowActionConfiguration = action.Arguments.Map(flowAction.ArgumentsType);
+                var flowActionConfiguration = await Resolve(action.Arguments, flowAction.ArgumentsType, context);
 
                 context.CurrentType = action.Type;
                 await flowAction.Act(context, connection, flowActionConfiguration);

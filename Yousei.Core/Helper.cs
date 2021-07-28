@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -117,7 +118,7 @@ namespace Yousei.Core
             return false;
         }
 
-        public static bool TryToObject<T>(this JToken jtoken, out T? result)
+        public static bool TryToObject<T>(this JToken jtoken, [NotNullWhen(true)] out T? result)
         {
             try
             {
