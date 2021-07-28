@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +15,23 @@ namespace Yousei.Core
     {
         public static string GetStackTrace(this IFlowContext context)
             => string.Join("\n", context.ExecutionStack.Select(o => $"@ {o}"));
+
+        public static Type GetValueType(this Type parameterType)
+        {
+            if (!parameterType.IsAssignableTo(typeof(IParameter)))
+                throw new ArgumentException();
+
+            var interfaceTypes = parameterType.GetInterfaces().ToList();
+            if (parameterType.IsInterface)
+                interfaceTypes.Add(parameterType);
+
+            var genericInterface = interfaceTypes
+                .FirstOrDefault(o => o.IsGenericType && o.GetGenericTypeDefinition() == typeof(IParameter<>));
+
+            return genericInterface is not null
+                ? genericInterface.GenericTypeArguments[0]
+                : typeof(object);
+        }
 
         public static async Task IgnoreCancellation(this Task task, CancellationToken? cancellationToken = default)
         {
@@ -29,6 +47,23 @@ namespace Yousei.Core
 
         public static object? Map(this object? source, Type targetType)
             => source is null ? null : JToken.FromObject(source).ToObject(targetType);
+
+        public static IParameter Map(this IParameter parameter, Type targetType)
+        {
+            if (targetType == typeof(object))
+                return parameter;
+
+            var mappedParameterType = typeof(MappedParameter<>).MakeGenericType(targetType);
+            var constructor = mappedParameterType.GetConstructor(new[] { typeof(IParameter) });
+            if (constructor is null)
+                throw new InvalidOperationException();
+
+            var expression = Expression.Lambda<Func<IParameter>>(Expression.New(constructor, Expression.Constant(parameter)));
+            return expression.Compile()();
+        }
+
+        public static IParameter<T> Map<T>(this IParameter parameter)
+            => (IParameter<T>)parameter.Map(typeof(T));
 
         public static T? SafeCast<T>(this object? obj)
             => obj is T castObj ? castObj : default;

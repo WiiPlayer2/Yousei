@@ -24,16 +24,17 @@ namespace Yousei.Serialization.Json
 
         public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
+            var valueType = objectType.GetValueType();
             var jtoken = JToken.ReadFrom(reader);
             if (!jtoken.TryToObject<Dto>(out var dto) || dto is null || dto.Type is null)
             {
-                return new ConstantParameter(jtoken);
+                return new ConstantParameter(jtoken).Map(valueType);
             }
 
             var parameter = dto.Type.Value.Match<IParameter>(
-                () => new ConstantParameter(dto.Config),
-                () => new VariableParameter(dto.Config.ToObject<string>() ?? string.Empty),
-                () => new ExpressionParameter(dto.Config.ToObject<string>() ?? string.Empty));
+                () => new ConstantParameter(dto.Config).Map(valueType),
+                () => new VariableParameter(dto.Config.ToObject<string>() ?? string.Empty).Map(valueType),
+                () => new ExpressionParameter(dto.Config.ToObject<string>() ?? string.Empty).Map(valueType));
             return parameter;
         }
 
