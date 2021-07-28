@@ -119,11 +119,12 @@ namespace Yousei.Core
         }
 
         public static bool TryToObject<T>(this JToken jtoken, [NotNullWhen(true)] out T? result)
+            where T : notnull
         {
             try
             {
                 result = jtoken.ToObject<T>();
-                return true;
+                return result is not null;
             }
             catch
             {
