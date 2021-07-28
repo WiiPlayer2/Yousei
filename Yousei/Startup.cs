@@ -71,7 +71,6 @@ namespace Yousei
                 .AddType<SubTypeInfoType<ObjectTypeInfo>>()
                 .AddType<SubTypeInfoType<ListTypeInfo>>()
                 .AddType<SubTypeInfoType<AnyTypeInfo>>()
-                .AddType<SubTypeInfoType<ParameterTypeInfo>>()
                 .AddType<SubTypeInfoType<DictionaryTypeInfo>>()
                 .AddType<SubTypeInfoType<ScalarTypeInfo>>()
                 .AddType<WrapperType<CLRPropertyInfo, PropertyInfo>>()

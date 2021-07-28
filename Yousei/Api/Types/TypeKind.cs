@@ -21,8 +21,6 @@ namespace Yousei.Api.Types
 
         Dictionary,
 
-        Parameter,
-
         Any,
     }
 }

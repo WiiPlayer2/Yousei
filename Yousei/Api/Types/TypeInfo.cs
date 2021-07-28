@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yousei.Api.Types;
+using Yousei.Core;
 using Yousei.Shared;
 
 namespace Yousei.Api.Types
@@ -29,7 +30,7 @@ namespace Yousei.Api.Types
             var types = GetTypeHierarchy(type);
 
             if (types.Contains(typeof(IParameter)))
-                return TypeKind.Parameter;
+                return GetKind(type.GetValueType());
 
             if (types.Contains(typeof(IDictionary)) || types.Contains(typeof(IDictionary<,>)))
                 return TypeKind.Dictionary;
@@ -59,7 +60,6 @@ namespace Yousei.Api.Types
             => GetKind(type) switch
             {
                 TypeKind.Scalar => new ScalarTypeInfo(type),
-                TypeKind.Parameter => new ParameterTypeInfo(type),
                 TypeKind.Object => new ObjectTypeInfo(type),
                 TypeKind.List => new ListTypeInfo(type),
                 TypeKind.Dictionary => new DictionaryTypeInfo(type),
