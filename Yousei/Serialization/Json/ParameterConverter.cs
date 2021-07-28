@@ -17,7 +17,9 @@ namespace Yousei.Serialization.Json
             Expression,
         }
 
-        private record Dto(ParameterType? Type, JToken Config);
+        private record Dto(
+            [JsonProperty("___ParameterType")] ParameterType? Type,
+            JToken Config);
 
         public override bool CanConvert(Type objectType)
             => objectType.IsAssignableTo(typeof(IParameter));
