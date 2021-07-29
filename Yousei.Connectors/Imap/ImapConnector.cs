@@ -27,6 +27,7 @@ namespace Yousei.Connectors.Imap
             AddAction<DeleteAction>();
             AddAction<FetchAction>();
             AddAction<SearchAction>();
+            AddAction<FlagAction>();
         }
 
         public override string Name { get; } = "imap";
