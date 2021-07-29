@@ -1,31 +1,16 @@
-﻿using Humanizer;
-using MailKit;
+﻿using MailKit;
 using MailKit.Net.Imap;
-using MimeKit;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Yousei.Core;
 using Yousei.Shared;
 
 namespace Yousei.Connectors.Imap
 {
-    internal class DeleteAction : FlowAction<ImapConnection, DeleteArguments>
+    internal class DeleteAction : ImapAction<DeleteArguments>
     {
         public override string Name { get; } = "delete";
 
-        protected override async Task Act(IFlowContext context, ImapConnection connection, DeleteArguments? arguments)
+        protected override async Task Act(IFlowContext context, ImapClient client, DeleteArguments arguments)
         {
-            if (arguments is null)
-                throw new ArgumentNullException(nameof(arguments));
-
-            using var client = await connection.Connect(default);
             var folderPath = await arguments.Folder.Resolve(context);
             var id = await arguments.ID.Resolve(context);
 
