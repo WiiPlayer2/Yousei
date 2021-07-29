@@ -1,6 +1,7 @@
 ﻿using Humanizer;
 using MailKit;
 using MailKit.Net.Imap;
+using MailKit.Search;
 using MimeKit;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace Yousei.Connectors.Imap
             AddTrigger(new ObservableTrigger<ObjectConnection<ImapConfiguration>>("subscribe", c => CreateSubscribeObservable(c.Object)));
             AddAction<DeleteAction>();
             AddAction<FetchAction>();
+            AddAction<SearchAction>();
         }
 
         public override string Name { get; } = "imap";
