@@ -16,6 +16,7 @@ namespace Yousei.Test.Internal
             // Arrange
             var context = CreateContext();
             await context.SetData("testing", "test");
+            context.CurrentType = "testing.type";
             var sourceObject = await context.AsObject();
 
             // Act

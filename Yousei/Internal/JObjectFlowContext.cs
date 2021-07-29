@@ -23,6 +23,7 @@ namespace Yousei.Internal
         {
             data = (JObject)from.data.DeepClone();
             ExecutionStack = new Stack<string>(from.ExecutionStack);
+            CurrentType = from.CurrentType;
         }
 
         public IFlowActor Actor { get; }

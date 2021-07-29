@@ -28,6 +28,7 @@ namespace Yousei.Internal
         {
             data = Clone(from.data);
             ExecutionStack = new Stack<string>(from.ExecutionStack);
+            CurrentType = from.CurrentType;
         }
 
         public IFlowActor Actor { get; }
