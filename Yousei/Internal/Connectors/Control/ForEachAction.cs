@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Shared;
@@ -15,15 +16,25 @@ namespace Yousei.Internal.Connectors.Control
             if (arguments is null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            var collection = await arguments.Collection.Resolve(context);
-            if (collection is null)
-                throw new ArgumentNullException(nameof(arguments.Collection));
-
-            foreach (var item in collection)
+            if (!arguments.Async)
             {
-                await context.SetData(item);
-                using (context.ScopeStack($"{{{item}}}"))
-                    await context.Actor.Act(arguments.Actions, context);
+                foreach (var item in arguments.Collection)
+                {
+                    await context.SetData(item);
+                    using (context.ScopeStack($"{{{item}}}"))
+                        await context.Actor.Act(arguments.Actions, context);
+                }
+            }
+            else
+            {
+                var tasks = arguments.Collection.Select(async item =>
+                {
+                    var subContext = context.Clone();
+                    await subContext.SetData(item);
+                    using (subContext.ScopeStack($"{{{item}}}"))
+                        await subContext.Actor.Act(arguments.Actions, subContext);
+                });
+                await Task.WhenAll(tasks);
             }
         }
     }

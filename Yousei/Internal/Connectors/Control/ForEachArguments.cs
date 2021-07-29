@@ -9,6 +9,8 @@ namespace Yousei.Internal.Connectors.Control
     {
         public List<BlockConfig> Actions { get; init; } = new();
 
-        public IParameter<ArrayList> Collection { get; init; } = DefaultParameter<ArrayList>.Instance;
+        public List<object?> Collection { get; init; } = new();
+
+        public bool Async { get; init; } = false;
     }
 }
