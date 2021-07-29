@@ -26,10 +26,10 @@ namespace Yousei.Test.Internal.Connectors
                     Type = "testing.test",
                 },
             };
-            var collection = new[] { 1, 2, 3 }.Map<ArrayList>() ?? throw new InvalidOperationException();
+            var collection = new object?[] { 1, 2, 3 }.ToList();
             var arguments = new ForEachArguments
             {
-                Collection = collection.ToConstantParameter(),
+                Collection = collection,
                 Actions = actions
             };
 
@@ -37,7 +37,7 @@ namespace Yousei.Test.Internal.Connectors
             await Act("foreach", arguments);
 
             // Assert
-            flowContextMock.Verify(o => o.SetData(It.IsIn(collection.Cast<int>())), Times.Exactly(3));
+            flowContextMock.Verify(o => o.SetData(It.IsIn<object?>(collection)), Times.Exactly(3));
             flowActorMock.Verify(o => o.Act(actions, flowContextMock.Object), Times.Exactly(3));
         }
 
