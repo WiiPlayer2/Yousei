@@ -62,24 +62,19 @@ namespace Yousei.Internal
         private static async Task<JToken> Resolve(JToken token, IFlowContext context)
         {
             if (token is JObject jobj)
-                return await ResolveObject(jobj);
-
-            if (token is JArray jarr)
-                return new JArray(await Task.WhenAll(jarr.Select(o => Resolve(o, context))));
+                return new JObject(await Task.WhenAll(jobj.Properties().Select(ResolveProperty)));
 
             return token;
 
-            async Task<JToken> ResolveObject(JObject jobject)
+            async Task<JProperty> ResolveProperty(JProperty property)
             {
-                if (jobject.TryToObject<IParameter>(out var parameter))
+                if (property.Value.TryToObject<IParameter>(out var parameter))
                 {
                     var resolvedValue = await parameter.Resolve(context);
-                    return resolvedValue is not null
-                        ? JToken.FromObject(resolvedValue)
-                        : JValue.CreateNull();
+                    return new JProperty(property.Name, resolvedValue);
                 }
 
-                return new JObject(await Task.WhenAll(jobject.Properties().Select(async prop => new JProperty(prop.Name, await Resolve(prop.Value, context)))));
+                return property;
             }
         }
 
