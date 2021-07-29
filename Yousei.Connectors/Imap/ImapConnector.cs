@@ -24,6 +24,7 @@ namespace Yousei.Connectors.Imap
 
             AddTrigger(new ObservableTrigger<ObjectConnection<ImapConfiguration>>("subscribe", c => CreateSubscribeObservable(c.Object)));
             AddAction<DeleteAction>();
+            AddAction<FetchAction>();
         }
 
         public override string Name { get; } = "imap";

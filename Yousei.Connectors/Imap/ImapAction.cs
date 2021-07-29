@@ -16,20 +16,17 @@ using Yousei.Shared;
 
 namespace Yousei.Connectors.Imap
 {
-
     internal abstract class ImapAction<TArguments> : FlowAction<ObjectConnection<ImapConfiguration>, TArguments>
+        where TArguments : new()
     {
         protected sealed override async Task Act(IFlowContext context, ObjectConnection<ImapConfiguration> connection, TArguments? arguments)
         {
-            if (arguments is null)
-                throw new ArgumentNullException(nameof(arguments));
-
             var config = connection.Object;
             using var client = new ImapClient();
             await client.ConnectAsync(config.Host, config.Port);
             await client.AuthenticateAsync(config.Username, config.Password);
 
-            await Act(context, client, arguments);
+            await Act(context, client, arguments ?? new TArguments());
         }
 
         protected abstract Task Act(IFlowContext context, ImapClient client, TArguments arguments);
