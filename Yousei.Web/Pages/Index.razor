@@ -1,37 +1,31 @@
 ﻿@page "/"
-@inject IApi api
-@inject IJSRuntime js;
-@inject ILogger<Index> logger
-@using Yousei.Core
-@using Newtonsoft.Json.Linq
-@using System.Linq
 
 <div class="sidebar">
-    <button @onclick="Reload">Reload</button>
+    <button @onclick="Reload" class="button-command">Reload</button>
     <ul>
         <li>
             <span>Flows</span>
-            <button @onclick="AddFlow">+</button>
+            <button @onclick="AddFlow" class="button-add">+</button>
             <ul>
                 @foreach (var flow in flows)
                 {
-                    <li><button @onclick="() => SetConfig(new FlowConfigModel(flow, api.ConfigurationDatabase))">@flow</button></li>
+                    <li><button @onclick="() => SetConfig(new FlowConfigModel(flow, Api.ConfigurationDatabase))" class="button-item">@flow</button></li>
                 }
             </ul>
         </li>
         <li>
             <span>Connections</span>
-            <button @onclick="AddConnector">+</button>
+            <button @onclick="AddConnector" class="button-add">+</button>
             <ul>
                 <li>
                     @foreach (var (connector, names) in configurations)
                     {
                         <span>@connector</span>
-                        <button @onclick="() => AddConfiguration(connector)">+</button>
+                        <button @onclick="() => AddConfiguration(connector)" class="button-add">+</button>
                         <ul>
                             @foreach (var name in names)
                             {
-                                <li><button @onclick="() => SetConfig(new ConnectionConfigModel(connector, name, api.ConfigurationDatabase))">@name</button></li>
+                                <li><button @onclick="() => SetConfig(new ConnectionConfigModel(connector, name, Api.ConfigurationDatabase))" class="button-item">@name</button></li>
                             }
                         </ul>
                     }
@@ -42,146 +36,7 @@
 </div>
 
 <div class="main">
-    <button @onclick="Save">Save</button>
-    <button @onclick="Delete">Delete</button>
+    <button @onclick="Save" class="button-command">Save</button>
+    <button @onclick="Delete" class="button-command">Delete</button>
     <MonacoEditor @ref="editor" ConstructionOptions="Construct" CssClass="editor" />
 </div>
-
-@code {
-    private List<string> flows = new();
-
-    private Dictionary<string, List<string>> configurations = new();
-
-    private MonacoEditor? editor;
-
-    private ConfigModel? currentConfig = null;
-
-    private bool isReadOnly = true;
-
-    private StandaloneEditorConstructionOptions Construct(MonacoEditor editor)
-        => new StandaloneEditorConstructionOptions
-        {
-            AutomaticLayout = true,
-            Language = "yaml",
-            Theme = "vs-dark",
-            ReadOnly = true,
-        };
-
-    protected override async Task OnInitializedAsync()
-    {
-        flows = new(await api.ConfigurationDatabase.ListFlows());
-        configurations = (await api.ConfigurationDatabase.ListConfigurations())
-            .ToDictionary(o => o.Key, o => o.Value.ToList());
-        isReadOnly = await api.ConfigurationDatabase.IsReadOnly;
-    }
-
-    private async Task Save()
-    {
-        if (editor is null
-            || currentConfig is null
-            || isReadOnly)
-            return;
-
-        try
-        {
-            var content = await editor.GetValue();
-            var model = await editor.GetModel();
-            //var language = await js.InvokeAsync<string>("blazorMonaco.editor.getModelLanguage", editor.Id, model.Id);
-            var language = "yaml";
-            await currentConfig.Save(new SourceConfig(language, content));
-        }
-        catch (Exception e)
-        {
-            logger.LogError(e, $"Exception while saving content.");
-        }
-    }
-
-    private async Task Delete()
-    {
-        if (editor is null
-            || currentConfig is null
-            || isReadOnly)
-            return;
-
-        await currentConfig.Delete();
-        StateHasChanged();
-    }
-
-    private async Task SetConfig(ConfigModel configModel)
-    {
-        if (editor is null)
-            return;
-
-        string? content = default;
-        try
-        {
-            var sourceConfig = await configModel.Load();
-            content = sourceConfig?.Content;
-            var model = await editor.GetModel();
-            await js.InvokeVoidAsync("blazorMonaco.editor.setModelLanguage", editor.Id, model.Id, sourceConfig?.Language ?? string.Empty);
-        }
-        catch (Exception e)
-        {
-            logger.LogError(e, $"Exception while loading content.");
-        }
-
-        content ??= string.Empty;
-        await editor.SetValue(content);
-        currentConfig = configModel;
-
-        await editor.UpdateOptions(new()
-        {
-            ReadOnly = isReadOnly,
-        });
-    }
-
-    private async Task AddFlow()
-    {
-        if (isReadOnly)
-            return;
-
-        var name = await js.InvokeAsync<string>("prompt", "Enter flow name:", string.Empty);
-        if (string.IsNullOrWhiteSpace(name))
-            return;
-
-        flows.Add(name);
-        await SetConfig(new FlowConfigModel(name, api.ConfigurationDatabase));
-        this.StateHasChanged();
-    }
-
-    private async Task AddConnector()
-    {
-        if (isReadOnly)
-            return;
-
-        var name = await js.InvokeAsync<string>("prompt", "Enter connector name:", string.Empty);
-        if (string.IsNullOrWhiteSpace(name))
-            return;
-
-        configurations.Add(name, new List<string>());
-        this.StateHasChanged();
-    }
-
-    private async Task AddConfiguration(string connector)
-    {
-        if (isReadOnly)
-            return;
-
-        var name = await js.InvokeAsync<string>("prompt", "Enter configuration name:", string.Empty);
-        if (string.IsNullOrWhiteSpace(name))
-            return;
-
-        configurations[connector].Add(name);
-        await SetConfig(new ConnectionConfigModel(connector, name, api.ConfigurationDatabase));
-        this.StateHasChanged();
-    }
-
-    private async Task Reload()
-    {
-        await api.Reload();
-        flows = new(await api.ConfigurationDatabase.ListFlows());
-        configurations = (await api.ConfigurationDatabase.ListConfigurations())
-            .ToDictionary(o => o.Key, o => o.Value.ToList());
-        isReadOnly = await api.ConfigurationDatabase.IsReadOnly;
-    }
-}

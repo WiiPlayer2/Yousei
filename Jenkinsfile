@@ -1,5 +1,10 @@
 def built_app = false;
 def built_web = false;
+def isTriggeredByIndexing = currentBuild.getBuildCauses('jenkins.branch.BranchIndexingCause').size();
+def isTriggeredByCommit = currentBuild.getBuildCauses('com.cloudbees.jenkins.GitHubPushCause').size();
+def isTriggeredByUser = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause').size();
+def lastBuildFailed = "${currentBuild.previousBuild?.result}" != "SUCCESS";
+def forceBuild = isTriggeredByUser || lastBuildFailed;
 
 pipeline {
     agent {
@@ -9,6 +14,7 @@ pipeline {
     environment {
         CLEAN_GIT_BRANCH = "${env.GIT_BRANCH.replaceAll('/', '_')}"
         DOTNET_CLI_HOME = "/tmp/DOTNET_CLI_HOME"
+        DOTNET_NOLOGO = "true"
     }
 
     stages {
@@ -19,7 +25,7 @@ pipeline {
                     if(env.CHANGE_TARGET == 'main' && !(env.CHANGE_BRANCH ==~ /(release|hotfix)\/.+/)) {
                         error('Only release and hotifx branches are allowed.')
                     }
-                    if(env.CHANGE_TARGET == 'dev' && !(env.CHANGE_BRANCH ==~ /(feature|bug|hotfix)\/.*/)) {
+                    if(env.CHANGE_TARGET == 'dev' && !(env.CHANGE_BRANCH ==~ /(feature|bug|hotfix)\/.+/)) {
                         error('Only feature, bug and hotfix branches are allowed.')
                     }
                 }
@@ -27,10 +33,12 @@ pipeline {
         }
 
         stage('Build') {
+            failFast true
             parallel {
                 stage('Build App') {
                     when {
                         anyOf {
+                            expression { forceBuild }
                             environment name: 'BUILD_NUMBER', value: '1'
                             changeset 'Yousei/**'
                             changeset 'Yousei.Connectors/**'
@@ -50,6 +58,7 @@ pipeline {
                 stage('Build Web') {
                     when {
                         anyOf {
+                            expression { forceBuild }
                             environment name: 'BUILD_NUMBER', value: '1'
                             changeset 'Yousei.Core/**'
                             changeset 'Yousei.Shared/**'

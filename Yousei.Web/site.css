@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
@@ -38,3 +41,30 @@ app {
 .main {
     flex: 1;
 }
+
+button {
+    @apply rounded border-2;
+    margin: 4px;
+}
+
+    button:hover {
+        @apply ring-4;
+    }
+
+.button-add {
+    @apply rounded-full bg-blue-300 w-7 h-7;
+}
+
+.button-command {
+    @apply bg-purple-300 rounded-full px-3;
+}
+
+.button-item {
+    @apply bg-gray-100 rounded-full px-3;
+}
+
+ul {
+    @apply ml-5;
+}
+
+@tailwind utilities;
