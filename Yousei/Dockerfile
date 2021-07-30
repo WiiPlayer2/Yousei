@@ -7,9 +7,9 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY . .
-RUN dotnet restore "Yousei/Yousei.csproj"
 WORKDIR "/src/Yousei"
-RUN dotnet build "Yousei.csproj" -c Release -o /app/build -warnaserror
+RUN dotnet restore "Yousei.csproj" \
+    && dotnet build "Yousei.csproj" -c Release -o /app/build -warnaserror
 
 FROM build AS publish
 RUN dotnet publish "Yousei.csproj" -c Release -o /app/publish
