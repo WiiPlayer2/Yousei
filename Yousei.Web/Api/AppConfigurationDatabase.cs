@@ -25,7 +25,7 @@ namespace Yousei.Web.Api
             this.logger = logger;
         }
 
-        public Task<bool> IsReadOnly => GetIsReadOnly();
+        public bool IsReadOnly => GetIsReadOnly().GetAwaiter().GetResult();
 
         public Task<object?> GetConfiguration(string connector, string name)
         {

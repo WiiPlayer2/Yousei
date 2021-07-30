@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Shared;
+using Yousei.Web.Api;
 
 namespace Yousei.Web.Model
 {
@@ -12,21 +13,54 @@ namespace Yousei.Web.Model
     {
         private readonly string connector;
 
+        private readonly string getConfigurationQuery = @"
+query _($connector: String!, $name: String!) {
+  database {
+    configuration(connector: $connector, name: $name) {
+      config {
+        content
+        language
+      }
+    }
+  }
+}";
+
         private readonly string name;
 
-        public ConnectionConfigModel(string connector, string name, IConfigurationDatabase database) : base(database)
+        private readonly string setConfigurationQuery = @"
+mutation _($connector: String!, $name: String!, $source: SourceConfigInput) {
+  setConfiguration(connector: $connector, name: $name, source: $source) {
+    name
+  }
+}";
+
+        public ConnectionConfigModel(string connector, string name, GraphQlRequestHandler requestHandler) : base(requestHandler)
         {
             this.connector = connector;
             this.name = name;
         }
 
         public override Task Delete()
-            => Database.SetConfiguration(connector, name, null);
+            => RequestHandler.Mutate<JToken>(new(setConfigurationQuery, new
+            {
+                connector,
+                name,
+                source = default(object?),
+            }));
 
-        public override Task<SourceConfig?> Load()
-            => Database.GetConfigurationSource(connector, name);
+        public override async Task<SourceConfig?> Load()
+            => (await RequestHandler.Query<Query>(new(getConfigurationQuery, new
+            {
+                connector,
+                name
+            }))).Database?.Configuration?.Config;
 
         public override Task Save(SourceConfig source)
-            => Database.SetConfiguration(connector, name, source);
+            => RequestHandler.Mutate<JToken>(new(setConfigurationQuery, new
+            {
+                connector,
+                name,
+                source = source,
+            }));
     }
 }

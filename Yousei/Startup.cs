@@ -52,7 +52,6 @@ namespace Yousei
             services.AddHostedService<MainService>();
 
             // Api
-            services.AddSingleton<IApi, InternalApi>();
             services.AddGraphQLServer()
                 .AddInMemorySubscriptions()
 

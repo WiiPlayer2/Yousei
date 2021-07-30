@@ -1,12 +1,15 @@
 ﻿using BlazorMonaco;
+using GraphQL;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 using Yousei.Shared;
+using Yousei.Web.Api;
 using Yousei.Web.Model;
 
 namespace Yousei.Web.Pages
@@ -26,7 +29,7 @@ namespace Yousei.Web.Pages
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         [Inject]
-        public IApi Api { get; set; }
+        public GraphQlRequestHandler Api { get; set; }
 
         [Inject]
         public IJSRuntime Js { get; set; }
@@ -36,13 +39,7 @@ namespace Yousei.Web.Pages
 
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-        protected override async Task OnInitializedAsync()
-        {
-            flows = new(await Api.ConfigurationDatabase.ListFlows());
-            configurations = (await Api.ConfigurationDatabase.ListConfigurations())
-                .ToDictionary(o => o.Key, o => o.Value.ToList());
-            isReadOnly = await Api.ConfigurationDatabase.IsReadOnly;
-        }
+        protected override Task OnInitializedAsync() => LoadData();
 
         private async Task AddConfiguration(string connector)
         {
@@ -54,7 +51,7 @@ namespace Yousei.Web.Pages
                 return;
 
             configurations[connector].Add(name);
-            await SetConfig(new ConnectionConfigModel(connector, name, Api.ConfigurationDatabase));
+            await SetConfig(new ConnectionConfigModel(connector, name, Api));
             this.StateHasChanged();
         }
 
@@ -81,7 +78,7 @@ namespace Yousei.Web.Pages
                 return;
 
             flows.Add(name);
-            await SetConfig(new FlowConfigModel(name, Api.ConfigurationDatabase));
+            await SetConfig(new FlowConfigModel(name, Api));
             this.StateHasChanged();
         }
 
@@ -103,13 +100,39 @@ namespace Yousei.Web.Pages
             StateHasChanged();
         }
 
+        private async Task LoadData()
+        {
+            var request = new GraphQLRequest(@"query {
+  database {
+    isReadOnly
+    flows {
+      name
+    }
+    connections {
+      id
+      configurations {
+        name
+      }
+    }
+  }
+}");
+            var query = await Api.Query<Query>(request, Logger);
+            isReadOnly = query.Database?.IsReadOnly ?? throw new InvalidOperationException();
+            flows = query.Database?.Flows?.Select(o => o.Name ?? throw new InvalidOperationException()).ToList() ?? throw new InvalidOperationException();
+            configurations = query.Database?.Connections?
+                .ToDictionary(
+                    o => o.Id ?? throw new InvalidOperationException(),
+                    o => o.Configurations?
+                        .Select(o => o.Name ?? throw new InvalidOperationException())
+                        .ToList() ?? throw new InvalidOperationException())
+                ?? throw new InvalidOperationException();
+        }
+
         private async Task Reload()
         {
-            await Api.Reload();
-            flows = new(await Api.ConfigurationDatabase.ListFlows());
-            configurations = (await Api.ConfigurationDatabase.ListConfigurations())
-                .ToDictionary(o => o.Key, o => o.Value.ToList());
-            isReadOnly = await Api.ConfigurationDatabase.IsReadOnly;
+            var request = new GraphQLRequest(@"mutation { reload }");
+            await Api.Mutate<Unit>(request, Logger);
+            await LoadData();
         }
 
         private async Task Save()

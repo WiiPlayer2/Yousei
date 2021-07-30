@@ -14,15 +14,9 @@ namespace Yousei.Api.Extensions
     [ExtendObjectType(Name = nameof(Configuration))]
     public class ConfigurationExtension
     {
-        private readonly IApi api;
-
-        public ConfigurationExtension(IApi api)
-        {
-            this.api = api;
-        }
-
         public async Task<SourceConfig?> GetConfig(
-            [Parent] Configuration configuration)
-            => await api.ConfigurationDatabase.GetConfigurationSource(configuration.Connector, configuration.Name);
+            [Parent] Configuration configuration,
+            [Service] IConfigurationDatabase configurationDatabase)
+            => await configurationDatabase.GetConfigurationSource(configuration.Connector, configuration.Name);
     }
 }

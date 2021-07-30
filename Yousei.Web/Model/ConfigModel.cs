@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yousei.Shared;
+using Yousei.Web.Api;
 
 namespace Yousei.Web.Model
 {
     public abstract class ConfigModel
     {
-        public ConfigModel(IConfigurationDatabase database)
+        public ConfigModel(GraphQlRequestHandler requestHandler)
         {
-            Database = database;
+            RequestHandler = requestHandler;
         }
 
-        protected IConfigurationDatabase Database { get; }
+        protected GraphQlRequestHandler RequestHandler { get; }
 
         public abstract Task Delete();
 

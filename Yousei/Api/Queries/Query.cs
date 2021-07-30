@@ -10,12 +10,7 @@ namespace Yousei.Api.Queries
 {
     public class Query
     {
-        public Query(IApi api)
-        {
-            Database = new Database(api);
-        }
-
-        public Database Database { get; }
+        public Database Database { get; } = new();
 
         public ConnectorInfo? GetConnector(
             string name,

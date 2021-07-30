@@ -9,7 +9,7 @@
             <ul>
                 @foreach (var flow in flows)
                 {
-                    <li><button @onclick="() => SetConfig(new FlowConfigModel(flow, Api.ConfigurationDatabase))" class="button-item">@flow</button></li>
+                    <li><button @onclick="() => SetConfig(new FlowConfigModel(flow, Api))" class="button-item">@flow</button></li>
                 }
             </ul>
         </li>
@@ -25,7 +25,7 @@
                         <ul>
                             @foreach (var name in names)
                             {
-                                <li><button @onclick="() => SetConfig(new ConnectionConfigModel(connector, name, Api.ConfigurationDatabase))" class="button-item">@name</button></li>
+                                <li><button @onclick="() => SetConfig(new ConnectionConfigModel(connector, name, Api))" class="button-item">@name</button></li>
                             }
                         </ul>
                     }

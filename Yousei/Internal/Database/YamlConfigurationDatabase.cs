@@ -35,7 +35,7 @@ namespace Yousei.Internal.Database
             this.notifier = notifier;
         }
 
-        public Task<bool> IsReadOnly { get; } = Task.FromResult(false);
+        public bool IsReadOnly { get; } = false;
 
         public async Task<object?> GetConfiguration(string connector, string name)
             => TryDeserializeSource<object>(await GetConfigurationSource(connector, name));

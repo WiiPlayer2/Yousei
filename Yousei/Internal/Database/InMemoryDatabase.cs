@@ -26,7 +26,7 @@ namespace Yousei.Internal.Database
             deserializer = YamlUtil.BuildDeserializer();
         }
 
-        public Task<bool> IsReadOnly { get; } = Task.FromResult(false);
+        public bool IsReadOnly { get; } = false;
 
         public Task<object?> GetConfiguration(string connector, string name)
             => Task.FromResult(GetConfigurationTuple(connector, name).Data);
