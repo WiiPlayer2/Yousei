@@ -26,6 +26,17 @@ pipeline {
             }
         }
 
+        stage('Compile') {
+            steps {
+                script {
+                    docker.image('mcr.microsoft.com/dotnet/sdk:5.0').inside {
+                        sh 'dotnet msbuild ./Yousei.sln -t:YarnInstall'
+                        sh 'dotnet build ./Yousei.sln -t:YarnInstall -c Release -warnaserror'
+                    }
+                }
+            }
+        }
+
         stage('Build') {
             parallel {
                 stage('Build App') {
