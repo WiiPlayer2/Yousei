@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Yousei.Api.Types;
 using Yousei.Shared;
 
-namespace Yousei.Api.SchemaType
+namespace Yousei.Api.SchemaTypes
 {
     internal class WrapperType<TWrapped, TWrapper> : ObjectType<TWrapper>
         where TWrapper : Wrapper<TWrapped>

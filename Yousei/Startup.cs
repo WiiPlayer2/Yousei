@@ -9,7 +9,7 @@ using System.Reactive;
 using Yousei.Api.Extensions;
 using Yousei.Api.Mutations;
 using Yousei.Api.Queries;
-using Yousei.Api.SchemaType;
+using Yousei.Api.SchemaTypes;
 using Yousei.Api.Subscriptions;
 using Yousei.Api.Types;
 using Yousei.Internal;
@@ -60,13 +60,14 @@ namespace Yousei
                 .AddTypeConverter<JObject, JToken>(from => from)
                 .AddTypeConverter<JArray, JToken>(from => from)
                 .AddTypeConverter<JValue, JToken>(from => from)
+                .BindRuntimeType<object, JsonType>()
                 .BindRuntimeType<JObject, JsonType>()
                 .BindRuntimeType<JArray, JsonType>()
                 .BindRuntimeType<JValue, JsonType>()
 
                 // Misc. types
-                .BindRuntimeType<Unit, AnyType>()
-                .BindRuntimeType<object, AnyType>()
+                .AddType<UnitType>()
+                .BindRuntimeType<Unit, UnitType>()
                 .AddType<SubTypeInfoType<ObjectTypeInfo>>()
                 .AddType<SubTypeInfoType<ListTypeInfo>>()
                 .AddType<SubTypeInfoType<AnyTypeInfo>>()
