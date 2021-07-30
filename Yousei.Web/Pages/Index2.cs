@@ -26,22 +26,22 @@ namespace Yousei.Web.Pages
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         [Inject]
-        public IApi api { get; set; }
+        public IApi Api { get; set; }
 
         [Inject]
-        public IJSRuntime js { get; set; }
+        public IJSRuntime Js { get; set; }
 
         [Inject]
-        public ILogger<Index2> logger { get; set; }
+        public ILogger<Index2> Logger { get; set; }
 
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         protected override async Task OnInitializedAsync()
         {
-            flows = new(await api.ConfigurationDatabase.ListFlows());
-            configurations = (await api.ConfigurationDatabase.ListConfigurations())
+            flows = new(await Api.ConfigurationDatabase.ListFlows());
+            configurations = (await Api.ConfigurationDatabase.ListConfigurations())
                 .ToDictionary(o => o.Key, o => o.Value.ToList());
-            isReadOnly = await api.ConfigurationDatabase.IsReadOnly;
+            isReadOnly = await Api.ConfigurationDatabase.IsReadOnly;
         }
 
         private async Task AddConfiguration(string connector)
@@ -49,12 +49,12 @@ namespace Yousei.Web.Pages
             if (isReadOnly)
                 return;
 
-            var name = await js.InvokeAsync<string>("prompt", "Enter configuration name:", string.Empty);
+            var name = await Js.InvokeAsync<string>("prompt", "Enter configuration name:", string.Empty);
             if (string.IsNullOrWhiteSpace(name))
                 return;
 
             configurations[connector].Add(name);
-            await SetConfig(new ConnectionConfigModel(connector, name, api.ConfigurationDatabase));
+            await SetConfig(new ConnectionConfigModel(connector, name, Api.ConfigurationDatabase));
             this.StateHasChanged();
         }
 
@@ -63,7 +63,7 @@ namespace Yousei.Web.Pages
             if (isReadOnly)
                 return;
 
-            var name = await js.InvokeAsync<string>("prompt", "Enter connector name:", string.Empty);
+            var name = await Js.InvokeAsync<string>("prompt", "Enter connector name:", string.Empty);
             if (string.IsNullOrWhiteSpace(name))
                 return;
 
@@ -76,12 +76,12 @@ namespace Yousei.Web.Pages
             if (isReadOnly)
                 return;
 
-            var name = await js.InvokeAsync<string>("prompt", "Enter flow name:", string.Empty);
+            var name = await Js.InvokeAsync<string>("prompt", "Enter flow name:", string.Empty);
             if (string.IsNullOrWhiteSpace(name))
                 return;
 
             flows.Add(name);
-            await SetConfig(new FlowConfigModel(name, api.ConfigurationDatabase));
+            await SetConfig(new FlowConfigModel(name, Api.ConfigurationDatabase));
             this.StateHasChanged();
         }
 
@@ -105,11 +105,11 @@ namespace Yousei.Web.Pages
 
         private async Task Reload()
         {
-            await api.Reload();
-            flows = new(await api.ConfigurationDatabase.ListFlows());
-            configurations = (await api.ConfigurationDatabase.ListConfigurations())
+            await Api.Reload();
+            flows = new(await Api.ConfigurationDatabase.ListFlows());
+            configurations = (await Api.ConfigurationDatabase.ListConfigurations())
                 .ToDictionary(o => o.Key, o => o.Value.ToList());
-            isReadOnly = await api.ConfigurationDatabase.IsReadOnly;
+            isReadOnly = await Api.ConfigurationDatabase.IsReadOnly;
         }
 
         private async Task Save()
@@ -127,7 +127,7 @@ namespace Yousei.Web.Pages
             }
             catch (Exception e)
             {
-                logger.LogError(e, $"Exception while saving content.");
+                Logger.LogError(e, $"Exception while saving content.");
             }
         }
 
@@ -142,11 +142,11 @@ namespace Yousei.Web.Pages
                 var sourceConfig = await configModel.Load();
                 content = sourceConfig?.Content ?? string.Empty;
                 var model = await editor.GetModel();
-                await js.InvokeVoidAsync("blazorMonaco.editor.setModelLanguage", editor.Id, model.Id, sourceConfig?.Language ?? string.Empty);
+                await Js.InvokeVoidAsync("blazorMonaco.editor.setModelLanguage", editor.Id, model.Id, sourceConfig?.Language ?? string.Empty);
             }
             catch (Exception e)
             {
-                logger.LogError(e, $"Exception while loading content.");
+                Logger.LogError(e, $"Exception while loading content.");
             }
 
             content ??= string.Empty;
