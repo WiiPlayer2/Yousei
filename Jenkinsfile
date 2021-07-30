@@ -1,5 +1,10 @@
 def built_app = false;
 def built_web = false;
+def isTriggeredByIndexing = currentBuild.getBuildCauses('jenkins.branch.BranchIndexingCause').size();
+def isTriggeredByCommit = currentBuild.getBuildCauses('com.cloudbees.jenkins.GitHubPushCause').size();
+def isTriggeredByUser = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause').size();
+def lastBuildFailed = currentBuild.previousBuild == currentBuild.previousFailedBuild;
+def forceBuild = isTriggeredByUser || lastBuildFailed;
 
 pipeline {
     agent {
@@ -37,7 +42,7 @@ pipeline {
                             changeset 'Yousei.Core/**'
                             changeset 'Yousei.Shared/**'
                             changeset 'Yousei.SourceGen/**'
-                            expression { currentBuild.previousBuild == currentBuild.previousFailedBuild }
+                            expression { forceBuild }
                         }
                     }
                     steps {
@@ -56,7 +61,7 @@ pipeline {
                             changeset 'Yousei.Shared/**'
                             changeset 'Yousei.SourceGen/**'
                             changeset 'Yousei.Web/**'
-                            expression { currentBuild.previousBuild == currentBuild.previousFailedBuild }
+                            expression { forceBuild }
                         }
                     }
                     steps {
