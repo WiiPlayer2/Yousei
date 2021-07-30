@@ -33,6 +33,7 @@ pipeline {
         }
 
         stage('Build') {
+            failFast true
             parallel {
                 stage('Build App') {
                     when {
