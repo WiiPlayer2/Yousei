@@ -26,19 +26,19 @@ pipeline {
             }
         }
 
-        stage('Compile') {
-            steps {
-                script {
-                    docker.image('mcr.microsoft.com/dotnet/sdk:5.0').inside {
-                        sh 'sudo curl -fsSL https://deb.nodesource.com/setup_16.x | bash -'
-                        sh 'sudo apt-get install -y nodejs'
-                        sh 'dotnet restore ./Yousei.sln'
-                        sh 'dotnet msbuild ./Yousei.sln -t:YarnInstall'
-                        sh 'dotnet build ./Yousei.sln -t:YarnInstall -c Release -warnaserror'
-                    }
-                }
-            }
-        }
+        // stage('Compile') {
+        //     steps {
+        //         script {
+        //             docker.image('mcr.microsoft.com/dotnet/sdk:5.0').inside {
+        //                 sh 'sudo curl -fsSL https://deb.nodesource.com/setup_16.x | bash -'
+        //                 sh 'sudo apt-get install -y nodejs'
+        //                 sh 'dotnet restore ./Yousei.sln'
+        //                 sh 'dotnet msbuild ./Yousei.sln -t:YarnInstall'
+        //                 sh 'dotnet build ./Yousei.sln -t:YarnInstall -c Release -warnaserror'
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Build') {
             parallel {
