@@ -29,8 +29,8 @@
   </Target>
 
   <ItemGroup>
-    <Compile Update="Pages\Index2.cs">
-      <DependentUpon>Pages\Index2.razor</DependentUpon>
+    <Compile Update="Pages\Index.cs">
+      <DependentUpon>Index.razor</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>
