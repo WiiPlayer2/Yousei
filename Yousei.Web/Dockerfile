@@ -14,7 +14,7 @@ WORKDIR /src
 COPY . .
 WORKDIR "/src/Yousei.Web"
 RUN dotnet restore "Yousei.Web.csproj" \
-    && dotnet msbuild "Yousei.Web.csproj" --nologo -t:YarnInstall \
+    && dotnet msbuild "Yousei.Web.csproj" -t:YarnInstall \
     && dotnet build "Yousei.Web.csproj" --nologo -c Release -o /app/build -warnaserror
 
 FROM build AS publish
