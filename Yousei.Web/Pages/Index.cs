@@ -32,6 +32,9 @@ namespace Yousei.Web.Pages
         public GraphQlRequestHandler Api { get; set; }
 
         [Inject]
+        public YouseiApi Api2 { get; set; }
+
+        [Inject]
         public IJSRuntime Js { get; set; }
 
         [Inject]
@@ -102,36 +105,20 @@ namespace Yousei.Web.Pages
 
         private async Task LoadData()
         {
-            var request = new GraphQLRequest(@"query {
-  database {
-    isReadOnly
-    flows {
-      name
-    }
-    connections {
-      id
-      configurations {
-        name
-      }
-    }
-  }
-}");
-            var query = await Api.Query<Query>(request, Logger);
-            isReadOnly = query.Database?.IsReadOnly ?? throw new InvalidOperationException();
-            flows = query.Database?.Flows?.Select(o => o.Name ?? throw new InvalidOperationException()).ToList() ?? throw new InvalidOperationException();
-            configurations = query.Database?.Connections?
-                .ToDictionary(
-                    o => o.Id ?? throw new InvalidOperationException(),
-                    o => o.Configurations?
-                        .Select(o => o.Name ?? throw new InvalidOperationException())
-                        .ToList() ?? throw new InvalidOperationException())
-                ?? throw new InvalidOperationException();
+            var result = await Api2.LoadData.ExecuteAsync();
+            if (result.Data is null)
+                return;
+
+            isReadOnly = result.Data.Database.IsReadOnly;
+            flows = result.Data.Database.Flows.Select(o => o.Name).ToList();
+            configurations = result.Data.Database.Connections.ToDictionary(
+                o => o.Id,
+                o => o.Configurations.Select(o => o.Name).ToList());
         }
 
         private async Task Reload()
         {
-            var request = new GraphQLRequest(@"mutation { reload }");
-            await Api.Mutate<Unit>(request, Logger);
+            await Api2.Reload.ExecuteAsync();
             await LoadData();
         }
 

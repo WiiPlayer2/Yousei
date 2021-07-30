@@ -34,3 +34,4 @@ packages/
 #Web
 node_modules/
 *.generated.*
+Generated/

@@ -1,0 +1,18 @@
+﻿query LoadData {
+  database {
+    isReadOnly
+    flows {
+      name
+    }
+    connections {
+      id
+      configurations {
+        name
+      }
+    }
+  }
+}
+
+mutation Reload {
+    reload
+}

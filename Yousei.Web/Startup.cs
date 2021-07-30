@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,6 +57,12 @@ namespace Yousei.Web
             services.Configure<ApiOptions>(Configuration.GetSection("Api"));
             services.AddHostedService<MainService>();
             services.AddSingleton<GraphQlRequestHandler>();
+            services.AddYouseiApi()
+                .ConfigureHttpClient((sp, client) =>
+                {
+                    var apiOptions = sp.GetService<IOptions<ApiOptions>>();
+                    client.BaseAddress = apiOptions?.Value.Url;
+                });
         }
     }
 }
