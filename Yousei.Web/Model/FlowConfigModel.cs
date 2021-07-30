@@ -11,50 +11,29 @@ namespace Yousei.Web.Model
 {
     public class FlowConfigModel : ConfigModel
     {
-        private static string getFlowQuery = @"
-query _($flowName: String!) {
-  database {
-    flow(name: $flowName) {
-      config {
-        content
-        language
-      }
-    }
-  }
-}";
-
-        private static string setFlowQuery = @"
-mutation _($flowName: String!, $source: SourceConfigInput) {
-  setFlow(name: $flowName, source: $source) {
-    name
-  }
-}";
-
         private readonly string flowName;
 
-        public FlowConfigModel(string flowName, GraphQlRequestHandler requestHandler) : base(requestHandler)
+        public FlowConfigModel(string flowName, YouseiApi api) : base(api)
         {
             this.flowName = flowName;
         }
 
         public override Task Delete()
-            => RequestHandler.Mutate<JToken>(new(setFlowQuery, new
-            {
-                flowName,
-                source = default(object?),
-            }));
+            => Api.SetFlow.ExecuteAsync(flowName, null);
 
         public override async Task<SourceConfig?> Load()
-            => (await RequestHandler.Query<Query>(new(getFlowQuery, new
-            {
-                flowName
-            }))).Database?.Flow?.Config;
+        {
+            var result = (await Api.GetFlow.ExecuteAsync(flowName)).Data?.Database.Flow?.Config;
+            if (result is null)
+                return null;
+            return new(result.Language, result.Content);
+        }
 
         public override Task Save(SourceConfig source)
-            => RequestHandler.Mutate<JToken>(new(setFlowQuery, new
+            => Api.SetFlow.ExecuteAsync(flowName, new()
             {
-                flowName,
-                source,
-            }));
+                Content = source.Content,
+                Language = source.Language,
+            });
     }
 }

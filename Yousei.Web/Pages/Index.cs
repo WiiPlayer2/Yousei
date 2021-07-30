@@ -1,5 +1,4 @@
 ﻿using BlazorMonaco;
-using GraphQL;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
@@ -29,10 +28,7 @@ namespace Yousei.Web.Pages
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         [Inject]
-        public GraphQlRequestHandler Api { get; set; }
-
-        [Inject]
-        public YouseiApi Api2 { get; set; }
+        public YouseiApi Api { get; set; }
 
         [Inject]
         public IJSRuntime Js { get; set; }
@@ -105,7 +101,7 @@ namespace Yousei.Web.Pages
 
         private async Task LoadData()
         {
-            var result = await Api2.LoadData.ExecuteAsync();
+            var result = await Api.LoadData.ExecuteAsync();
             if (result.Data is null)
                 return;
 
@@ -118,7 +114,7 @@ namespace Yousei.Web.Pages
 
         private async Task Reload()
         {
-            await Api2.Reload.ExecuteAsync();
+            await Api.Reload.ExecuteAsync();
             await LoadData();
         }
 

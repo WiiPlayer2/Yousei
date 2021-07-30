@@ -9,12 +9,12 @@ namespace Yousei.Web.Model
 {
     public abstract class ConfigModel
     {
-        public ConfigModel(GraphQlRequestHandler requestHandler)
+        public ConfigModel(YouseiApi api)
         {
-            RequestHandler = requestHandler;
+            Api = api;
         }
 
-        protected GraphQlRequestHandler RequestHandler { get; }
+        protected YouseiApi Api { get; }
 
         public abstract Task Delete();
 

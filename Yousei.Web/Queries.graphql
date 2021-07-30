@@ -16,3 +16,37 @@
 mutation Reload {
     reload
 }
+
+query GetConfiguration($connector: String!, $name: String!) {
+  database {
+    configuration(connector: $connector, name: $name) {
+      config {
+        content
+        language
+      }
+    }
+  }
+}
+
+mutation SetConfiguration($connector: String!, $name: String!, $source: SourceConfigInput) {
+  setConfiguration(connector: $connector, name: $name, source: $source) {
+    name
+  }
+}
+
+query GetFlow($flowName: String!) {
+  database {
+    flow(name: $flowName) {
+      config {
+        content
+        language
+      }
+    }
+  }
+}
+
+mutation SetFlow($flowName: String!, $source: SourceConfigInput) {
+  setFlow(name: $flowName, source: $source) {
+    name
+  }
+}

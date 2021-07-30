@@ -13,54 +13,31 @@ namespace Yousei.Web.Model
     {
         private readonly string connector;
 
-        private readonly string getConfigurationQuery = @"
-query _($connector: String!, $name: String!) {
-  database {
-    configuration(connector: $connector, name: $name) {
-      config {
-        content
-        language
-      }
-    }
-  }
-}";
-
         private readonly string name;
 
-        private readonly string setConfigurationQuery = @"
-mutation _($connector: String!, $name: String!, $source: SourceConfigInput) {
-  setConfiguration(connector: $connector, name: $name, source: $source) {
-    name
-  }
-}";
-
-        public ConnectionConfigModel(string connector, string name, GraphQlRequestHandler requestHandler) : base(requestHandler)
+        public ConnectionConfigModel(string connector, string name, YouseiApi api) : base(api)
         {
             this.connector = connector;
             this.name = name;
         }
 
         public override Task Delete()
-            => RequestHandler.Mutate<JToken>(new(setConfigurationQuery, new
-            {
-                connector,
-                name,
-                source = default(object?),
-            }));
+            => Api.SetConfiguration.ExecuteAsync(connector, name, null);
 
         public override async Task<SourceConfig?> Load()
-            => (await RequestHandler.Query<Query>(new(getConfigurationQuery, new
-            {
-                connector,
-                name
-            }))).Database?.Configuration?.Config;
+        {
+            var result = (await Api.GetConfiguration.ExecuteAsync(connector, name)).Data?.Database.Configuration?.Config;
+            if (result is null)
+                return null;
+
+            return new(result.Language, result.Content);
+        }
 
         public override Task Save(SourceConfig source)
-            => RequestHandler.Mutate<JToken>(new(setConfigurationQuery, new
+            => Api.SetConfiguration.ExecuteAsync(connector, name, new()
             {
-                connector,
-                name,
-                source = source,
-            }));
+                Content = source.Content,
+                Language = source.Language,
+            });
     }
 }
