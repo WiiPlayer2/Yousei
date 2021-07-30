@@ -6,7 +6,7 @@ def isTriggeredByUser = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCa
 def lastBuildFailed = !hudson.model.Result.SUCCESS.equals(currentBuild.previousBuild?.result); // This somehow does not work
 def forceBuild = isTriggeredByUser;
 
-echo "${currentBuild.previousBuild}";
+echo "${currentBuild.previousBuild?.result}";
 
 pipeline {
     agent {
