@@ -6,6 +6,8 @@
 
 scalar Json
 
+scalar Unit
+
 type ObjectTypeInfo implements TypeInfo {
   properties: [PropertyInfo!]!
   kind: TypeKind!
@@ -73,7 +75,7 @@ type Query {
 
 type Mutation {
   act(config: [BlockConfigInput!]!): Json!
-  reload: Json!
+  reload: Unit!
   setConfiguration(connector: String! name: String! source: SourceConfigInput): Configuration!
   setFlow(name: String! source: SourceConfigInput): Flow!
 }
