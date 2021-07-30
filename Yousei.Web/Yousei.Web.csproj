@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="site.css" />
+    <AdditionalFiles Include="site.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,4 +27,10 @@
   <Target Name="YarnInstall">
     <Yarn />
   </Target>
+
+  <ItemGroup>
+    <Compile Update="Pages\Index2.cs">
+      <DependentUpon>Pages\Index2.razor</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>
