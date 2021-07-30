@@ -55,7 +55,6 @@ namespace Yousei.Web
 
             services.Configure<ApiOptions>(Configuration.GetSection("Api"));
             services.AddHostedService<MainService>();
-            services.AddSingleton<IConfigurationDatabase, AppConfigurationDatabase>();
             services.AddSingleton<GraphQlRequestHandler>();
         }
     }
