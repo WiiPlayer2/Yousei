@@ -3,10 +3,8 @@ def built_web = false;
 def isTriggeredByIndexing = currentBuild.getBuildCauses('jenkins.branch.BranchIndexingCause').size();
 def isTriggeredByCommit = currentBuild.getBuildCauses('com.cloudbees.jenkins.GitHubPushCause').size();
 def isTriggeredByUser = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause').size();
-def lastBuildFailed = !hudson.model.Result.SUCCESS.equals(currentBuild.previousBuild?.result); // This somehow does not work
-def forceBuild = isTriggeredByUser;
-
-echo "${currentBuild.previousBuild?.result}";
+def lastBuildFailed = "${currentBuild.previousBuild?.result}" == "FAILURE";
+def forceBuild = isTriggeredByUser || lastBuildFailed;
 
 pipeline {
     agent {
