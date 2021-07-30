@@ -14,6 +14,7 @@ pipeline {
     environment {
         CLEAN_GIT_BRANCH = "${env.GIT_BRANCH.replaceAll('/', '_')}"
         DOTNET_CLI_HOME = "/tmp/DOTNET_CLI_HOME"
+        DOTNET_NOLOGO = "true"
     }
 
     stages {
