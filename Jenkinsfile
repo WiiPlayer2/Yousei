@@ -37,6 +37,7 @@ pipeline {
                             changeset 'Yousei.Core/**'
                             changeset 'Yousei.Shared/**'
                             changeset 'Yousei.SourceGen/**'
+                            expression { currentBuild.previousBuild == currentBuild.previousFailedBuild }
                         }
                     }
                     steps {
@@ -55,6 +56,7 @@ pipeline {
                             changeset 'Yousei.Shared/**'
                             changeset 'Yousei.SourceGen/**'
                             changeset 'Yousei.Web/**'
+                            expression { currentBuild.previousBuild == currentBuild.previousFailedBuild }
                         }
                     }
                     steps {
