@@ -1,24 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reactive.Linq;
 using Yousei.Core;
-using System.Reactive;
 using Yousei.Shared;
-using Yousei;
 
-namespace YouseiReloaded.Internal.Connectors.Internal
+namespace Yousei.Internal.Connectors.Internal
 {
     internal class InternalConnector : SingletonConnector
     {
         private readonly EventHub eventHub;
 
-        public InternalConnector(EventHub eventHub) : base("internal")
+        public InternalConnector(EventHub eventHub)
         {
             this.eventHub = eventHub;
+
+            AddTrigger(new ObservableTrigger("onevent", eventHub.Events.Select(o => new
+            {
+                Event = o.Event,
+                Data = o.Data,
+            })));
+            AddTrigger(new ObservableTrigger("onexception", Filter<Exception>(InternalEvent.Exception)));
+            AddTrigger(new ObservableTrigger("onstart", Filter(InternalEvent.Start).FirstAsync()));
+            AddTrigger(new ObservableTrigger("onstop", Filter(InternalEvent.Stop).FirstAsync()));
+
+            AddTrigger(new OnValueTrigger(eventHub.Values));
+            AddAction(new SendValueAction(eventHub.Values));
+
+            AddAction(new InvokeAction("reload", eventHub.TriggerReload));
         }
 
-        protected override IConnection CreateConnection() => new InternalConnection(eventHub);
+        public override string Name { get; } = "internal";
+
+        private IObservable<object> Filter(InternalEvent @event)
+                            => Filter<object>(@event);
+
+        private IObservable<T> Filter<T>(InternalEvent @event)
+            => eventHub.Events.Where(o => o.Event == @event)
+                .Select(o => (T)o.Data);
     }
 }

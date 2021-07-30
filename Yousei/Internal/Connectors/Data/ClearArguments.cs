@@ -1,9 +1,10 @@
-﻿using Yousei.Shared;
+﻿using Yousei.Core;
+using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Data
+namespace Yousei.Internal.Connectors.Data
 {
     internal record ClearArguments
     {
-        public IParameter Path { get; init; }
+        public IParameter<string> Path { get; init; } = DefaultParameter<string>.Instance;
     }
 }

@@ -2,21 +2,29 @@
 using Yousei.Core;
 using System.Reactive.Linq;
 using Yousei.Shared;
+using System.Reactive;
 
-namespace YouseiReloaded.Internal.Connectors.Internal
+namespace Yousei.Internal.Connectors.Internal
 {
-    internal class OnValueTrigger : FlowTrigger<OnValueConfiguration>
+    internal class OnValueTrigger : FlowTrigger<UnitConnection, OnValueConfiguration>
     {
-        public readonly IObservable<(string Topic, object Value)> valueObservable;
+        public readonly IObservable<(string Topic, object? Value)> valueObservable;
 
-        public OnValueTrigger(IObservable<(string, object)> valueObservable)
+        public OnValueTrigger(IObservable<(string, object?)> valueObservable)
         {
             this.valueObservable = valueObservable;
         }
 
-        protected override IObservable<object> GetEvents(IFlowContext context, OnValueConfiguration arguments)
-            => valueObservable
+        public override string Name { get; } = "onvalue";
+
+        protected override IObservable<object> GetEvents(IFlowContext context, UnitConnection _, OnValueConfiguration? arguments)
+        {
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
+
+            return valueObservable
                 .Where(o => o.Topic == arguments.Topic)
-                .Select(o => o.Value);
+                .Select(o => o.Value ?? Unit.Default);
+        }
     }
 }

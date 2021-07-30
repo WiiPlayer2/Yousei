@@ -1,19 +1,40 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Linq;
 using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Control
+namespace Yousei.Internal.Connectors.Control
 {
-    internal class ForEachAction : FlowAction<ForEachArguments>
+    internal class ForEachAction : FlowAction<UnitConnection, ForEachArguments>
     {
-        protected override async Task Act(IFlowContext context, ForEachArguments arguments)
+        public override string Name { get; } = "foreach";
+
+        protected override async Task Act(IFlowContext context, UnitConnection _, ForEachArguments? arguments)
         {
-            var collection = await arguments.Collection.Resolve<ArrayList>(context);
-            foreach (var item in collection)
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
+
+            if (!arguments.Async)
             {
-                await context.SetData(item);
-                await context.Actor.Act(arguments.Actions, context);
+                foreach (var item in arguments.Collection)
+                {
+                    await context.SetData(item);
+                    using (context.ScopeStack($"{{{item}}}"))
+                        await context.Actor.Act(arguments.Actions, context);
+                }
+            }
+            else
+            {
+                var tasks = arguments.Collection.Select(async item =>
+                {
+                    var subContext = context.Clone();
+                    await subContext.SetData(item);
+                    using (subContext.ScopeStack($"{{{item}}}"))
+                        await subContext.Actor.Act(arguments.Actions, subContext);
+                });
+                await Task.WhenAll(tasks);
             }
         }
     }

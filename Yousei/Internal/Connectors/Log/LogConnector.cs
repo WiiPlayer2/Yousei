@@ -7,13 +7,11 @@ namespace YouseiRelaoded.Internal.Connectors.Log
 {
     internal class LogConnector : SingletonConnector
     {
-        private readonly ILogger<LogConnector> logger;
-
-        public LogConnector(ILogger<LogConnector> logger) : base("log")
+        public LogConnector(ILogger logger)
         {
-            this.logger = logger;
+            AddAction(new WriteAction(logger));
         }
 
-        protected override IConnection CreateConnection() => new LogConnection(logger);
+        public override string Name { get; } = "log";
     }
 }

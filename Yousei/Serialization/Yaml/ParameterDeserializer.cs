@@ -4,11 +4,11 @@ using YamlDotNet.Core;
 using Yousei.Core;
 using YamlDotNet.Core.Events;
 
-namespace YouseiReloaded.Serialization.Yaml
+namespace Yousei.Serialization.Yaml
 {
     internal class ParameterDeserializer : INodeDeserializer
     {
-        public bool Deserialize(IParser reader, Type expectedType, Func<IParser, Type, object> nestedObjectDeserializer, out object value)
+        public bool Deserialize(IParser reader, Type expectedType, Func<IParser, Type, object?> nestedObjectDeserializer, out object? value)
         {
             value = default;
             if (expectedType != typeof(VariableParameter) && expectedType != typeof(ExpressionParameter))

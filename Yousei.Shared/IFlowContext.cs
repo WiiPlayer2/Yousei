@@ -12,6 +12,10 @@ namespace Yousei.Shared
 
         string CurrentType { get; set; }
 
+        Stack<string> ExecutionStack { get; }
+
+        string Flow { get; }
+
         Task<object> AsObject();
 
         Task ClearData(string path);
@@ -20,10 +24,10 @@ namespace Yousei.Shared
 
         Task<bool> ExistsData(string path);
 
-        Task<object> GetData(string path);
+        Task<object?> GetData(string path);
 
-        Task SetData(object data);
+        Task SetData(object? data);
 
-        Task SetData(string path, object data);
+        Task SetData(string path, object? data);
     }
 }

@@ -1,11 +1,14 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Yousei.Core;
+using Yousei.Internal;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal
+namespace Yousei.Internal
 {
     internal class FlowActor : IFlowActor
     {
@@ -24,45 +27,98 @@ namespace YouseiReloaded.Internal
             var currentType = context.CurrentType;
             using (new ActionDisposable(() => context.CurrentType = currentType))
             {
-                foreach (var action in actions)
+                for (int i = 0; i < actions.Count; i++)
                 {
-                    await Act(action, context);
+                    var action = actions[i];
+                    using (context.ScopeStack($"[{i + 1}] {action.Type}"))
+                        await Act(action, context);
                 }
             }
         }
 
         public IObservable<object> GetTrigger(BlockConfig trigger, IFlowContext context)
         {
-            var (connection, name) = GetConnection(trigger);
+            try
+            {
+                var (connector, connection, name) = GetConnection(trigger, context);
 
-            var flowTrigger = connection.CreateTrigger(name);
-            var flowTriggerConfiguration = trigger.Arguments.Map(flowTrigger.ArgumentsType);
+                var flowTrigger = connector.GetTrigger(name);
+                if (flowTrigger is null)
+                    throw new FlowException($"Unable to acquire trigger \"{trigger.Type}\".", context);
 
-            return flowTrigger.GetEvents(context, flowTriggerConfiguration);
+                return Observable.DeferAsync(async _ =>
+                {
+                    var flowTriggerConfiguration = await Resolve(trigger.Arguments, flowTrigger.ArgumentsType, context);
+
+                    return flowTrigger.GetEvents(context, connection, flowTriggerConfiguration);
+                });
+            }
+            catch (Exception e) when (e is not FlowException)
+            {
+                throw new FlowException($"Error while getting trigger \"{trigger.Type}\".", context, e);
+            }
         }
 
-        private Task Act(BlockConfig action, IFlowContext context)
+        private static async Task<JToken> Resolve(JToken token, IFlowContext context)
         {
-            var (connection, name) = GetConnection(action);
+            if (token is JObject jobj)
+                return new JObject(await Task.WhenAll(jobj.Properties().Select(ResolveProperty)));
 
-            var flowAction = connection.CreateAction(name);
-            var flowActionConfiguration = action.Arguments.Map(flowAction.ArgumentsType);
+            return token;
 
-            context.CurrentType = action.Type;
-            return flowAction.Act(context, flowActionConfiguration);
+            async Task<JProperty> ResolveProperty(JProperty property)
+            {
+                if (property.Value.TryToObject<IParameter>(out var parameter))
+                {
+                    var resolvedValue = await parameter.Resolve(context);
+                    return new JProperty(property.Name, resolvedValue);
+                }
+
+                return property;
+            }
         }
 
-        private (IConnection Connection, string Name) GetConnection(BlockConfig config)
+        private static async Task<object?> Resolve(object? obj, Type targetType, IFlowContext context)
+            => obj is not null
+                ? (await Resolve(JToken.FromObject(obj), context)).Map(targetType)
+                : default;
+
+        private async Task Act(BlockConfig action, IFlowContext context)
+        {
+            try
+            {
+                var (connector, connection, name) = GetConnection(action, context);
+
+                var flowAction = connector.GetAction(name);
+                if (flowAction is null)
+                    throw new FlowException($"Unable to acquire action \"{action.Type}\".", context);
+
+                var flowActionConfiguration = await Resolve(action.Arguments, flowAction.ArgumentsType, context);
+
+                context.CurrentType = action.Type;
+                await flowAction.Act(context, connection, flowActionConfiguration);
+            }
+            catch (Exception e) when (e is not FlowException)
+            {
+                throw new FlowException($"Error while executing \"{action.Type}\".", context, e);
+            }
+        }
+
+        private (IConnector Connector, IConnection Connection, string Name) GetConnection(BlockConfig config, IFlowContext context)
         {
             var (connectorName, name) = config.Type.SplitType();
             var connector = connectorRegistry.Get(connectorName);
+            if (connector is null)
+                throw new FlowException($"Unable to acquire connector \"{connectorName}\".", context);
 
             var connectionConfiguration = configurationProvider
                 .GetConnectionConfiguration(connectorName, config.Configuration)
                 .Map(connector.ConfigurationType);
             var connection = connector.GetConnection(connectionConfiguration);
+            if (connection is null)
+                throw new FlowException($"Unable to acquire connection for \"{connectorName}\" and configuration {{{connectionConfiguration}}}.", context);
 
-            return (connection, name);
+            return (connector, connection, name);
         }
     }
 }

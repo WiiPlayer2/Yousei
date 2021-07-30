@@ -1,11 +1,13 @@
-﻿using Yousei.Shared;
+﻿using Telegram.Bot.Types;
+using Yousei.Core;
+using Yousei.Shared;
 
 namespace Yousei.Connectors.Telegram
 {
     internal record SendArguments
     {
-        public IParameter ChatId { get; init; }
+        public IParameter<ChatId> ChatId { get; init; } = DefaultParameter<ChatId>.Instance;
 
-        public IParameter Text { get; init; }
+        public IParameter<string> Text { get; init; } = DefaultParameter<string>.Instance;
     }
 }

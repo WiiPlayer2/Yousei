@@ -11,12 +11,17 @@ namespace Yousei.Connectors.Http
 {
     public class HttpConnector : SimpleConnector<Config>
     {
-        public HttpConnector() : base("http")
+        public HttpConnector()
         {
             DefaultConnection = new HttpConnection(default);
+
+            AddTrigger<WebhookTrigger>();
+            AddAction<RequestAction>();
         }
 
-        protected override IConnection CreateConnection(Config configuration)
+        public override string Name { get; } = "http";
+
+        protected override IConnection? CreateConnection(Config configuration)
         {
             if (!configuration.Prefixes.Any())
             {

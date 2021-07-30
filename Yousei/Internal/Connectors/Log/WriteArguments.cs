@@ -6,8 +6,10 @@ namespace YouseiRelaoded.Internal.Connectors.Log
 {
     internal record WriteArguments
     {
-        public IParameter Level { get; init; } = new ConstantParameter(LogLevel.Information);
-        public IParameter Tag { get; init; } = new ConstantParameter("logging");
-        public IParameter Message { get; init; }
+        public IParameter<LogLevel> Level { get; init; } = LogLevel.Information.ToConstantParameter();
+
+        public IParameter<string> Tag { get; init; } = "logging".ToConstantParameter();
+
+        public IParameter Message { get; init; } = DefaultParameter.Instance;
     }
 }

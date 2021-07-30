@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Data
+namespace Yousei.Internal.Connectors.Data
 {
     internal class DataConnector : SingletonConnector
     {
-        public DataConnector() : base("data")
+        public DataConnector()
         {
+            AddAction<SetAction>();
+            AddAction<ClearAction>();
         }
 
-        protected override IConnection CreateConnection() => new DataConnection();
+        public override string Name { get; } = "data";
     }
 }

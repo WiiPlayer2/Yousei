@@ -1,25 +1,24 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Transmission.API.RPC;
 using Yousei.Core;
 using Yousei.Shared;
 
 namespace Yousei.Connectors.Transmission
 {
-    internal class GetAction : FlowAction<GetArguments>
+    internal class GetAction : FlowAction<ObjectConnection<Client>, GetArguments>
     {
-        private readonly Client client;
+        public override string Name { get; } = "get";
 
-        public GetAction(Client client)
+        protected override async Task Act(IFlowContext context, ObjectConnection<Client> connection, GetArguments? arguments)
         {
-            this.client = client;
-        }
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
 
-        protected override async Task Act(IFlowContext context, GetArguments arguments)
-        {
-            var fields = await arguments.Fields.Resolve<string[]>(context);
-            var ids = await arguments.Ids.Resolve<int[]>(context);
+            var fields = await arguments.Fields.Resolve(context);
+            var ids = await arguments.Ids.Resolve(context);
 
-            var torrents = await client.TorrentGetAsync(fields, ids);
+            var torrents = await connection.Object.TorrentGetAsync(fields, ids);
             await context.SetData(torrents);
         }
     }

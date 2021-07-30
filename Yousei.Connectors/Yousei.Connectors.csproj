@@ -2,9 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Humanizer.Core" Version="2.11.10" />
+    <PackageReference Include="MailKit" Version="2.13.0" />
+    <PackageReference Include="NuxeoClient" Version="1.0.0-beta-64050" />
     <PackageReference Include="SimpleFeedReader" Version="1.0.9" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
     <PackageReference Include="Telegram.Bot" Version="15.7.1" />

@@ -6,6 +6,8 @@ namespace Yousei.Shared
     {
         Type ArgumentsType { get; }
 
-        IObservable<object> GetEvents(IFlowContext context, object arguments);
+        string Name { get; }
+
+        IObservable<object> GetEvents(IFlowContext context, IConnection connection, object? arguments);
     }
 }

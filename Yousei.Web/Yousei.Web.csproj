@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <Nullable>enable</Nullable>
     <YarnBuildCommand>run tailwindcss build ./site.css -o ./wwwroot/css/site.generated.min.css</YarnBuildCommand>
   </PropertyGroup>
 

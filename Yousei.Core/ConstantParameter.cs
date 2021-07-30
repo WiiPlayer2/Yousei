@@ -3,18 +3,29 @@ using Yousei.Shared;
 
 namespace Yousei.Core
 {
-    public class ConstantParameter : IParameter
+    public class ConstantParameter : ConstantParameter<object?>
     {
-        public ConstantParameter(object value)
+        public ConstantParameter(object? value) : base(value)
+        {
+        }
+    }
+
+    public class ConstantParameter<T> : IParameter<T>
+    {
+        public ConstantParameter(T value)
         {
             Value = value;
         }
 
-        public object Value { get; }
+        public T Value { get; }
 
-        public Task<T> Resolve<T>(IFlowContext context)
-            => Task.FromResult(Value.Map<T>());
+        public async Task<T?> Resolve(IFlowContext context)
+            => await Task.FromResult(Value);
 
-        public override string ToString() => Value?.ToString() ?? string.Empty;
+        async Task<object?> IParameter.Resolve(IFlowContext context)
+            => await Resolve(context);
+
+        public override string ToString()
+            => $"{Value}";
     }
 }

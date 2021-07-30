@@ -5,11 +5,11 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 
-namespace YouseiReloaded.Serialization.Yaml
+namespace Yousei.Serialization.Yaml
 {
     internal class BlockConfigDeserializer : INodeDeserializer
     {
-        public bool Deserialize(IParser reader, Type expectedType, Func<IParser, Type, object> nestedObjectDeserializer, out object value)
+        public bool Deserialize(IParser reader, Type expectedType, Func<IParser, Type, object?> nestedObjectDeserializer, out object? value)
         {
             if (expectedType != typeof(BlockConfig))
             {
@@ -27,6 +27,12 @@ namespace YouseiReloaded.Serialization.Yaml
             }
 
             var map = nestedObjectDeserializer(reader, typeof(Dictionary<string, object>)) as Dictionary<string, object>;
+            if (map is null)
+            {
+                value = default;
+                return false;
+            }
+
             var config = new BlockConfig();
             if (map.Remove("type", out var type))
                 config.Type = (string)type;

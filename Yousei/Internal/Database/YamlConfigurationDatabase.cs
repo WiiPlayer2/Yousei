@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 using Yousei.Serialization.Yaml;
 using Yousei.Shared;
-using YouseiReloaded.Serialization.Yaml;
 
 namespace Yousei.Internal.Database
 {
@@ -38,16 +37,16 @@ namespace Yousei.Internal.Database
 
         public Task<bool> IsReadOnly { get; } = Task.FromResult(false);
 
-        public async Task<object> GetConfiguration(string connector, string name)
+        public async Task<object?> GetConfiguration(string connector, string name)
             => TryDeserializeSource<object>(await GetConfigurationSource(connector, name));
 
-        public Task<SourceConfig> GetConfigurationSource(string connector, string name)
+        public Task<SourceConfig?> GetConfigurationSource(string connector, string name)
             => TryGetSource(GetConfigurationPath(connector, name));
 
-        public async Task<FlowConfig> GetFlow(string name)
+        public async Task<FlowConfig?> GetFlow(string name)
             => TryDeserializeSource<FlowConfig>(await GetFlowSource(name));
 
-        public Task<SourceConfig> GetFlowSource(string name)
+        public Task<SourceConfig?> GetFlowSource(string name)
             => TryGetSource(GetFlowPath(name));
 
         public Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> ListConfigurations()
@@ -72,7 +71,7 @@ namespace Yousei.Internal.Database
             return Task.FromResult<IReadOnlyList<string>>(files);
         }
 
-        public async Task SetConfiguration(string connector, string name, SourceConfig source)
+        public async Task SetConfiguration(string connector, string name, SourceConfig? source)
         {
             var path = GetConfigurationPath(connector, name);
             if (source is null)
@@ -81,12 +80,12 @@ namespace Yousei.Internal.Database
             }
             else
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                Directory.CreateDirectory(Path.GetDirectoryName(path) ?? string.Empty);
                 await File.WriteAllTextAsync(path, source.Content);
             }
         }
 
-        public async Task SetFlow(string name, SourceConfig source)
+        public async Task SetFlow(string name, SourceConfig? source)
         {
             var path = GetFlowPath(name);
             if (source is null)
@@ -103,7 +102,7 @@ namespace Yousei.Internal.Database
         private string GetFlowPath(string name)
             => Path.Combine(flowsPath, $"{name}.{FILE_EXTENSION}");
 
-        private T TryDeserializeSource<T>(SourceConfig source)
+        private T? TryDeserializeSource<T>(SourceConfig? source)
         {
             if (source is null)
                 return default;
@@ -118,7 +117,7 @@ namespace Yousei.Internal.Database
             }
         }
 
-        private async Task<SourceConfig> TryGetSource(string path)
+        private async Task<SourceConfig?> TryGetSource(string path)
         {
             if (!File.Exists(path))
                 return default;
@@ -129,7 +128,7 @@ namespace Yousei.Internal.Database
         {
             public const string KEY = "YamlConfigurationDatabase";
 
-            public string Path { get; init; }
+            public string Path { get; init; } = string.Empty;
         }
     }
 }

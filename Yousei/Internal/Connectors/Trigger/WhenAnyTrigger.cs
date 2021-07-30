@@ -4,21 +4,28 @@ using System.Reactive.Linq;
 using Yousei.Core;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Trigger
+namespace Yousei.Internal.Connectors.Trigger
 {
-    internal class WhenAnyTrigger : FlowTrigger<WhenAnyArguments>
+    internal class WhenAnyTrigger : FlowTrigger<UnitConnection, WhenAnyArguments>
     {
-        protected override IObservable<object> GetEvents(IFlowContext context, WhenAnyArguments arguments)
-            => Observable.Defer(() =>
-            {
-                var observables = arguments.Triggers
-                    .Select(trigger => context.Actor.GetTrigger(trigger, context)
-                        .Select(o => new
-                        {
-                            Source = trigger.Type,
-                            Data = o,
-                        }));
-                return observables.Merge();
-            });
+        public override string Name { get; } = "whenany";
+
+        protected override IObservable<object> GetEvents(IFlowContext context, UnitConnection _, WhenAnyArguments? arguments)
+        {
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
+
+            return Observable.Defer(() =>
+                {
+                    var observables = arguments.Triggers
+                        .Select(trigger => context.Actor.GetTrigger(trigger, context)
+                            .Select(o => new
+                            {
+                                Source = trigger.Type,
+                                Data = o,
+                            }));
+                    return observables.Merge();
+                });
+        }
     }
 }

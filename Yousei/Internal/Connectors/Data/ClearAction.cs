@@ -1,14 +1,25 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Yousei.Core;
+using Yousei.Internal;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Data
+namespace Yousei.Internal.Connectors.Data
 {
-    internal class ClearAction : FlowAction<ClearArguments>
+    internal class ClearAction : FlowAction<UnitConnection, ClearArguments>
     {
-        protected override async Task Act(IFlowContext context, ClearArguments arguments)
+        public override string Name { get; } = "clear";
+
+        protected override async Task Act(IFlowContext context, UnitConnection _, ClearArguments? arguments)
         {
-            var path = await arguments.Path.Resolve<string>(context);
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
+
+            var path = await arguments.Path.Resolve(context);
+
+            if (path is null)
+                throw new ArgumentNullException(nameof(arguments.Path));
+
             await context.ClearData(path);
         }
     }

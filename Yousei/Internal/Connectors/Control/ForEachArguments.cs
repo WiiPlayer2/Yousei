@@ -1,12 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Yousei.Core;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Control
+namespace Yousei.Internal.Connectors.Control
 {
     internal record ForEachArguments
     {
-        public List<BlockConfig> Actions { get; init; }
+        public List<BlockConfig> Actions { get; init; } = new();
 
-        public IParameter Collection { get; init; }
+        public List<object?> Collection { get; init; } = new();
+
+        public bool Async { get; init; } = false;
     }
 }

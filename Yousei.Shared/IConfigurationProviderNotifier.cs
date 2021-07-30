@@ -9,6 +9,6 @@ namespace Yousei.Shared
 {
     public interface IConfigurationProviderNotifier
     {
-        ISubject<(string Name, FlowConfig Flow)> Flows { get; }
+        ISubject<(string Name, FlowConfig? Flow)> Flows { get; }
     }
 }

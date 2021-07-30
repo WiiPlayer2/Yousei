@@ -1,25 +1,33 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Control
+namespace Yousei.Internal.Connectors.Control
 {
-    internal class SwitchAction : FlowAction<SwitchArguments>
+    internal class SwitchAction : FlowAction<UnitConnection, SwitchArguments>
     {
-        protected override async Task Act(IFlowContext context, SwitchArguments arguments)
+        public override string Name { get; } = "switch";
+
+        protected override async Task Act(IFlowContext context, UnitConnection _, SwitchArguments? arguments)
         {
-            var value = await arguments.Value.Resolve<object>(context);
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
+
+            var value = await arguments.Value.Resolve(context);
 
             foreach (var (@case, actions) in arguments.Cases)
             {
                 if (Equals(value, @case))
                 {
-                    await context.Actor.Act(actions, context);
+                    using (context.ScopeStack($"CASE {{{@case}}}"))
+                        await context.Actor.Act(actions, context);
                     return;
                 }
             }
 
-            await context.Actor.Act(arguments.Default, context);
+            using (context.ScopeStack("DEFAULT"))
+                await context.Actor.Act(arguments.Default, context);
         }
     }
 }

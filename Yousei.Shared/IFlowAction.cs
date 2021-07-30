@@ -7,6 +7,8 @@ namespace Yousei.Shared
     {
         Type ArgumentsType { get; }
 
-        Task Act(IFlowContext context, object arguments);
+        string Name { get; }
+
+        Task Act(IFlowContext context, IConnection connection, object? arguments);
     }
 }

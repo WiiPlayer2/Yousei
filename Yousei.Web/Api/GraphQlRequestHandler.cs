@@ -19,17 +19,20 @@ namespace Yousei.Web.Api
 
         public GraphQlRequestHandler(IOptions<ApiOptions> options, ILogger<GraphQlRequestHandler> logger)
         {
+            if (options.Value.Url is null)
+                throw new ArgumentNullException(nameof(options));
+
             client = new GraphQLHttpClient(options.Value.Url, new NewtonsoftJsonSerializer());
             this.logger = logger;
         }
 
-        public Task<T> Mutate<T>(GraphQLRequest request, ILogger logger = default)
+        public Task<T> Mutate<T>(GraphQLRequest request, ILogger? logger = default)
             => Request(request, client.SendMutationAsync<T>, logger);
 
-        public Task<T> Query<T>(GraphQLRequest request, ILogger logger = default)
-                    => Request(request, client.SendQueryAsync<T>, logger);
+        public Task<T> Query<T>(GraphQLRequest request, ILogger? logger = default)
+            => Request(request, client.SendQueryAsync<T>, logger);
 
-        private async Task<T> Request<T>(GraphQLRequest request, Func<GraphQLRequest, CancellationToken, Task<GraphQLResponse<T>>> sendFunc, ILogger logger)
+        private async Task<T> Request<T>(GraphQLRequest request, Func<GraphQLRequest, CancellationToken, Task<GraphQLResponse<T>>> sendFunc, ILogger? logger)
         {
             logger ??= this.logger;
             logger.LogTrace($"<< Query: {request.Query}; Variables: {request.Variables}");

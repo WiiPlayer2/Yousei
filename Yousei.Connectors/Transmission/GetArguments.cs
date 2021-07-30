@@ -1,11 +1,12 @@
-﻿using Yousei.Core;
+﻿using System;
+using Yousei.Core;
 using Yousei.Shared;
 
 namespace Yousei.Connectors.Transmission
 {
     internal record GetArguments
     {
-        public IParameter Fields { get; init; } = new ConstantParameter(System.Array.Empty<string>());
-        public IParameter Ids { get; init; } = new ConstantParameter(System.Array.Empty<int>());
+        public IParameter<string[]> Fields { get; init; } = Array.Empty<string>().ToConstantParameter();
+        public IParameter<int[]> Ids { get; init; } = Array.Empty<int>().ToConstantParameter();
     }
 }

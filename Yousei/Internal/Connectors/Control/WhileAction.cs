@@ -1,14 +1,20 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Control
+namespace Yousei.Internal.Connectors.Control
 {
-    internal class WhileAction : FlowAction<WhileArguments>
+    internal class WhileAction : FlowAction<UnitConnection, WhileArguments>
     {
-        protected override async Task Act(IFlowContext context, WhileArguments arguments)
+        public override string Name { get; } = "while";
+
+        protected override async Task Act(IFlowContext context, UnitConnection _, WhileArguments? arguments)
         {
-            while (await arguments.Condition.Resolve<bool>(context))
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
+
+            while (await arguments.Condition.Resolve(context))
             {
                 await context.Actor.Act(arguments.Actions, context);
             }

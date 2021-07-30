@@ -7,17 +7,38 @@ using Yousei.Shared;
 
 namespace Yousei.Core
 {
-    public class ObservableTrigger : IFlowTrigger
+    public class ObservableTrigger : ObservableTrigger<IConnection>
     {
-        private readonly IObservable<object> observable;
-
-        public ObservableTrigger(IObservable<object> observable)
+        public ObservableTrigger(string name, Func<IConnection, IObservable<object>> observableFunc) : base(name, observableFunc)
         {
-            this.observable = observable;
+        }
+
+        public ObservableTrigger(string name, IObservable<object> observable) : base(name, observable)
+        {
+        }
+    }
+
+    public class ObservableTrigger<TConnection> : IFlowTrigger
+        where TConnection : IConnection
+    {
+        private readonly Func<TConnection, IObservable<object>> observableFunc;
+
+        public ObservableTrigger(string name, Func<TConnection, IObservable<object>> observableFunc)
+        {
+            Name = name;
+            this.observableFunc = observableFunc;
+        }
+
+        public ObservableTrigger(string name, IObservable<object> observable)
+            : this(name, _ => observable)
+        {
         }
 
         public Type ArgumentsType { get; } = typeof(object);
 
-        public IObservable<object> GetEvents(IFlowContext context, object arguments) => observable;
+        public string Name { get; }
+
+        public IObservable<object> GetEvents(IFlowContext context, IConnection connection, object? arguments)
+            => observableFunc((TConnection)connection);
     }
 }

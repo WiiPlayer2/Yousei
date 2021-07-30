@@ -2,22 +2,32 @@
 using System.Reactive.Subjects;
 using Yousei.Shared;
 using System.Threading.Tasks;
+using System;
 
-namespace YouseiReloaded.Internal.Connectors.Internal
+namespace Yousei.Internal.Connectors.Internal
 {
-    internal class SendValueAction : FlowAction<SendValueArguments>
+    internal class SendValueAction : FlowAction<UnitConnection, SendValueArguments>
     {
-        private readonly ISubject<(string, object)> valueSubject;
+        private readonly ISubject<(string, object?)> valueSubject;
 
-        public SendValueAction(ISubject<(string, object)> valueSubject)
+        public SendValueAction(ISubject<(string, object?)> valueSubject)
         {
             this.valueSubject = valueSubject;
         }
 
-        protected override async Task Act(IFlowContext context, SendValueArguments arguments)
+        public override string Name { get; } = "sendvalue";
+
+        protected override async Task Act(IFlowContext context, UnitConnection _, SendValueArguments? arguments)
         {
-            var topic = await arguments.Topic.Resolve<string>(context);
-            var value = await arguments.Value.Resolve<object>(context);
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
+
+            var topic = await arguments.Topic.Resolve(context);
+            var value = await arguments.Value.Resolve(context);
+
+            if (topic is null)
+                throw new ArgumentNullException(nameof(arguments.Topic));
+
             valueSubject.OnNext((topic, value));
         }
     }

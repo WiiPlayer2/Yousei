@@ -4,13 +4,16 @@ using Yousei.Shared;
 
 namespace Yousei.Core
 {
-    public abstract class FlowTrigger<TArguments> : IFlowTrigger
+    public abstract class FlowTrigger<TConnection, TArguments> : IFlowTrigger
+        where TConnection : IConnection
     {
         public Type ArgumentsType { get; } = typeof(TArguments);
 
-        public IObservable<object> GetEvents(IFlowContext context, object arguments)
-            => GetEvents(context, arguments.SafeCast<TArguments>());
+        public abstract string Name { get; }
 
-        protected abstract IObservable<object> GetEvents(IFlowContext context, TArguments arguments);
+        public IObservable<object> GetEvents(IFlowContext context, IConnection connection, object? arguments)
+            => GetEvents(context, (TConnection)connection, arguments.SafeCast<TArguments>());
+
+        protected abstract IObservable<object> GetEvents(IFlowContext context, TConnection connection, TArguments? arguments);
     }
 }

@@ -2,10 +2,11 @@
 using Yousei.Shared;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using System;
 
 namespace YouseiRelaoded.Internal.Connectors.Log
 {
-    internal class WriteAction : FlowAction<WriteArguments>
+    internal class WriteAction : FlowAction<UnitConnection, WriteArguments>
     {
         private readonly ILogger logger;
 
@@ -14,11 +15,17 @@ namespace YouseiRelaoded.Internal.Connectors.Log
             this.logger = logger;
         }
 
-        protected override async Task Act(IFlowContext context, WriteArguments arguments)
+        public override string Name { get; } = "write";
+
+        protected override async Task Act(IFlowContext context, UnitConnection _, WriteArguments? arguments)
         {
-            var level = await arguments.Level.Resolve<LogLevel>(context);
-            var message = await arguments.Message.Resolve<object>(context);
-            var tag = await arguments.Tag.Resolve<string>(context);
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
+
+            var level = await arguments.Level.Resolve(context);
+            var message = await arguments.Message.Resolve(context);
+            var tag = await arguments.Tag.Resolve(context);
+
             logger.Log(level, $"[{tag}] {message}");
         }
     }

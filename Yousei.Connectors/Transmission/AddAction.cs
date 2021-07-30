@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Transmission.API.RPC;
 using Transmission.API.RPC.Entity;
 using Yousei.Core;
@@ -10,19 +11,18 @@ namespace Yousei.Connectors.Transmission
     [Parameterized(typeof(NewTorrent))]
     internal partial record ParameterizedNewTorrent { }
 
-    internal class AddAction : FlowAction<ParameterizedNewTorrent>
+    internal class AddAction : FlowAction<ObjectConnection<Client>, ParameterizedNewTorrent>
     {
-        private readonly Client client;
+        public override string Name { get; } = "add";
 
-        public AddAction(Client client)
+        protected override async Task Act(IFlowContext context, ObjectConnection<Client> connection, ParameterizedNewTorrent? arguments)
         {
-            this.client = client;
-        }
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
 
-        protected override async Task Act(IFlowContext context, ParameterizedNewTorrent arguments)
-        {
             var newTorrent = await arguments.Resolve(context);
-            var torrentInfo = await client.TorrentAddAsync(newTorrent).ConfigureAwait(false);
+
+            var torrentInfo = await connection.Object.TorrentAddAsync(newTorrent).ConfigureAwait(false);
             await context.SetData(torrentInfo);
         }
     }

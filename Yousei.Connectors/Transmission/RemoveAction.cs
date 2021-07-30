@@ -1,25 +1,24 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Transmission.API.RPC;
 using Yousei.Core;
 using Yousei.Shared;
 
 namespace Yousei.Connectors.Transmission
 {
-    internal class RemoveAction : FlowAction<RemoveArguments>
+    internal class RemoveAction : FlowAction<ObjectConnection<Client>, RemoveArguments>
     {
-        private readonly Client client;
+        public override string Name { get; } = "remove";
 
-        public RemoveAction(Client client)
+        protected override async Task Act(IFlowContext context, ObjectConnection<Client> connection, RemoveArguments? arguments)
         {
-            this.client = client;
-        }
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
 
-        protected override async Task Act(IFlowContext context, RemoveArguments arguments)
-        {
-            var ids = await arguments.Ids.Resolve<int[]>(context);
-            var deleteData = await arguments.DeleteData.Resolve<bool>(context);
+            var ids = await arguments.Ids.Resolve(context);
+            var deleteData = await arguments.DeleteData.Resolve(context);
 
-            client.TorrentRemoveAsync(ids, deleteData);
+            connection.Object.TorrentRemoveAsync(ids, deleteData);
         }
     }
 }

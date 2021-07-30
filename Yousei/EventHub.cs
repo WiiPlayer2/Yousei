@@ -5,7 +5,7 @@ using System.Reactive;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
-using YouseiReloaded.Internal.Connectors.Internal;
+using Yousei.Internal.Connectors.Internal;
 
 namespace Yousei
 {
@@ -15,9 +15,9 @@ namespace Yousei
 
         public ISubject<Unit> Reload { get; } = new Subject<Unit>();
 
-        public ISubject<(string Topic, object Value)> Values { get; } = new Subject<(string, object)>();
+        public ISubject<(string Topic, object? Value)> Values { get; } = new Subject<(string, object?)>();
 
-        public void RaiseEvent(InternalEvent @event, object data = default)
+        public void RaiseEvent(InternalEvent @event, object? data = default)
             => Events.OnNext((@event, data ?? Unit.Default));
 
         public void TriggerReload()

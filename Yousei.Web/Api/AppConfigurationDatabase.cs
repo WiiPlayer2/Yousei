@@ -27,17 +27,17 @@ namespace Yousei.Web.Api
 
         public Task<bool> IsReadOnly => GetIsReadOnly();
 
-        public Task<object> GetConfiguration(string connector, string name)
+        public Task<object?> GetConfiguration(string connector, string name)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<SourceConfig> GetConfigurationSource(string connector, string name)
+        public async Task<SourceConfig?> GetConfigurationSource(string connector, string name)
         {
             var request = new GraphQLRequest
             {
                 Query = @"
-query Configuration($connector: String, $name: String) {
+query Configuration($connector: String!, $name: String!) {
   database {
     configuration(connector: $connector, name: $name) {
       config {
@@ -53,21 +53,23 @@ query Configuration($connector: String, $name: String) {
                     name,
                 },
             };
-            var response = await requestHandler.Query<JToken>(request, logger);
-            return response["database"]["configuration"]["config"].ToObject<SourceConfig>();
+            var response = await requestHandler.Query<Query>(request, logger);
+            return response.Database?
+                .Configuration?
+                .Config;
         }
 
-        public Task<FlowConfig> GetFlow(string name)
+        public Task<FlowConfig?> GetFlow(string name)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<SourceConfig> GetFlowSource(string name)
+        public async Task<SourceConfig?> GetFlowSource(string name)
         {
             var request = new GraphQLRequest
             {
                 Query = @"
-query Flow($name: String) {
+query Flow($name: String!) {
   database {
     flow(name: $name) {
       config {
@@ -82,8 +84,10 @@ query Flow($name: String) {
                     name = name,
                 },
             };
-            var response = await requestHandler.Query<JToken>(request, logger);
-            return response["database"]["flow"]["config"].ToObject<SourceConfig>();
+            var response = await requestHandler.Query<Query>(request, logger);
+            return response.Database?
+                .Flow?
+                .Config;
         }
 
         public async Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> ListConfigurations()
@@ -99,9 +103,16 @@ query {
     }
   }
 }");
-            var response = await requestHandler.Query<JToken>(request, logger);
-            return response["database"]["connections"].ToObject<List<ConnectionOutput>>()
-                .ToDictionary(o => o.Id, o => (IReadOnlyList<string>)o.Configurations.Select(o => o.Name).ToList());
+            var response = await requestHandler.Query<Query>(request, logger);
+            return response.Database?
+                .Connections?
+                .ToDictionary(
+                    o => o.Id ?? string.Empty,
+                    o => o.Configurations?
+                        .Select(o => o.Name ?? string.Empty)?
+                        .ToList()
+                        ?? (IReadOnlyList<string>)Array.Empty<string>())
+                ?? new Dictionary<string, IReadOnlyList<string>>();
         }
 
         public async Task<IReadOnlyList<string>> ListFlows()
@@ -114,18 +125,20 @@ query {
     }
   }
 }");
-            var response = await requestHandler.Query<JToken>(request, logger);
-            return response["database"]["flows"].ToObject<List<FlowOutput>>()
-                .Select(o => o.Name)
-                .ToList();
+            var response = await requestHandler.Query<Query>(request, logger);
+            return response.Database?
+                .Flows?
+                .Select(o => o.Name ?? string.Empty)?
+                .ToList()
+                ?? (IReadOnlyList<string>)Array.Empty<string>();
         }
 
-        public async Task SetConfiguration(string connector, string name, SourceConfig source)
+        public async Task SetConfiguration(string connector, string name, SourceConfig? source)
         {
             var request = new GraphQLRequest
             {
                 Query = @"
-mutation SetConfiguration($connector: String, $name: String, $source: SourceConfigInput) {
+mutation SetConfiguration($connector: String!, $name: String!, $source: SourceConfigInput) {
   setConfiguration(connector: $connector, name: $name, source: $source) {
     name
   }
@@ -140,12 +153,12 @@ mutation SetConfiguration($connector: String, $name: String, $source: SourceConf
             await requestHandler.Mutate<JToken>(request, logger);
         }
 
-        public async Task SetFlow(string name, SourceConfig source)
+        public async Task SetFlow(string name, SourceConfig? source)
         {
             var request = new GraphQLRequest
             {
                 Query = @"
-mutation SetFlow($name: String, $source: SourceConfigInput) {
+mutation SetFlow($name: String!, $source: SourceConfigInput) {
   setFlow(name: $name, source: $source) {
     name
   }
@@ -170,8 +183,10 @@ query {
     }
 }",
             };
-            var response = await requestHandler.Query<JToken>(request, logger);
-            return response["database"]["isReadOnly"].ToObject<bool>();
+            var response = await requestHandler.Query<Query>(request, logger);
+            return response.Database?
+                .IsReadOnly
+                ?? false;
         }
 
         private record ConfigurationOutput(string Name);

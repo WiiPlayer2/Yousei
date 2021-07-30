@@ -1,19 +1,28 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Reactive;
+using System.Threading.Tasks;
 using Yousei.Core;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Control
+namespace Yousei.Internal.Connectors.Control
 {
-    internal class IfAction : FlowAction<IfArguments>
+    internal class IfAction : FlowAction<UnitConnection, IfArguments>
     {
-        protected override async Task Act(IFlowContext context, IfArguments arguments)
+        public override string Name { get; } = "if";
+
+        protected override async Task Act(IFlowContext context, UnitConnection _, IfArguments? arguments)
         {
-            var condition = await arguments.If.Resolve<bool>(context);
+            if (arguments is null)
+                throw new ArgumentNullException(nameof(arguments));
+
+            var condition = await arguments.If.Resolve(context);
 
             if (condition)
-                await context.Actor.Act(arguments.Then, context);
+                using (context.ScopeStack("IF"))
+                    await context.Actor.Act(arguments.Then, context);
             else
-                await context.Actor.Act(arguments.Else, context);
+                using (context.ScopeStack("ELSE"))
+                    await context.Actor.Act(arguments.Else, context);
         }
     }
 }

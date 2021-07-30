@@ -9,6 +9,6 @@ namespace Yousei.Internal
 {
     public class ConfigurationProviderNotifier : IConfigurationProviderNotifier
     {
-        public ISubject<(string Name, FlowConfig Flow)> Flows { get; } = new Subject<(string, FlowConfig)>();
+        public ISubject<(string Name, FlowConfig? Flow)> Flows { get; } = new Subject<(string, FlowConfig?)>();
     }
 }

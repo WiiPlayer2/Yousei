@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
+using Yousei.Core;
 using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Control
+namespace Yousei.Internal.Connectors.Control
 {
     internal record WhileArguments
     {
-        public IParameter Condition { get; init; }
-        public List<BlockConfig> Actions { get; init; }
+        public IParameter<bool> Condition { get; init; } = DefaultParameter<bool>.Instance;
+
+        public List<BlockConfig> Actions { get; init; } = new();
     }
 }

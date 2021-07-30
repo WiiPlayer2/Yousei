@@ -4,26 +4,59 @@ using Yousei.Shared;
 
 namespace Yousei.Core
 {
-    public abstract class SimpleConnector<TConfiguration> : Connector<TConfiguration>
+    public abstract class SimpleConnector<TConfiguration> : SimpleConnector<IConnection, TConfiguration>
+        where TConfiguration : notnull
+    { }
+
+    public abstract class SimpleConnector<TConnection, TConfiguration> : Connector<TConnection, TConfiguration>
+        where TConnection : IConnection
+        where TConfiguration : notnull
     {
-        private readonly Dictionary<TConfiguration, IConnection> connections = new();
+        private readonly Dictionary<string, IFlowAction> actions = new();
 
-        protected SimpleConnector(string name) : base(name)
+        private readonly Dictionary<TConfiguration, TConnection?> connections = new();
+
+        private readonly Dictionary<string, IFlowTrigger> triggers = new();
+
+        protected TConnection? DefaultConnection { get; set; }
+
+        public sealed override IFlowAction? GetAction(string name)
+            => actions.GetValueOrDefault(name);
+
+        public sealed override IEnumerable<IFlowAction> GetActions()
+            => actions.Values;
+
+        public sealed override IFlowTrigger? GetTrigger(string name)
+                    => triggers.GetValueOrDefault(name);
+
+        public sealed override IEnumerable<IFlowTrigger> GetTriggers()
+            => triggers.Values;
+
+        public sealed override Task Reset()
         {
-        }
-
-        protected IConnection DefaultConnection { get; set; }
-
-        public override Task Reset()
-        {
-            // TODO: maybe force subclass to check each connection if it needs to be handled.
+            foreach (var connection in connections.Values)
+                connection?.Dispose();
             connections.Clear();
             return Task.CompletedTask;
         }
 
-        protected abstract IConnection CreateConnection(TConfiguration configuration);
+        protected void AddAction<T>()
+            where T : IFlowAction, new()
+            => AddAction(new T());
 
-        protected override IConnection GetConnection(TConfiguration configuration)
+        protected void AddAction(IFlowAction instance)
+            => actions.Add(instance.Name, instance);
+
+        protected void AddTrigger<T>()
+            where T : IFlowTrigger, new()
+            => AddTrigger(new T());
+
+        protected void AddTrigger(IFlowTrigger instance)
+            => triggers.Add(instance.Name, instance);
+
+        protected abstract TConnection? CreateConnection(TConfiguration configuration);
+
+        protected sealed override TConnection? GetConnection(TConfiguration? configuration)
         {
             if (configuration is null)
                 return DefaultConnection;

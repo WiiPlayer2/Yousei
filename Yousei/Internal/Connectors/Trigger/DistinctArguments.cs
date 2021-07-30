@@ -1,9 +1,9 @@
 ﻿using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Trigger
+namespace Yousei.Internal.Connectors.Trigger
 {
     internal record DistinctArguments
     {
-        public BlockConfig Base { get; init; }
+        public BlockConfig? Base { get; init; }
     }
 }

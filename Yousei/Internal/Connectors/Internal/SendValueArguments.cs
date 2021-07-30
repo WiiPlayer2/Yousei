@@ -1,10 +1,12 @@
-﻿using Yousei.Shared;
+﻿using Yousei.Core;
+using Yousei.Shared;
 
-namespace YouseiReloaded.Internal.Connectors.Internal
+namespace Yousei.Internal.Connectors.Internal
 {
     internal record SendValueArguments
     {
-        public IParameter Topic { get; init; }
-        public IParameter Value { get; init; }
+        public IParameter<string> Topic { get; init; } = DefaultParameter<string>.Instance;
+
+        public IParameter Value { get; init; } = DefaultParameter.Instance;
     }
 }
