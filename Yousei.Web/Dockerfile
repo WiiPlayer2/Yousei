@@ -12,10 +12,10 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /src
 COPY . .
-RUN dotnet restore "Yousei.Web/Yousei.Web.csproj"
 WORKDIR "/src/Yousei.Web"
-RUN dotnet msbuild "Yousei.Web.csproj" -t:YarnInstall
-RUN dotnet build "Yousei.Web.csproj" -c Release -o /app/build -warnaserror
+RUN dotnet restore "Yousei.Web.csproj" \
+    && dotnet msbuild "Yousei.Web.csproj" -t:YarnInstall \
+    && dotnet build "Yousei.Web.csproj" -c Release -o /app/build -warnaserror
 
 FROM build AS publish
 RUN dotnet publish "Yousei.Web.csproj" -c Release -o /app/publish
