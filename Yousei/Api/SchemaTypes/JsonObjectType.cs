@@ -61,24 +61,19 @@ namespace Yousei.Api.SchemaTypes
         {
             resultValue = default;
             if (runtimeValue is null || runtimeValue is not Dummy<JToken, object> dummy)
-                resultValue = null;
-            else if (dummy.Value is JObject jobject)
-                resultValue = jobject.Properties().ToDictionary(o => o.Name, o =>
-                {
-                    TrySerialize(o.Value, out var result);
-                    return result;
-                });
-            else if (dummy.Value is JArray jarray)
-                resultValue = jarray.Select(o =>
-                {
-                    TrySerialize(o, out var result);
-                    return result;
-                }).ToList();
-            else if (dummy.Value is JValue jvalue)
-                resultValue = jvalue.Value;
-            else
                 return false;
+
+            resultValue = Serialize(dummy.Value);
             return true;
+
+            object? Serialize(JToken jtoken)
+                => jtoken switch
+                {
+                    JObject jobject => jobject.Properties().ToDictionary(o => o.Name, o => Serialize(o.Value)),
+                    JArray jarray => jarray.Select(Serialize).ToList(),
+                    JValue jvalue => jvalue.Value,
+                    _ => throw new NotImplementedException(),
+                };
         }
     }
 }

@@ -15,5 +15,17 @@ namespace Yousei.Api.Types
 
         public static implicit operator TValue(Dummy<TValue, TExtra> dummy)
             => dummy.Value;
+
+        public static TValue? TryCast(object? obj)
+        {
+            if (obj is null)
+                return default;
+
+            var dummy = obj as Dummy<TValue, TExtra>;
+            if (dummy is null)
+                return default;
+
+            return dummy.Value;
+        }
     }
 }

@@ -19,6 +19,10 @@ namespace Yousei.Api.SchemaTypes
                 .Field("object")
                 .Type<JsonObjectType>()
                 .Resolve(ctx => (Dummy<JToken, object>)ctx.Parent<JToken>());
+            descriptor
+                .Field("string")
+                .Type<JsonStringType>()
+                .Resolve(ctx => (Dummy<JToken, string>)ctx.Parent<JToken>());
         }
     }
 }

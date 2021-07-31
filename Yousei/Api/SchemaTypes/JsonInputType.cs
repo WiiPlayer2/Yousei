@@ -22,7 +22,8 @@ namespace Yousei.Api.SchemaTypes
             var field = objectNode.Fields[0];
             return field.Name.Value switch
             {
-                "object" => (JToken)(Dummy<JToken, object>)new JsonObjectType().ParseLiteral(field.Value),
+                "object" => Dummy<JToken, object>.TryCast(new JsonObjectType().ParseLiteral(field.Value)),
+                "string" => Dummy<JToken, string>.TryCast(new JsonStringType().ParseLiteral(field.Value)),
                 _ => throw new NotImplementedException(),
             };
         }
@@ -34,6 +35,10 @@ namespace Yousei.Api.SchemaTypes
             descriptor
                 .Field("object")
                 .Type<JsonObjectType>()
+                .DefaultValue(NullValueNode.Default);
+            descriptor
+                .Field("string")
+                .Type<JsonStringType>()
                 .DefaultValue(NullValueNode.Default);
         }
     }

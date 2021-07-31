@@ -57,8 +57,9 @@ namespace Yousei
 
                 // JSON types
                 .AddType<JsonType>()
-                .AddType<JsonObjectType>()
                 .AddType<JsonInputType>()
+                .AddType<JsonObjectType>()
+                .AddType<JsonStringType>()
                 .AddTypeConverter<JObject, JToken>(from => from)
                 .AddTypeConverter<JArray, JToken>(from => from)
                 .AddTypeConverter<JValue, JToken>(from => from)
