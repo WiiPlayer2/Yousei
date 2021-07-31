@@ -15,13 +15,9 @@ namespace Yousei.Web.Api.Serialization
         }
 
         public override Unit Parse(string serializedValue)
-        {
-            throw new NotImplementedException();
-        }
+            => Unit.Default;
 
         protected override string Format(Unit runtimeValue)
-        {
-            throw new NotImplementedException();
-        }
+            => "()";
     }
 }

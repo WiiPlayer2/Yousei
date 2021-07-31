@@ -14,3 +14,6 @@ extend schema @key(fields: "id")
 
 extend scalar Unit
 	@runtimeType(name: "global::System.Reactive.Unit")
+
+extend scalar JsonString
+	@runtimeType(name: "global::Newtonsoft.Json.Linq.JToken")

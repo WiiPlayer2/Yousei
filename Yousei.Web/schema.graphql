@@ -4,9 +4,21 @@
   subscription: Subscription
 }
 
-scalar Json
+type Json {
+  object: JsonObject
+  string: JsonString
+}
 
 scalar Unit
+
+input JsonInput {
+  object: JsonObject
+  string: JsonString
+}
+
+scalar JsonObject
+
+scalar JsonString
 
 type ObjectTypeInfo implements TypeInfo {
   properties: [PropertyInfo!]!
@@ -111,7 +123,7 @@ type Configuration {
 input BlockConfigInput {
   type: String!
   configuration: String! = "default"
-  arguments: Json
+  arguments: JsonInput
 }
 
 type SourceConfig {
