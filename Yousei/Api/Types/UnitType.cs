@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace Yousei.Api.Types
 {
-    internal class UnitType : ScalarType
+    internal class UnitType : ScalarType<Unit>
     {
         public UnitType() : base("Unit")
         {
         }
 
-        public override Type RuntimeType { get; } = typeof(Unit);
-
         public override bool IsInstanceOfType(IValueNode valueSyntax)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
 
         public override object? ParseLiteral(IValueNode valueSyntax, bool withDefaults = true)
         {
@@ -32,17 +32,6 @@ namespace Yousei.Api.Types
         public override IValueNode ParseValue(object? runtimeValue)
         {
             throw new NotImplementedException();
-        }
-
-        public override bool TryDeserialize(object? resultValue, out object? runtimeValue)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool TrySerialize(object? runtimeValue, out object? resultValue)
-        {
-            resultValue = new Dictionary<string, object>();
-            return true;
         }
     }
 }

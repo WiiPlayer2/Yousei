@@ -6,12 +6,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using StrawberryShake.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yousei.Shared;
 using Yousei.Web.Api;
+using Yousei.Web.Api.Serialization;
 
 namespace Yousei.Web
 {
@@ -56,6 +58,7 @@ namespace Yousei.Web
 
             services.Configure<ApiOptions>(Configuration.GetSection("Api"));
             services.AddHostedService<MainService>();
+            services.AddSingleton<ISerializer, UnitSerializer>();
             services.AddYouseiApi()
                 .ConfigureHttpClient((sp, client) =>
                 {
