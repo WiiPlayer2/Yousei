@@ -4,12 +4,12 @@
   "extensions": {
     "strawberryShake": {
       "name": "YouseiApi",
-      "url": "http://localhost:5000/graphql/",
       "namespace": "Yousei.Web.Api",
+      "url": "http://localhost:5000/graphql/",
       "dependencyInjection": true,
       "strictSchemaValidation": true,
       "hashAlgorithm": "md5",
-      "useSingleFile": false,
+      "useSingleFile": true,
       "requestStrategy": "Default",
       "outputDirectoryName": "Generated",
       "noStore": false,
