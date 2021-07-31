@@ -28,7 +28,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{B4057D2C-E1F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{8F9326E1-C7A1-4D21-ACA3-122C9F18AAB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yousei.Tests", "Yousei.Tests\Yousei.Tests.csproj", "{616CB5EA-C64F-48B2-8A2D-2486807AE0B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yousei.Tests", "Yousei.Tests\Yousei.Tests.csproj", "{616CB5EA-C64F-48B2-8A2D-2486807AE0B5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F314C85F-7C5D-4AE1-9DC7-125454CE26F3}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
