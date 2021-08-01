@@ -69,7 +69,7 @@ ul {
 
 .sidebar-row {
     @apply p-1 flex items-center;
-    min-height: 3rem;
+    /*min-height: 3rem;*/
 }
 
 .sidebar-header {

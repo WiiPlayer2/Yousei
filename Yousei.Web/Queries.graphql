@@ -11,6 +11,9 @@
       }
     }
   }
+  connectors {
+    name
+  }
 }
 
 mutation Reload {

@@ -20,20 +20,45 @@
                     <span>@flow.Name</span>
                 </div>
             }
+
+            @{
+                var connections = context.Database.Connections.ToDictionary(o => o.Id, o => o.Configurations);
+                var inactiveConnectors = connections.Keys.Where(o => !context.Connectors.Select(o => o.Name).Contains(o)).ToList();
+            }
             <div class="sidebar-header">
                 <span>Connections</span>
             </div>
-            @foreach (var connector in context.Database.Connections)
+            @foreach (var connector in context.Connectors)
             {
+                connections.TryGetValue(connector.Name, out var currentConnections);
                 <div class="sidebar-subheader">
-                    <span>@connector.Id</span>&nbsp;
+                    <span>@connector.Name</span>&nbsp;
                     <Icon Name="IconName.Add" />
                 </div>
-                @foreach (var connection in connector.Configurations)
+                @if (currentConnections is not null)
                 {
-                    <div class="sidebar-clickable" @onclick="() => Selected.InvokeAsync(new ConnectionConfigModel(connector.Id, connection.Name, Api))">
-                        <span>@connection.Name</span>
-                    </div>
+                    foreach (var connection in currentConnections)
+
+                    {
+                        <div class="sidebar-clickable" @onclick="() => Selected.InvokeAsync(new ConnectionConfigModel(connector.Name, connection.Name, Api))">
+                            <span>@connection.Name</span>
+                        </div>
+                    }
+                }
+            }
+            @if (inactiveConnectors.Any())
+            {
+                <div class="sidebar-subheader">
+                    <span>Misc.</span>
+                </div>
+                @foreach (var connector in inactiveConnectors)
+                {
+                    @foreach (var connection in connections[connector])
+                    {
+                        <div class="sidebar-clickable" @onclick="() => Selected.InvokeAsync(new ConnectionConfigModel(connector, connection.Name, Api))">
+                            <span>@connector.@connection.Name</span>
+                        </div>
+                    }
                 }
             }
         </Content>
