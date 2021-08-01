@@ -78,6 +78,13 @@ namespace Yousei.Web.Pages
             if (editor is null)
                 return;
 
+            if (isDirty)
+            {
+                var result = await Js.InvokeAsync<bool>("confirm", "This config has not been saved yet. Are you sure you want to load another one?");
+                if (!result)
+                    return;
+            }
+
             string? content = default;
             try
             {
