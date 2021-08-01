@@ -67,10 +67,18 @@ ul {
     @apply ml-5;
 }
 
+.sidebar a {
+    @apply hover:text-blue-500;
+}
+
 .sidebar-row {
-    @apply p-1 flex items-center;
+    @apply p-1 flex flex-row items-center;
     /*min-height: 3rem;*/
 }
+
+    .sidebar-row > a {
+        @apply flex items-center;
+    }
 
 .sidebar-header {
     @apply sidebar-row font-bold bg-gray-200;

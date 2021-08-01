@@ -15,13 +15,9 @@ namespace Yousei.Web.Pages
 {
     public partial class Index
     {
-        private Dictionary<string, List<string>> configurations = new();
-
         private ConfigModel? currentConfig = null;
 
         private MonacoEditor? editor;
-
-        private List<string> flows = new();
 
         private bool isReadOnly = true;
 
@@ -37,47 +33,6 @@ namespace Yousei.Web.Pages
         public ILogger<Index> Logger { get; set; }
 
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-
-        private async Task AddConfiguration(string connector)
-        {
-            if (isReadOnly)
-                return;
-
-            var name = await Js.InvokeAsync<string>("prompt", "Enter configuration name:", string.Empty);
-            if (string.IsNullOrWhiteSpace(name))
-                return;
-
-            configurations[connector].Add(name);
-            await SetConfig(new ConnectionConfigModel(connector, name, Api));
-            this.StateHasChanged();
-        }
-
-        private async Task AddConnector()
-        {
-            if (isReadOnly)
-                return;
-
-            var name = await Js.InvokeAsync<string>("prompt", "Enter connector name:", string.Empty);
-            if (string.IsNullOrWhiteSpace(name))
-                return;
-
-            configurations.Add(name, new List<string>());
-            this.StateHasChanged();
-        }
-
-        private async Task AddFlow()
-        {
-            if (isReadOnly)
-                return;
-
-            var name = await Js.InvokeAsync<string>("prompt", "Enter flow name:", string.Empty);
-            if (string.IsNullOrWhiteSpace(name))
-                return;
-
-            flows.Add(name);
-            await SetConfig(new FlowConfigModel(name, Api));
-            this.StateHasChanged();
-        }
 
         private StandaloneEditorConstructionOptions Construct(MonacoEditor editor)
             => new StandaloneEditorConstructionOptions
@@ -95,25 +50,6 @@ namespace Yousei.Web.Pages
 
             await currentConfig.Delete();
             StateHasChanged();
-        }
-
-        private async Task LoadData()
-        {
-            var result = await Api.LoadData.ExecuteAsync();
-            if (result.Data is null)
-                return;
-
-            isReadOnly = result.Data.Database.IsReadOnly;
-            flows = result.Data.Database.Flows.Select(o => o.Name).ToList();
-            configurations = result.Data.Database.Connections.ToDictionary(
-                o => o.Id,
-                o => o.Configurations.Select(o => o.Name).ToList());
-        }
-
-        private async Task Reload()
-        {
-            await Api.Reload.ExecuteAsync();
-            await LoadData();
         }
 
         private async Task Save()
