@@ -19,6 +19,8 @@ namespace Yousei.Web.Pages
 
         private MonacoEditor? editor;
 
+        private bool isDirty = false;
+
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         [Inject]
@@ -42,6 +44,15 @@ namespace Yousei.Web.Pages
                 TabIndex = 2,
             };
 
+        private void EditorContentChanged()
+        {
+            if (isDirty)
+                return;
+
+            isDirty = true;
+            StateHasChanged();
+        }
+
         private async Task Save()
         {
             if (currentConfig is null || editor is null || currentConfig.IsReadOnly)
@@ -54,6 +65,7 @@ namespace Yousei.Web.Pages
                 //var language = await js.InvokeAsync<string>("blazorMonaco.editor.getModelLanguage", editor.Id, model.Id);
                 var language = "yaml";
                 await currentConfig.Save(new SourceConfig(language, content));
+                isDirty = false;
             }
             catch (Exception e)
             {
@@ -82,6 +94,7 @@ namespace Yousei.Web.Pages
             content ??= string.Empty;
             await editor.SetValue(content);
             currentConfig = configModel;
+            isDirty = false;
 
             await editor.UpdateOptions(new()
             {

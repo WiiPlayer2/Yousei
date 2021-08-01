@@ -12,6 +12,12 @@
         <span class="font-bold text-xl ml-2">
             @currentConfig?.Title
         </span>
+        @if (isDirty)
+        {
+            <span class="font-bold text-xl ml-2">
+                *
+            </span>
+        }
     </div>
-    <MonacoEditor @ref="editor" ConstructionOptions="Construct" CssClass="editor" />
+    <MonacoEditor @ref="editor" ConstructionOptions="Construct" CssClass="editor" OnDidChangeModelContent="EditorContentChanged" />
 </div>
