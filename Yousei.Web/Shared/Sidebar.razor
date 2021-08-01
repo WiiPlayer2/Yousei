@@ -22,9 +22,9 @@
             </div>
             @foreach (var flow in context.Database.Flows)
             {
-                <div class="sidebar-clickable" @onclick="() => Selected.InvokeAsync(new FlowConfigModel(flow.Name, Api))">
-                    <span>@flow.Name</span>
-                </div>
+                <SidebarItem Title="@flow.Name"
+                             Selected="Selected"
+                             ConfigModel="new FlowConfigModel(flow.Name, Api)" />
             }
 
             @{
@@ -49,11 +49,10 @@
                 @if (currentConnections is not null)
                 {
                     foreach (var connection in currentConnections)
-
                     {
-                        <div class="sidebar-clickable" @onclick="() => Selected.InvokeAsync(new ConnectionConfigModel(connector.Name, connection.Name, Api))">
-                            <span>@connection.Name</span>
-                        </div>
+                        <SidebarItem Title="@connection.Name"
+                                     Selected="Selected"
+                                     ConfigModel="new ConnectionConfigModel(connector.Name, connection.Name, Api)" />
                     }
                 }
             }
@@ -66,9 +65,9 @@
                 {
                     @foreach (var connection in connections[connector])
                     {
-                        <div class="sidebar-clickable" @onclick="() => Selected.InvokeAsync(new ConnectionConfigModel(connector, connection.Name, Api))">
-                            <span>@connector.@connection.Name</span>
-                        </div>
+                        <SidebarItem Title="@($"{connector}.{connection.Name}")"
+                                     Selected="Selected"
+                                     ConfigModel="new ConnectionConfigModel(connector, connection.Name, Api)" />
                     }
                 }
             }

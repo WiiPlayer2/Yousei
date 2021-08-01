@@ -1,0 +1,14 @@
+﻿<div class="sidebar-clickable" @onclick="() => Selected.InvokeAsync(ConfigModel)">
+    <span>@Title</span>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = default!;
+
+    [Parameter]
+    public ConfigModel ConfigModel { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<ConfigModel> Selected { get; set; }
+}
