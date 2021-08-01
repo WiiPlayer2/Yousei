@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using StrawberryShake;
 using StrawberryShake.Serialization;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,9 @@ using System.Threading.Tasks;
 using Yousei.Shared;
 using Yousei.Web.Api;
 using Yousei.Web.Api.Serialization;
+using Blazorise;
+using Blazorise.Icons.Material;
+using Blazorise.Bulma;
 
 namespace Yousei.Web
 {
@@ -56,10 +60,18 @@ namespace Yousei.Web
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            services.Configure<ApiOptions>(Configuration.GetSection("Api"));
             services.AddHostedService<MainService>();
-            services.AddSingleton<ISerializer, UnitSerializer>();
-            services.AddYouseiApi()
+
+            services
+                .AddBlazorise()
+                .AddBulmaProviders()
+                .AddMaterialIcons();
+
+            // Api
+            services
+                .Configure<ApiOptions>(Configuration.GetSection("Api"))
+                .AddSingleton<ISerializer, UnitSerializer>()
+                .AddYouseiApi(ExecutionStrategy.CacheAndNetwork)
                 .ConfigureHttpClient((sp, client) =>
                 {
                     var apiOptions = sp.GetService<IOptions<ApiOptions>>();

@@ -1,0 +1,57 @@
+﻿@inherits QueryBase<ILoadDataResult>
+@inject YouseiApi Api
+
+<div class="flex flex-col">
+    <LoadDataRenderer>
+        <Loading>
+            loading...
+        </Loading>
+        <Content>
+            <div class="sidebar-item">
+                <a @onclick="Reload"><Icon Name="IconName.Sync" /></a>
+            </div>
+            <div class="sidebar-header">
+                <span>Flows</span>&nbsp;
+                <Icon Name="IconName.Add" />
+            </div>
+            @foreach (var flow in context.Database.Flows)
+            {
+                <div class="sidebar-clickable" @onclick="() => Selected.InvokeAsync(new FlowConfigModel(flow.Name, Api))">
+                    <span>@flow.Name</span>
+                </div>
+            }
+            <div class="sidebar-header">
+                <span>Connections</span>
+            </div>
+            @foreach (var connector in context.Database.Connections)
+            {
+                <div class="sidebar-subheader">
+                    <span>@connector.Id</span>&nbsp;
+                    <Icon Name="IconName.Add" />
+                </div>
+                @foreach (var connection in connector.Configurations)
+                {
+                    <div class="sidebar-clickable" @onclick="() => Selected.InvokeAsync(new ConnectionConfigModel(connector.Id, connection.Name, Api))">
+                        <span>@connection.Name</span>
+                    </div>
+                }
+            }
+        </Content>
+    </LoadDataRenderer>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<ConfigModel> Selected { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Api.LoadData.ExecuteAsync();
+    }
+
+    private async Task Reload()
+    {
+        await Api.Reload.ExecuteAsync();
+        await Api.LoadData.ExecuteAsync();
+    }
+}

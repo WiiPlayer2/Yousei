@@ -1,38 +1,7 @@
 ﻿@page "/"
 
 <div class="sidebar">
-    <button @onclick="Reload" class="button-command">Reload</button>
-    <ul>
-        <li>
-            <span>Flows</span>
-            <button @onclick="AddFlow" class="button-add">+</button>
-            <ul>
-                @foreach (var flow in flows)
-                {
-                    <li><button @onclick="() => SetConfig(new FlowConfigModel(flow, Api))" class="button-item">@flow</button></li>
-                }
-            </ul>
-        </li>
-        <li>
-            <span>Connections</span>
-            <button @onclick="AddConnector" class="button-add">+</button>
-            <ul>
-                <li>
-                    @foreach (var (connector, names) in configurations)
-                    {
-                        <span>@connector</span>
-                        <button @onclick="() => AddConfiguration(connector)" class="button-add">+</button>
-                        <ul>
-                            @foreach (var name in names)
-                            {
-                                <li><button @onclick="() => SetConfig(new ConnectionConfigModel(connector, name, Api))" class="button-item">@name</button></li>
-                            }
-                        </ul>
-                    }
-                </li>
-            </ul>
-        </li>
-    </ul>
+    <Sidebar Selected="SetConfig" />
 </div>
 
 <div class="main">

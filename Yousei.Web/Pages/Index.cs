@@ -38,8 +38,6 @@ namespace Yousei.Web.Pages
 
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-        protected override Task OnInitializedAsync() => LoadData();
-
         private async Task AddConfiguration(string connector)
         {
             if (isReadOnly)
