@@ -18,6 +18,8 @@ namespace Yousei.Web.Model
             this.flowName = flowName;
         }
 
+        public override string Title => $"Flows / {flowName}";
+
         public override Task Delete()
             => Api.SetFlow.ExecuteAsync(flowName, null);
 

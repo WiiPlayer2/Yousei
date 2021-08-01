@@ -5,6 +5,13 @@
 </div>
 
 <div class="main">
-    <button @onclick="Save" class="button-command">Save</button>
+    <div class="flex items-center">
+        <a @onclick="Save" class="flex items-center">
+            <Icon Name="IconName.Save" />
+        </a>
+        <span class="font-bold text-xl ml-2">
+            @currentConfig?.Title
+        </span>
+    </div>
     <MonacoEditor @ref="editor" ConstructionOptions="Construct" CssClass="editor" />
 </div>

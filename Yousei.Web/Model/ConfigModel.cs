@@ -17,6 +17,8 @@ namespace Yousei.Web.Model
 
         public bool IsReadOnly { get; }
 
+        public abstract string Title { get; }
+
         protected YouseiApi Api { get; }
 
         public abstract Task Delete();

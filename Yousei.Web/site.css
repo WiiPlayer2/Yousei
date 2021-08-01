@@ -67,7 +67,7 @@ ul {
     @apply ml-5;
 }
 
-.sidebar a {
+a > .material-icons {
     @apply hover:text-blue-500;
 }
 

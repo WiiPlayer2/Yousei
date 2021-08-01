@@ -57,7 +57,7 @@
                     }
                 }
             }
-            @if (inactiveConnectors.Any())
+            @if (inactiveConnectors.SelectMany(o => connections[o]).Any())
             {
                 <div class="sidebar-subheader">
                     <span>Misc.</span>

@@ -21,6 +21,8 @@ namespace Yousei.Web.Model
             this.name = name;
         }
 
+        public override string Title => $"Connections / {connector}.{name}";
+
         public override Task Delete()
             => Api.SetConfiguration.ExecuteAsync(connector, name, null);
 
