@@ -39,16 +39,8 @@ namespace Yousei.Web.Pages
                 Language = "yaml",
                 Theme = "vs-dark",
                 ReadOnly = true,
+                TabIndex = 2,
             };
-
-        private async Task Delete()
-        {
-            if (currentConfig is null || currentConfig.IsReadOnly)
-                return;
-
-            await currentConfig.Delete();
-            StateHasChanged();
-        }
 
         private async Task Save()
         {
