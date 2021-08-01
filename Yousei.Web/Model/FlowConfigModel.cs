@@ -13,7 +13,7 @@ namespace Yousei.Web.Model
     {
         private readonly string flowName;
 
-        public FlowConfigModel(string flowName, YouseiApi api) : base(api)
+        public FlowConfigModel(string flowName, bool isReadOnly, YouseiApi api) : base(isReadOnly, api)
         {
             this.flowName = flowName;
         }

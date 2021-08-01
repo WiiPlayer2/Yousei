@@ -24,7 +24,7 @@
             {
                 <SidebarItem Title="@flow.Name"
                              Selected="Selected"
-                             ConfigModel="new FlowConfigModel(flow.Name, Api)" />
+                             ConfigModel="new FlowConfigModel(flow.Name, context.Database.IsReadOnly, Api)" />
             }
 
             @{
@@ -52,7 +52,7 @@
                     {
                         <SidebarItem Title="@connection.Name"
                                      Selected="Selected"
-                                     ConfigModel="new ConnectionConfigModel(connector.Name, connection.Name, Api)" />
+                                     ConfigModel="new ConnectionConfigModel(connector.Name, connection.Name, context.Database.IsReadOnly, Api)" />
                     }
                 }
             }
@@ -67,7 +67,7 @@
                     {
                         <SidebarItem Title="@($"{connector}.{connection.Name}")"
                                      Selected="Selected"
-                                     ConfigModel="new ConnectionConfigModel(connector, connection.Name, Api)" />
+                                     ConfigModel="new ConnectionConfigModel(connector, connection.Name, context.Database.IsReadOnly, Api)" />
                     }
                 }
             }
@@ -102,7 +102,7 @@
             Language = "yaml",
         });
         await Api.LoadData.ExecuteAsync();
-        await Selected.InvokeAsync(new ConnectionConfigModel(connector, name, Api));
+        await Selected.InvokeAsync(new ConnectionConfigModel(connector, name, false, Api));
     }
 
     private async Task AddFlow()
@@ -117,6 +117,6 @@
             Language = "yaml",
         });
         await Api.LoadData.ExecuteAsync();
-        await Selected.InvokeAsync(new FlowConfigModel(name, Api));
+        await Selected.InvokeAsync(new FlowConfigModel(name, false, Api));
     }
 }

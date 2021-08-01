@@ -9,10 +9,13 @@ namespace Yousei.Web.Model
 {
     public abstract class ConfigModel
     {
-        public ConfigModel(YouseiApi api)
+        public ConfigModel(bool isReadOnly, YouseiApi api)
         {
             Api = api;
+            IsReadOnly = isReadOnly;
         }
+
+        public bool IsReadOnly { get; }
 
         protected YouseiApi Api { get; }
 

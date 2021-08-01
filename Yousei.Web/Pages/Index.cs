@@ -19,8 +19,6 @@ namespace Yousei.Web.Pages
 
         private MonacoEditor? editor;
 
-        private bool isReadOnly = true;
-
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         [Inject]
@@ -45,7 +43,7 @@ namespace Yousei.Web.Pages
 
         private async Task Delete()
         {
-            if (currentConfig is null || isReadOnly)
+            if (currentConfig is null || currentConfig.IsReadOnly)
                 return;
 
             await currentConfig.Delete();
@@ -54,7 +52,7 @@ namespace Yousei.Web.Pages
 
         private async Task Save()
         {
-            if (currentConfig is null || editor is null || isReadOnly)
+            if (currentConfig is null || editor is null || currentConfig.IsReadOnly)
                 return;
 
             try
@@ -95,7 +93,7 @@ namespace Yousei.Web.Pages
 
             await editor.UpdateOptions(new()
             {
-                ReadOnly = isReadOnly,
+                ReadOnly = currentConfig.IsReadOnly,
             });
         }
     }

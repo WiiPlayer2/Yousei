@@ -15,7 +15,7 @@ namespace Yousei.Web.Model
 
         private readonly string name;
 
-        public ConnectionConfigModel(string connector, string name, YouseiApi api) : base(api)
+        public ConnectionConfigModel(string connector, string name, bool isReadOnly, YouseiApi api) : base(isReadOnly, api)
         {
             this.connector = connector;
             this.name = name;
