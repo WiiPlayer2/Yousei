@@ -49,6 +49,11 @@ type ScalarTypeInfo implements TypeInfo {
   fullName: String
 }
 
+type UnitTypeInfo implements TypeInfo {
+  kind: TypeKind!
+  fullName: String
+}
+
 type PropertyInfo {
   isParameter: Boolean!
   name: String!
@@ -101,6 +106,7 @@ enum TypeKind {
   OBJECT
   LIST
   DICTIONARY
+  UNIT
   ANY
 }
 

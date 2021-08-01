@@ -76,6 +76,7 @@ namespace Yousei
                 .AddType<SubTypeInfoType<AnyTypeInfo>>()
                 .AddType<SubTypeInfoType<DictionaryTypeInfo>>()
                 .AddType<SubTypeInfoType<ScalarTypeInfo>>()
+                .AddType<SubTypeInfoType<UnitTypeInfo>>()
                 .AddType<WrapperType<CLRPropertyInfo, PropertyInfo>>()
                 .AddType<WrapperType<IConnector, ConnectorInfo>>()
                 .AddType<WrapperType<IFlowAction, FlowActionInfo>>()

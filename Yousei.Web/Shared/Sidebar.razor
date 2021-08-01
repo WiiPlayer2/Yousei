@@ -30,11 +30,12 @@
             @{
                 var connections = context.Database.Connections.ToDictionary(o => o.Id, o => o.Configurations);
                 var inactiveConnectors = connections.Keys.Where(o => !context.Connectors.Select(o => o.Name).Contains(o)).ToList();
+                var configurationKinds = context.Connectors.ToDictionary(o => o.Name, o => o.ConfigurationType.Kind);
             }
             <div class="sidebar-header">
                 <span>Connections</span>
             </div>
-            @foreach (var connector in context.Connectors.OrderBy(o => o.Name))
+            @foreach (var connector in context.Connectors.Where(o => configurationKinds[o.Name] != TypeKind.Unit).OrderBy(o => o.Name))
             {
                 connections.TryGetValue(connector.Name, out var currentConnections);
                 <div class="sidebar-subheader">

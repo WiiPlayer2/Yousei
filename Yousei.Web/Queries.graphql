@@ -13,6 +13,9 @@
   }
   connectors {
     name
+    configurationType {
+      kind
+    }
   }
 }
 

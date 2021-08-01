@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 using Yousei.Api.Types;
 using Yousei.Core;
@@ -41,6 +42,9 @@ namespace Yousei.Api.Types
             if (type == typeof(object))
                 return TypeKind.Any;
 
+            if (type == typeof(Unit))
+                return TypeKind.Unit;
+
             return TypeKind.Object;
         }
 
@@ -63,6 +67,7 @@ namespace Yousei.Api.Types
                 TypeKind.Object => new ObjectTypeInfo(type),
                 TypeKind.List => new ListTypeInfo(type),
                 TypeKind.Dictionary => new DictionaryTypeInfo(type),
+                TypeKind.Unit => new UnitTypeInfo(type),
                 TypeKind.Any => new AnyTypeInfo(type),
                 _ => throw new NotImplementedException(),
             };
