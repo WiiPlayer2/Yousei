@@ -20,7 +20,7 @@
                     </a>
                 }
             </div>
-            @foreach (var flow in context.Database.Flows)
+            @foreach (var flow in context.Database.Flows.OrderBy(o => o.Name))
             {
                 <SidebarItem Title="@flow.Name"
                              Selected="Selected"
@@ -34,7 +34,7 @@
             <div class="sidebar-header">
                 <span>Connections</span>
             </div>
-            @foreach (var connector in context.Connectors)
+            @foreach (var connector in context.Connectors.OrderBy(o => o.Name))
             {
                 connections.TryGetValue(connector.Name, out var currentConnections);
                 <div class="sidebar-subheader">
@@ -48,7 +48,7 @@
                 </div>
                 @if (currentConnections is not null)
                 {
-                    foreach (var connection in currentConnections)
+                    foreach (var connection in currentConnections.OrderBy(o => o.Name))
                     {
                         <SidebarItem Title="@connection.Name"
                                      Selected="Selected"
@@ -61,9 +61,9 @@
                 <div class="sidebar-subheader">
                     <span>Misc.</span>
                 </div>
-                @foreach (var connector in inactiveConnectors)
+                @foreach (var connector in inactiveConnectors.OrderBy(o => o))
                 {
-                    @foreach (var connection in connections[connector])
+                    @foreach (var connection in connections[connector].OrderBy(o => o.Name))
                     {
                         <SidebarItem Title="@($"{connector}.{connection.Name}")"
                                      Selected="Selected"
