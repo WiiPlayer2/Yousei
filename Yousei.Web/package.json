@@ -3,9 +3,9 @@
   "scripts": {
     "tailwindcss": "tailwindcss"
   },
-  "dependencies": {
-    "autoprefixer": "10.2.5",
-    "tailwindcss": "2.0.4",
-    "postcss": "8.2.9"
+  "devDependencies": {
+    "autoprefixer": "^10.3.1",
+    "postcss": "^8.3.6",
+    "tailwindcss": "^2.2.7"
   }
 }
