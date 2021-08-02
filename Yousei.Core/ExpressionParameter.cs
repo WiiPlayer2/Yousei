@@ -8,6 +8,8 @@ using Yousei.Shared;
 
 namespace Yousei.Core
 {
+    public record ScriptGlobals(dynamic Context);
+
     public class ExpressionParameter : ExpressionParameter<object?>
     {
         public ExpressionParameter(string expressionCode) : base(expressionCode)
@@ -17,8 +19,6 @@ namespace Yousei.Core
 
     public class ExpressionParameter<T> : IParameter<T>
     {
-        public record ScriptGlobals(dynamic Context);
-
         private readonly Script<object> script;
 
         public ExpressionParameter(string expressionCode)
