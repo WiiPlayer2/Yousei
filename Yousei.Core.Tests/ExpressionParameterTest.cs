@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace Yousei.Core.Test
         public async Task ResolveWithExpressionReferencingContextReturnsValue()
         {
             // Arrange
-            var flowContext = Mock.Of<IFlowContext>(o => o.AsObject().Result == new { value = "henlo dere" });
+            var flowContext = Mock.Of<IFlowContext>(o => o.AsObject().Result == JToken.FromObject(new { value = "henlo dere" })); // TODO: Fix for general objects
             var expression = "Context.value";
             var parameter = new ExpressionParameter<string>(expression);
 
