@@ -14,8 +14,8 @@ namespace Yousei.Connectors.Telegram
     {
         public TelegramConnector()
         {
-            AddTrigger(new ObservableTrigger<TelegramConnection>("onmessage", c => c.OnMessage.Select(o => o.Message)));
-            AddTrigger(new ObservableTrigger<TelegramConnection>("onupdate", c => c.OnUpdate.Select(o => o.Update)));
+            AddTrigger(new ObservableTrigger<TelegramConnection>("onupdate", c => c.OnUpdate));
+            AddTrigger(new ObservableTrigger<TelegramConnection>("onerror", c => c.OnError));
             AddAction<SendAction>();
         }
 
