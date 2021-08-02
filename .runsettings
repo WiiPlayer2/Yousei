@@ -44,7 +44,7 @@
 
     <DataCollectionRunSettings>
         <DataCollectors>
-            <DataCollector friendlyName="Code Coverage" uri="datacollector://Microsoft/CodeCoverage/2.0" assemblyQualifiedName="Microsoft.VisualStudio.Coverage.DynamicCoverageDataCollector, Microsoft.VisualStudio.TraceCollector, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+            <DataCollector friendlyName="XPlat Code Coverage">
                 <Configuration>
                     <CodeCoverage>
                         <!--
@@ -166,27 +166,17 @@ Included items must then not match any entries in the exclude list to remain inc
   </TestRunParameters>
   -->
 
-    <!--  Section for loggers,  see https://docs.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file?view=vs-2019#loggerrunsettings-element 
+    <!--  Section for loggers,  see https://docs.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file?view=vs-2019#loggerrunsettings-element -->
   <LoggerRunSettings>
       <Loggers>
         <Logger friendlyName="console" enabled="True">
           <Configuration>
-              <Verbosity>quiet</Verbosity>
+              <Verbosity>detailed</Verbosity>
           </Configuration>
         </Logger>
-        <Logger friendlyName="trx" enabled="True">
-          <Configuration>
-            <LogFileName>foo.trx</LogFileName>
-          </Configuration>
-        </Logger>
-        <Logger friendlyName="html" enabled="True">
-          <Configuration>
-            <LogFileName>foo.html</LogFileName>
-          </Configuration>
-        </Logger>
+        <Logger friendlyName="trx" enabled="True" />
       </Loggers>
     </LoggerRunSettings>
--->
 
 
 
