@@ -94,6 +94,7 @@ pipeline {
                         coberturaReportFile: '**/coverage.cobertura.xml',
                         enableNewApi: true,
                         failUnhealthy: true,
+                        onlyStable: false,
                         conditionalCoverageTargets: '70, 50, 0',
                         lineCoverageTargets: '80, 60, 0',
                         methodCoverageTargets: '80, 60, 0',
