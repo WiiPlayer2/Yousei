@@ -14,6 +14,21 @@ namespace Yousei.Core.Test
     public class ExpressionParameterTest
     {
         [TestMethod]
+        public async Task ResolveWithExpressionReferencingContextReturnsValue()
+        {
+            // Arrange
+            var flowContext = Mock.Of<IFlowContext>(o => o.AsObject().Result == new { value = "henlo dere" });
+            var expression = "Context.value";
+            var parameter = new ExpressionParameter<string>(expression);
+
+            // Act
+            var result = await parameter.Resolve(flowContext);
+
+            // Assert
+            result.Should().Be("henlo dere");
+        }
+
+        [TestMethod]
         public async Task ResolveWithValidExpressionReturnsValue()
         {
             // Arrange
