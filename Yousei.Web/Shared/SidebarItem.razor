@@ -1,0 +1,31 @@
+﻿@inject IYouseiApi Api
+
+<div class="sidebar-clickable" @onclick="() => Selected.InvokeAsync(ConfigModel)">
+    <span>@Title</span>&nbsp;
+    @if (!IsReadOnly)
+    {
+        <a @onclick="Delete">
+            <Icon Name="IconName.Delete" />
+        </a>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = default!;
+
+    [Parameter]
+    public ConfigModel ConfigModel { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<ConfigModel> Selected { get; set; }
+
+    [Parameter]
+    public bool IsReadOnly { get; set; }
+
+    private async Task Delete()
+    {
+        await ConfigModel.Delete();
+        await Api.LoadData.ExecuteAsync();
+    }
+}

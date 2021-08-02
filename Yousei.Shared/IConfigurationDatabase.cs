@@ -5,7 +5,7 @@ namespace Yousei.Shared
 {
     public interface IConfigurationDatabase
     {
-        Task<bool> IsReadOnly { get; }
+        bool IsReadOnly { get; }
 
         Task<object?> GetConfiguration(string connector, string name);
 

@@ -1,0 +1,123 @@
+﻿@inherits QueryBase<ILoadDataResult>
+@inject YouseiApi Api
+@inject IJSRuntime Js
+
+<div class="flex flex-col">
+    <LoadDataRenderer>
+        <Loading>
+            loading...
+        </Loading>
+        <Content>
+            <div class="sidebar-item">
+                <a @onclick="Reload"><Icon Name="IconName.Sync" /></a>
+            </div>
+            <div class="sidebar-header">
+                <span>Flows</span>&nbsp;
+                @if (!context.Database.IsReadOnly)
+                {
+                    <a @onclick="AddFlow">
+                        <Icon Name="IconName.Add" />
+                    </a>
+                }
+            </div>
+            @foreach (var flow in context.Database.Flows.OrderBy(o => o.Name))
+            {
+                <SidebarItem Title="@flow.Name"
+                             Selected="Selected"
+                             ConfigModel="new FlowConfigModel(flow.Name, context.Database.IsReadOnly, Api)" />
+            }
+
+            @{
+                var connections = context.Database.Connections.ToDictionary(o => o.Id, o => o.Configurations);
+                var inactiveConnectors = connections.Keys.Where(o => !context.Connectors.Select(o => o.Name).Contains(o)).ToList();
+                var configurationKinds = context.Connectors.ToDictionary(o => o.Name, o => o.ConfigurationType.Kind);
+            }
+            <div class="sidebar-header">
+                <span>Connections</span>
+            </div>
+            @foreach (var connector in context.Connectors.Where(o => configurationKinds[o.Name] != TypeKind.Unit).OrderBy(o => o.Name))
+            {
+                connections.TryGetValue(connector.Name, out var currentConnections);
+                <div class="sidebar-subheader">
+                    <span>@connector.Name</span>&nbsp;
+                    @if (!context.Database.IsReadOnly)
+                    {
+                        <a @onclick="() => AddConfiguration(connector.Name)">
+                            <Icon Name="IconName.Add" />
+                        </a>
+                    }
+                </div>
+                @if (currentConnections is not null)
+                {
+                    foreach (var connection in currentConnections.OrderBy(o => o.Name))
+                    {
+                        <SidebarItem Title="@connection.Name"
+                                     Selected="Selected"
+                                     ConfigModel="new ConnectionConfigModel(connector.Name, connection.Name, context.Database.IsReadOnly, Api)" />
+                    }
+                }
+            }
+            @if (inactiveConnectors.SelectMany(o => connections[o]).Any())
+            {
+                <div class="sidebar-subheader">
+                    <span>Misc.</span>
+                </div>
+                @foreach (var connector in inactiveConnectors.OrderBy(o => o))
+                {
+                    @foreach (var connection in connections[connector].OrderBy(o => o.Name))
+                    {
+                        <SidebarItem Title="@($"{connector}.{connection.Name}")"
+                                     Selected="Selected"
+                                     ConfigModel="new ConnectionConfigModel(connector, connection.Name, context.Database.IsReadOnly, Api)" />
+                    }
+                }
+            }
+        </Content>
+    </LoadDataRenderer>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<ConfigModel> Selected { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Api.LoadData.ExecuteAsync();
+    }
+
+    private async Task Reload()
+    {
+        await Api.Reload.ExecuteAsync();
+        await Api.LoadData.ExecuteAsync();
+    }
+
+    private async Task AddConfiguration(string connector)
+    {
+        var name = await Js.InvokeAsync<string>("prompt", "Enter configuration name:", string.Empty);
+        if (string.IsNullOrWhiteSpace(name))
+            return;
+
+        await Api.SetConfiguration.ExecuteAsync(connector, name, new()
+        {
+            Content = "",
+            Language = "yaml",
+        });
+        await Api.LoadData.ExecuteAsync();
+        await Selected.InvokeAsync(new ConnectionConfigModel(connector, name, false, Api));
+    }
+
+    private async Task AddFlow()
+    {
+        var name = await Js.InvokeAsync<string>("prompt", "Enter flow name:", string.Empty);
+        if (string.IsNullOrWhiteSpace(name))
+            return;
+
+        await Api.SetFlow.ExecuteAsync(name, new()
+        {
+            Content = "",
+            Language = "yaml",
+        });
+        await Api.LoadData.ExecuteAsync();
+        await Selected.InvokeAsync(new FlowConfigModel(name, false, Api));
+    }
+}

@@ -5,28 +5,26 @@ using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 using Yousei.Shared;
+using Yousei.Web.Api;
 using Yousei.Web.Model;
 
 namespace Yousei.Web.Pages
 {
     public partial class Index
     {
-        private Dictionary<string, List<string>> configurations = new();
-
         private ConfigModel? currentConfig = null;
 
         private MonacoEditor? editor;
 
-        private List<string> flows = new();
-
-        private bool isReadOnly = true;
+        private bool isDirty = false;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         [Inject]
-        public IApi Api { get; set; }
+        public YouseiApi Api { get; set; }
 
         [Inject]
         public IJSRuntime Js { get; set; }
@@ -36,55 +34,6 @@ namespace Yousei.Web.Pages
 
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-        protected override async Task OnInitializedAsync()
-        {
-            flows = new(await Api.ConfigurationDatabase.ListFlows());
-            configurations = (await Api.ConfigurationDatabase.ListConfigurations())
-                .ToDictionary(o => o.Key, o => o.Value.ToList());
-            isReadOnly = await Api.ConfigurationDatabase.IsReadOnly;
-        }
-
-        private async Task AddConfiguration(string connector)
-        {
-            if (isReadOnly)
-                return;
-
-            var name = await Js.InvokeAsync<string>("prompt", "Enter configuration name:", string.Empty);
-            if (string.IsNullOrWhiteSpace(name))
-                return;
-
-            configurations[connector].Add(name);
-            await SetConfig(new ConnectionConfigModel(connector, name, Api.ConfigurationDatabase));
-            this.StateHasChanged();
-        }
-
-        private async Task AddConnector()
-        {
-            if (isReadOnly)
-                return;
-
-            var name = await Js.InvokeAsync<string>("prompt", "Enter connector name:", string.Empty);
-            if (string.IsNullOrWhiteSpace(name))
-                return;
-
-            configurations.Add(name, new List<string>());
-            this.StateHasChanged();
-        }
-
-        private async Task AddFlow()
-        {
-            if (isReadOnly)
-                return;
-
-            var name = await Js.InvokeAsync<string>("prompt", "Enter flow name:", string.Empty);
-            if (string.IsNullOrWhiteSpace(name))
-                return;
-
-            flows.Add(name);
-            await SetConfig(new FlowConfigModel(name, Api.ConfigurationDatabase));
-            this.StateHasChanged();
-        }
-
         private StandaloneEditorConstructionOptions Construct(MonacoEditor editor)
             => new StandaloneEditorConstructionOptions
             {
@@ -92,29 +41,21 @@ namespace Yousei.Web.Pages
                 Language = "yaml",
                 Theme = "vs-dark",
                 ReadOnly = true,
+                TabIndex = 2,
             };
 
-        private async Task Delete()
+        private void EditorContentChanged()
         {
-            if (currentConfig is null || isReadOnly)
+            if (isDirty)
                 return;
 
-            await currentConfig.Delete();
+            isDirty = true;
             StateHasChanged();
-        }
-
-        private async Task Reload()
-        {
-            await Api.Reload();
-            flows = new(await Api.ConfigurationDatabase.ListFlows());
-            configurations = (await Api.ConfigurationDatabase.ListConfigurations())
-                .ToDictionary(o => o.Key, o => o.Value.ToList());
-            isReadOnly = await Api.ConfigurationDatabase.IsReadOnly;
         }
 
         private async Task Save()
         {
-            if (currentConfig is null || editor is null || isReadOnly)
+            if (currentConfig is null || editor is null || currentConfig.IsReadOnly)
                 return;
 
             try
@@ -124,6 +65,7 @@ namespace Yousei.Web.Pages
                 //var language = await js.InvokeAsync<string>("blazorMonaco.editor.getModelLanguage", editor.Id, model.Id);
                 var language = "yaml";
                 await currentConfig.Save(new SourceConfig(language, content));
+                isDirty = false;
             }
             catch (Exception e)
             {
@@ -135,6 +77,13 @@ namespace Yousei.Web.Pages
         {
             if (editor is null)
                 return;
+
+            if (isDirty)
+            {
+                var result = await Js.InvokeAsync<bool>("confirm", "This config has not been saved yet. Are you sure you want to load another one?");
+                if (!result)
+                    return;
+            }
 
             string? content = default;
             try
@@ -152,10 +101,11 @@ namespace Yousei.Web.Pages
             content ??= string.Empty;
             await editor.SetValue(content);
             currentConfig = configModel;
+            isDirty = false;
 
             await editor.UpdateOptions(new()
             {
-                ReadOnly = isReadOnly,
+                ReadOnly = currentConfig.IsReadOnly,
             });
         }
     }

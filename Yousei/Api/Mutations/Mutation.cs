@@ -27,10 +27,11 @@ namespace Yousei.Api.Mutations
             return JToken.FromObject(obj);
         }
 
-        public async Task<Unit> Reload(
-            [Service] IApi api)
+        public Unit Reload(
+            [Service] IServiceProvider serviceProvider)
         {
-            await api.Reload();
+            var eventHub = (EventHub)(serviceProvider.GetService(typeof(EventHub)) ?? throw new InvalidOperationException());
+            eventHub.TriggerReload();
             return Unit.Default;
         }
     }

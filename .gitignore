@@ -34,3 +34,6 @@ packages/
 #Web
 node_modules/
 *.generated.*
+/Yousei.Web/Generated/*
+# nasty fix
+!/Yousei.Web/Generated/YouseiApi.Components.cs

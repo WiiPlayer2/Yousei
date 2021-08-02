@@ -12,15 +12,9 @@ namespace Yousei.Api.Extensions
     [ExtendObjectType(nameof(Flow))]
     internal class FlowExtension
     {
-        private readonly IApi api;
-
-        public FlowExtension(IApi api)
-        {
-            this.api = api;
-        }
-
         public Task<SourceConfig?> GetConfig(
-            [Parent] Flow flow)
-            => api.ConfigurationDatabase.GetFlowSource(flow.Name);
+            [Parent] Flow flow,
+            [Service] IConfigurationDatabase configurationDatabase)
+            => configurationDatabase.GetFlowSource(flow.Name);
     }
 }

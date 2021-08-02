@@ -1,0 +1,151 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Json {
+  object: JsonObject
+  string: JsonString
+}
+
+scalar Unit
+
+input JsonInput {
+  object: JsonObject
+  string: JsonString
+}
+
+scalar JsonObject
+
+scalar JsonString
+
+type ObjectTypeInfo implements TypeInfo {
+  properties: [PropertyInfo!]!
+  kind: TypeKind!
+  fullName: String
+}
+
+type ListTypeInfo implements TypeInfo {
+  itemType: TypeInfo!
+  kind: TypeKind!
+  fullName: String
+}
+
+type AnyTypeInfo implements TypeInfo {
+  kind: TypeKind!
+  fullName: String
+}
+
+type DictionaryTypeInfo implements TypeInfo {
+  keyType: TypeInfo!
+  valueType: TypeInfo!
+  kind: TypeKind!
+  fullName: String
+}
+
+type ScalarTypeInfo implements TypeInfo {
+  kind: TypeKind!
+  fullName: String
+}
+
+type UnitTypeInfo implements TypeInfo {
+  kind: TypeKind!
+  fullName: String
+}
+
+type PropertyInfo {
+  isParameter: Boolean!
+  name: String!
+  propertyType: TypeInfo!
+}
+
+type ConnectorInfo {
+  action(name: String!): FlowActionInfo
+  actions: [FlowActionInfo!]!
+  trigger(name: String!): FlowTriggerInfo
+  triggers: [FlowTriggerInfo!]!
+  configurationType: TypeInfo!
+  name: String!
+}
+
+type FlowActionInfo {
+  argumentsType: TypeInfo!
+  name: String!
+}
+
+type FlowTriggerInfo {
+  argumentsType: TypeInfo!
+  name: String!
+}
+
+interface TypeInfo {
+  kind: TypeKind!
+  fullName: String
+}
+
+type Query {
+  connector(name: String!): ConnectorInfo
+  connectors: [ConnectorInfo!]!
+  database: Database!
+}
+
+type Mutation {
+  act(config: [BlockConfigInput!]!): Json!
+  reload: Unit!
+  setConfiguration(connector: String! name: String! source: SourceConfigInput): Configuration!
+  setFlow(name: String! source: SourceConfigInput): Flow!
+}
+
+type Subscription {
+  onTrigger(config: BlockConfigInput!): Json!
+}
+
+enum TypeKind {
+  SCALAR
+  OBJECT
+  LIST
+  DICTIONARY
+  UNIT
+  ANY
+}
+
+input SourceConfigInput {
+  language: String!
+  content: String!
+}
+
+type Flow {
+  name: String!
+  config: SourceConfig
+}
+
+type Configuration {
+  connector: String!
+  name: String!
+  config: SourceConfig
+}
+
+input BlockConfigInput {
+  type: String!
+  configuration: String! = "default"
+  arguments: JsonInput
+}
+
+type SourceConfig {
+  language: String!
+  content: String!
+}
+
+type Database {
+  configuration(connector: String! name: String!): Configuration
+  connections: [Connection!]!
+  flow(name: String!): Flow
+  flows: [Flow!]!
+  isReadOnly: Boolean!
+}
+
+type Connection {
+  id: String!
+  configurations: [Configuration!]!
+}

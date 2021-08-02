@@ -3,17 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yousei.Shared;
+using Yousei.Web.Api;
 
 namespace Yousei.Web.Model
 {
     public abstract class ConfigModel
     {
-        public ConfigModel(IConfigurationDatabase database)
+        public ConfigModel(bool isReadOnly, YouseiApi api)
         {
-            Database = database;
+            Api = api;
+            IsReadOnly = isReadOnly;
         }
 
-        protected IConfigurationDatabase Database { get; }
+        public bool IsReadOnly { get; }
+
+        public abstract string Title { get; }
+
+        protected YouseiApi Api { get; }
 
         public abstract Task Delete();
 

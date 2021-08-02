@@ -18,18 +18,18 @@ namespace Yousei.Api.Mutations
             string connector,
             string name,
             SourceConfig? source,
-            [Service] IApi api)
+            [Service] IConfigurationDatabase configurationDatabase)
         {
-            await api.ConfigurationDatabase.SetConfiguration(connector, name, source);
+            await configurationDatabase.SetConfiguration(connector, name, source);
             return new Configuration(connector, name);
         }
 
         public async Task<Flow> SetFlow(
             string name,
             SourceConfig? source,
-            [Service] IApi api)
+            [Service] IConfigurationDatabase configurationDatabase)
         {
-            await api.ConfigurationDatabase.SetFlow(name, source);
+            await configurationDatabase.SetFlow(name, source);
             return new Flow(name);
         }
     }

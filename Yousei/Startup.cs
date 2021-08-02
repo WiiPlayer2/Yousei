@@ -9,7 +9,7 @@ using System.Reactive;
 using Yousei.Api.Extensions;
 using Yousei.Api.Mutations;
 using Yousei.Api.Queries;
-using Yousei.Api.SchemaType;
+using Yousei.Api.SchemaTypes;
 using Yousei.Api.Subscriptions;
 using Yousei.Api.Types;
 using Yousei.Internal;
@@ -52,27 +52,31 @@ namespace Yousei
             services.AddHostedService<MainService>();
 
             // Api
-            services.AddSingleton<IApi, InternalApi>();
             services.AddGraphQLServer()
                 .AddInMemorySubscriptions()
 
                 // JSON types
                 .AddType<JsonType>()
+                .AddType<JsonInputType>()
+                .AddType<JsonObjectType>()
+                .AddType<JsonStringType>()
                 .AddTypeConverter<JObject, JToken>(from => from)
                 .AddTypeConverter<JArray, JToken>(from => from)
                 .AddTypeConverter<JValue, JToken>(from => from)
+                .BindRuntimeType<object, JsonType>()
                 .BindRuntimeType<JObject, JsonType>()
                 .BindRuntimeType<JArray, JsonType>()
                 .BindRuntimeType<JValue, JsonType>()
 
                 // Misc. types
-                .BindRuntimeType<Unit, AnyType>()
-                .BindRuntimeType<object, AnyType>()
+                .AddType<UnitType>()
+                .BindRuntimeType<Unit, UnitType>()
                 .AddType<SubTypeInfoType<ObjectTypeInfo>>()
                 .AddType<SubTypeInfoType<ListTypeInfo>>()
                 .AddType<SubTypeInfoType<AnyTypeInfo>>()
                 .AddType<SubTypeInfoType<DictionaryTypeInfo>>()
                 .AddType<SubTypeInfoType<ScalarTypeInfo>>()
+                .AddType<SubTypeInfoType<UnitTypeInfo>>()
                 .AddType<WrapperType<CLRPropertyInfo, PropertyInfo>>()
                 .AddType<WrapperType<IConnector, ConnectorInfo>>()
                 .AddType<WrapperType<IFlowAction, FlowActionInfo>>()

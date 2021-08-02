@@ -29,7 +29,7 @@
     height: 100vh;
     position: sticky;
     top: 0;
-    background-color: lightgray;
+    /*background-color: lightgray;*/
 }
 
 app {
@@ -65,6 +65,35 @@ button {
 
 ul {
     @apply ml-5;
+}
+
+a > .material-icons {
+    @apply hover:text-blue-500;
+}
+
+.sidebar-row {
+    @apply p-1 flex flex-row items-center;
+    /*min-height: 3rem;*/
+}
+
+    .sidebar-row > a {
+        @apply flex items-center;
+    }
+
+.sidebar-header {
+    @apply sidebar-row font-bold bg-gray-200;
+}
+
+.sidebar-subheader {
+    @apply sidebar-row font-semibold bg-gray-100;
+}
+
+.sidebar-item {
+    @apply sidebar-row bg-gray-50;
+}
+
+.sidebar-clickable {
+    @apply sidebar-item ring-inset hover:bg-blue-50 cursor-pointer;
 }
 
 @tailwind utilities;
