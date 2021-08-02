@@ -27,12 +27,12 @@ namespace Yousei.Api.SchemaTypes
                     var jobject = new JObject();
                     foreach (var field in objectValueNode.Fields)
                     {
-                        jobject.Add(field.Name.Value, (ParseLiteral(field.Value) as Dummy<JToken, object>)?.Value);
+                        jobject.Add(field.Name.Value, (ParseLiteral(field.Value) as Dummy<JToken, object>)!.Value);
                     }
                     return (Dummy<JToken, object>)jobject;
 
                 case ListValueNode listValueNode:
-                    return (Dummy<JToken, object>)new JArray(listValueNode.Items.Select(value => ParseLiteral(value)).ToArray());
+                    return (Dummy<JToken, object>)new JArray(listValueNode.Items.Select(value => (ParseLiteral(value) as Dummy<JToken, object>)!.Value).ToArray());
 
                 case IntValueNode intValueNode:
                     return (Dummy<JToken, object>)new JValue(intValueNode.ToInt64());

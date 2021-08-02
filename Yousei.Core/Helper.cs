@@ -93,6 +93,12 @@ namespace Yousei.Core
             return (splits[0], splits[1]);
         }
 
+        public static void ThrowIfNull<T>([NotNull] this T? value)
+        {
+            if (value is null)
+                throw new ArgumentNullException();
+        }
+
         public static ConstantParameter<T> ToConstantParameter<T>(this T obj)
             => new ConstantParameter<T>(obj);
 

@@ -34,5 +34,8 @@ namespace Yousei.Internal
         public string Flow { get; }
 
         public string FlowStackTrace { get; }
+
+        public override string ToString()
+            => $"{GetType().FullName}: {Message}{Environment.NewLine}{FlowStackTrace}{Environment.NewLine}{StackTrace}";
     }
 }

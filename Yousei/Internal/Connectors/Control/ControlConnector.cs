@@ -12,6 +12,7 @@ namespace Yousei.Internal.Connectors.Control
             AddAction<ForEachAction>();
             AddAction<WhileAction>();
             AddAction<SwitchAction>();
+            AddAction<TryAction>();
         }
 
         public override string Name { get; } = "control";
