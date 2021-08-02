@@ -86,6 +86,32 @@ namespace Yousei.Core.Tests
         }
 
         [TestMethod]
+        public void ThrowIfNull_DoesNotThrowIfValueIsNotNull()
+        {
+            // Arrange
+            int? value = 1234;
+
+            // Act
+            Action act = () => value.ThrowIfNull();
+
+            // Assert
+            act.Should().NotThrow<ArgumentNullException>();
+        }
+
+        [TestMethod]
+        public void ThrowIfNull_ThrowsIfValueIsNull()
+        {
+            // Arrange
+            int? value = null;
+
+            // Act
+            Action act = () => value.ThrowIfNull();
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        [TestMethod]
         public void TryGetValue_ReturnsFalseIfNotFound()
         {
             // Arrange
