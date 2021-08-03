@@ -78,22 +78,24 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh "find . -name '*.trx' -delete"
-                sh "find . -name 'coverage.cobertura.xml' -delete"
+                sh "rm -r ./TestResults"
                 script {
                     docker.image('mcr.microsoft.com/dotnet/sdk:5.0').inside {
-                        sh 'dotnet test ./Yousei.sln --configuration Release --collect:"XPlat Code Coverage" --logger "console;verbosity=detailed" --logger trx'
+                        sh 'dotnet test ./Yousei.sln --configuration Release --settings .runsettings'
                     }
                 }
             }
             post {
                 always {
-                    mstest testResultsFile:"**/*.trx", keepLongStdio: true
+                    junit skipPublishingChecks: true,
+                        testResults:"**/*.results.xml",
+                        keepLongStdio: true
                     cobertura autoUpdateHealth: false,
                         autoUpdateStability: false,
                         coberturaReportFile: '**/coverage.cobertura.xml',
                         enableNewApi: true,
                         failUnhealthy: true,
+                        onlyStable: false,
                         conditionalCoverageTargets: '70, 50, 0',
                         lineCoverageTargets: '80, 60, 0',
                         methodCoverageTargets: '80, 60, 0',

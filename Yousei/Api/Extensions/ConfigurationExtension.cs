@@ -11,7 +11,7 @@ using Yousei.Shared;
 
 namespace Yousei.Api.Extensions
 {
-    [ExtendObjectType(Name = nameof(Configuration))]
+    [ExtendObjectType(typeof(Configuration))]
     public class ConfigurationExtension
     {
         public async Task<SourceConfig?> GetConfig(
