@@ -76,6 +76,7 @@
         </Logger>
         <Logger friendlyName="junit" enabled="True">
           <Configuration>
+            <LogFileName>{assembly}.results.xml</LogFileName>
             <MethodFormat>Default</MethodFormat>
             <FailureBodyFormat>Verbose</FailureBodyFormat>
           </Configuration>

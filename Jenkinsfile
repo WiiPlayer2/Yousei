@@ -88,7 +88,7 @@ pipeline {
             post {
                 always {
                     junit skipPublishingChecks: true,
-                        testResults:"**/TestResults.xml",
+                        testResults:"**/*.results.xml",
                         keepLongStdio: true
                     cobertura autoUpdateHealth: false,
                         autoUpdateStability: false,
