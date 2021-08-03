@@ -79,7 +79,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh "find . -name 'TestResults.xml' -delete"
-                sh "find . -name 'coverage.cobertura.xml' -delete"
+                // sh "find . -name 'coverage.cobertura.xml' -delete"
                 script {
                     docker.image('mcr.microsoft.com/dotnet/sdk:5.0').inside {
                         sh 'dotnet test ./Yousei.sln --configuration Release --settings .runsettings'
