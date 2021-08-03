@@ -117,9 +117,6 @@ pipeline {
 
         post {
             always {
-                junit skipPublishingChecks: true,
-                    testResults:"**/TestResults.xml",
-                    keepLongStdio: true
                 cobertura autoUpdateHealth: false,
                     autoUpdateStability: false,
                     coberturaReportFile: '**/coverage.cobertura.xml',
@@ -130,6 +127,9 @@ pipeline {
                     lineCoverageTargets: '80, 60, 0',
                     methodCoverageTargets: '80, 60, 0',
                     zoomCoverageChart: false
+                junit skipPublishingChecks: true,
+                    testResults:"**/TestResults.xml",
+                    keepLongStdio: true
             }
         }
     }
