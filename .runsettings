@@ -174,7 +174,12 @@ Included items must then not match any entries in the exclude list to remain inc
               <Verbosity>detailed</Verbosity>
           </Configuration>
         </Logger>
-        <Logger friendlyName="trx" enabled="True" />
+        <Logger friendlyName="junit" enabled="True">
+          <Configuration>
+            <MethodFormat>Default</MethodFormat>
+            <FailureBodyFormat>Verbose</FailureBodyFormat>
+          </Configuration>
+        </Logger>
       </Loggers>
     </LoggerRunSettings>
 
