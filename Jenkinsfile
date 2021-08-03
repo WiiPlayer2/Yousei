@@ -86,23 +86,6 @@ pipeline {
                     }
                 }
             }
-            post {
-                always {
-                    junit skipPublishingChecks: true,
-                        testResults:"**/TestResults.xml",
-                        keepLongStdio: true
-                    cobertura autoUpdateHealth: false,
-                        autoUpdateStability: false,
-                        coberturaReportFile: '**/coverage.cobertura.xml',
-                        enableNewApi: true,
-                        failUnhealthy: true,
-                        onlyStable: false,
-                        conditionalCoverageTargets: '70, 50, 0',
-                        lineCoverageTargets: '80, 60, 0',
-                        methodCoverageTargets: '80, 60, 0',
-                        zoomCoverageChart: false
-                }
-            }
         }
 
         stage('Publish') {
@@ -129,6 +112,24 @@ pipeline {
                         }
                     }
                 }
+            }
+        }
+
+        post {
+            always {
+                junit skipPublishingChecks: true,
+                    testResults:"**/TestResults.xml",
+                    keepLongStdio: true
+                cobertura autoUpdateHealth: false,
+                    autoUpdateStability: false,
+                    coberturaReportFile: '**/coverage.cobertura.xml',
+                    enableNewApi: true,
+                    failUnhealthy: true,
+                    onlyStable: false,
+                    conditionalCoverageTargets: '70, 50, 0',
+                    lineCoverageTargets: '80, 60, 0',
+                    methodCoverageTargets: '80, 60, 0',
+                    zoomCoverageChart: false
             }
         }
     }
