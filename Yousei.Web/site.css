@@ -101,6 +101,11 @@ a > .material-icons {
     grid-template-columns: max-content minmax(10rem, 1fr);
 }
 
+.editor-jtoken {
+    min-width: 20rem;
+    height: 10rem;
+}
+
 .editor-label {
     @apply flex items-center p-2 bg-black bg-opacity-25;
 }

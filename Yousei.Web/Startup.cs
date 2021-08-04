@@ -67,6 +67,9 @@ namespace Yousei.Web
                 .AddBulmaProviders()
                 .AddMaterialIcons();
 
+            services
+                .AddSingleton(Core.Serialization.Yaml.YamlUtil.BuildDeserializer());
+
             // Api
             services
                 .Configure<ApiOptions>(Configuration.GetSection("Api"))

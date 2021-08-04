@@ -16,7 +16,7 @@
 
     private async Task Do()
     {
-        if (editor is not null && editor.IsAllValid)
+        if (editor is not null && editor.IsValid)
             result = editor.BuildToken();
     }
 }

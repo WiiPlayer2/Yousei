@@ -1,0 +1,36 @@
+﻿@inherits EditorBase
+@inject YamlDotNet.Serialization.IDeserializer Deserializer
+
+<MonacoEditor @ref="editor"
+              CssClass="editor-jtoken"
+              ConstructionOptions="Construct"
+              OnDidChangeModelContent="ContentChanged" />
+
+@code {
+    private MonacoEditor? editor;
+
+    private string content = string.Empty;
+
+    public override bool IsValid => editor is not null && Deserializer.TryDeserialize<object>(content, out var _);
+
+    public override JToken BuildToken()
+    {
+        if (!Deserializer.TryDeserialize<object>(content, out var obj))
+            throw new InvalidOperationException();
+        return obj.Map<JToken>() ?? JValue.CreateNull();
+    }
+
+    private StandaloneEditorConstructionOptions Construct(MonacoEditor editor)
+        => new()
+        {
+            AutomaticLayout = true,
+            Language = "yaml",
+            Theme = "vs-dark",
+            TabIndex = 2,
+        };
+
+    private async Task ContentChanged(ModelContentChangedEvent e)
+    {
+        content = await editor!.GetValue();
+    }
+}

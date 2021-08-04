@@ -20,8 +20,6 @@ namespace Yousei.Web.Shared.Editors
             Add<BlockConfig, BlockConfigEditor>();
         }
 
-        public override bool IsAllValid => editor?.IsAllValid ?? false;
-
         public override bool IsValid => editor?.IsValid ?? false;
 
         [Parameter]
@@ -58,7 +56,7 @@ namespace Yousei.Web.Shared.Editors
         private Type? GetEditorType(string type)
         {
             if (!editorCreators.TryGetValue(type, out var editorType))
-                return null;
+                return typeof(RawEditor);
             return editorType;
         }
     }
