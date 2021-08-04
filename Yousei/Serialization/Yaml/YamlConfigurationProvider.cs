@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using Yousei.Core;
+using Yousei.Core.Serialization.Yaml;
 using Yousei.Serialization.Yaml;
 using Yousei.Shared;
 using IConfigurationProvider = Yousei.Shared.IConfigurationProvider;

@@ -5,7 +5,7 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 
-namespace Yousei.Serialization.Yaml
+namespace Yousei.Core.Serialization.Yaml
 {
     internal class BlockConfigDeserializer : INodeDeserializer
     {
