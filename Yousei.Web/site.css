@@ -96,4 +96,25 @@ a > .material-icons {
     @apply sidebar-item ring-inset hover:bg-blue-50 cursor-pointer;
 }
 
+.editor-blockconfig {
+    @apply grid bg-purple-50;
+    grid-template-columns: max-content minmax(10rem, 1fr);
+}
+
+.editor-label {
+    @apply flex items-center p-2 bg-black bg-opacity-25;
+}
+
+.editor-value {
+    @apply flex items-center p-2;
+}
+
+    .editor-value .control {
+        @apply w-full;
+    }
+
+    .editor-value select {
+        @apply w-full;
+    }
+
 @tailwind utilities;

@@ -56,4 +56,20 @@ namespace Yousei.Web.Api.Components
             Subscribe(Operation.Watch(FlowName, strategy: Strategy));
         }
     }
+
+    [global::System.CodeDom.Compiler.GeneratedCode("StrawberryShake", "12.0.0.0")]
+    public partial class BlockConfigEditor_GetDataRenderer : global::StrawberryShake.Razor.QueryBase<global::Yousei.Web.Api.IBlockConfigEditor_GetDataResult>
+    {
+        [global::Microsoft.AspNetCore.Components.InjectAttribute]
+        internal global::Yousei.Web.Api.BlockConfigEditor_GetDataQuery Operation { get; set; } = default !;
+        protected override void OnInitialized()
+        {
+            Subscribe(Operation.Watch(strategy: Strategy));
+        }
+
+        protected override void OnParametersSet()
+        {
+            Subscribe(Operation.Watch(strategy: Strategy));
+        }
+    }
 }

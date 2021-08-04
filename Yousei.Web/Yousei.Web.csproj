@@ -8,16 +8,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <GraphQL Remove="Pages\TestTrigger.graphql" />
     <GraphQL Remove="Queries.graphql" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Queries.graphql" />
+    <None Remove="Shared\Editors\BlockConfigEditor.graphql" />
   </ItemGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="Queries.graphql" />
     <AdditionalFiles Include="site.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Shared\Editors\TestTrigger.graphql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,5 +50,9 @@
     <Compile Update="Pages\Index.cs">
       <DependentUpon>Index.razor</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Shared\Components\" />
   </ItemGroup>
 </Project>

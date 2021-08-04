@@ -34,6 +34,15 @@ namespace Yousei.Core
                 : typeof(object);
         }
 
+        public static async void Ignore(this Task task)
+        {
+            try
+            {
+                await task;
+            }
+            catch { }
+        }
+
         public static async Task IgnoreCancellation(this Task task, CancellationToken? cancellationToken = default)
         {
             try

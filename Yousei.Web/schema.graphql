@@ -63,6 +63,8 @@ type PropertyInfo {
 type ConnectorInfo {
   action(name: String!): FlowActionInfo
   actions: [FlowActionInfo!]!
+  connection(name: String!): Configuration
+  connections: [Configuration!]!
   trigger(name: String!): FlowTriggerInfo
   triggers: [FlowTriggerInfo!]!
   configurationType: TypeInfo!
@@ -110,18 +112,18 @@ enum TypeKind {
   ANY
 }
 
+type Configuration {
+  connector: String!
+  name: String!
+  config: SourceConfig
+}
+
 input SourceConfigInput {
   language: String!
   content: String!
 }
 
 type Flow {
-  name: String!
-  config: SourceConfig
-}
-
-type Configuration {
-  connector: String!
   name: String!
   config: SourceConfig
 }

@@ -1,0 +1,17 @@
+﻿query BlockConfigEditor_GetData {
+  connectors {
+    name
+    configurationType {
+      kind
+    }
+    connections {
+      name
+    }
+    triggers {
+      name
+    }
+    actions {
+      name
+    }
+  }
+}
