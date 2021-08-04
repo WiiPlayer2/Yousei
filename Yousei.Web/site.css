@@ -97,7 +97,7 @@ a > .material-icons {
 }
 
 .editor-blockconfig {
-    @apply grid bg-purple-50;
+    @apply grid bg-purple-50 border-4 border-purple-200;
     grid-template-columns: max-content minmax(10rem, 1fr);
 }
 

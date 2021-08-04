@@ -1,3 +1,22 @@
 ﻿@page "/trigger"
 
-    <BlockConfigEditor ActiveFilter="BlockConfigEditor.Filter.Triggers" />
+<BlockConfigEditor @ref="editor" ActiveFilter="BlockConfigEditor.Filter.Triggers" />
+<button @onclick="Do">Do</button>
+<div>
+    @if (result is not null)
+    {
+        @result.ToString(Newtonsoft.Json.Formatting.Indented);
+    }
+</div>
+
+@code {
+    private BlockConfigEditor? editor;
+
+    private JToken? result;
+
+    private async Task Do()
+    {
+        if (editor is not null)
+            result = editor.BuildToken();
+    }
+}
