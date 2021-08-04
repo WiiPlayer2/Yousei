@@ -99,11 +99,11 @@
             </div>
             <div class="editor-value col-span-2">
                 @if (selectedConnector is not null
-            && (
-                selectedConnection is not null
-                || context.Connectors.Single(o => o.Name == selectedConnector).ConfigurationType.Kind == TypeKind.Unit
-            )
-            && selectedType is not null)
+           && (
+               selectedConnection is not null
+               || context.Connectors.Single(o => o.Name == selectedConnector).ConfigurationType.Kind == TypeKind.Unit
+           )
+           && selectedType is not null)
                 {
                     <span>
                         TODO: Implement value editors
@@ -151,6 +151,8 @@
         => ActiveFilter switch
         {
             Filter.All => connector.Actions.Select(o => o.Name).Concat(connector.Triggers.Select(o => o.Name)),
+            Filter.Triggers => connector.Triggers.Select(o => o.Name),
+            Filter.Actions => connector.Actions.Select(o => o.Name),
             _ => throw new NotImplementedException(),
         };
 }
