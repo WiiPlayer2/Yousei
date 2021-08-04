@@ -100,15 +100,13 @@
             </div>
             <div class="editor-value col-span-2">
                 @if (selectedConnector is not null
-                  && (
-                      selectedConnection is not null
-                      || context.Connectors.Single(o => o.Name == selectedConnector).ConfigurationType.Kind == TypeKind.Unit
-                  )
-                  && selectedType is not null)
+                    && (
+                        selectedConnection is not null
+                        || context.Connectors.Single(o => o.Name == selectedConnector).ConfigurationType.Kind == TypeKind.Unit
+                    )
+                    && selectedType is not null)
                 {
-                    <span>
-                        TODO: Implement value editors
-                    </span>
+                    <ValueEditor Type="System.String" />
                 }
                 else
                 {
