@@ -9,10 +9,10 @@ namespace Yousei.Web.Shared.Editors
 {
     public abstract class EditorBase : ComponentBase
     {
-        public abstract bool IsAllValid { get; }
+        public virtual bool IsAllValid => IsValid;
 
         public abstract bool IsValid { get; }
 
-        public abstract JToken BuildJToken();
+        public abstract JToken BuildToken();
     }
 }

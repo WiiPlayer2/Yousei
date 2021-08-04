@@ -1,4 +1,5 @@
-﻿@inject BlockConfigEditor_GetDataQuery Operation
+﻿@inherits EditorBase
+@inject BlockConfigEditor_GetDataQuery Operation
 
 <BlockConfigEditor_GetDataRenderer>
     <Loading>
@@ -99,11 +100,11 @@
             </div>
             <div class="editor-value col-span-2">
                 @if (selectedConnector is not null
-           && (
-               selectedConnection is not null
-               || context.Connectors.Single(o => o.Name == selectedConnector).ConfigurationType.Kind == TypeKind.Unit
-           )
-           && selectedType is not null)
+                  && (
+                      selectedConnection is not null
+                      || context.Connectors.Single(o => o.Name == selectedConnector).ConfigurationType.Kind == TypeKind.Unit
+                  )
+                  && selectedType is not null)
                 {
                     <span>
                         TODO: Implement value editors
@@ -137,6 +138,10 @@
     [Parameter]
     public Filter ActiveFilter { get; set; } = Filter.All;
 
+    public override bool IsValid
+        => selectedConnector is not null
+            && selectedType is not null;
+
     protected override Task OnInitializedAsync()
         => Operation.ExecuteAsync();
 
@@ -146,6 +151,17 @@
         selectedConnection = null;
         selectedType = null;
     }
+
+    public BlockConfig BuildConfig()
+        => new BlockConfig
+        {
+            Type = $"{selectedConnector}.{selectedType}",
+            Configuration = selectedConnection ?? "default",
+            Arguments = null,
+        };
+
+    public override JToken BuildToken()
+        => JToken.FromObject(BuildConfig());
 
     private IEnumerable<string> FilterTypes(IBlockConfigEditor_GetData_Connectors connector)
         => ActiveFilter switch
