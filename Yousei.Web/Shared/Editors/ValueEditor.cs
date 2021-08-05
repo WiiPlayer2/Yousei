@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Yousei.Shared;
+using Yousei.Web.Shared.Editors.Scalars;
 
 namespace Yousei.Web.Shared.Editors
 {
@@ -17,6 +18,10 @@ namespace Yousei.Web.Shared.Editors
 
         static ValueEditor()
         {
+            // Scalars
+            Add<bool, BooleanEditor>();
+
+            // Objects
             Add<BlockConfig, BlockConfigEditor>();
         }
 
