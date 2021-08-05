@@ -15,7 +15,7 @@
 
     private JToken? result;
 
-    private async Task Do()
+    private void Do()
     {
         if (editor is not null && editor.IsValid)
             result = editor.BuildToken();

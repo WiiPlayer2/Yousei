@@ -25,9 +25,6 @@
 @code {
     private Dictionary<string, EditorBase> propertyEditors = new();
 
-    [Parameter]
-    public string Type { get; set; } = default!;
-
     public override bool IsValid => propertyEditors.All(e => e.Value?.IsValid ?? false);
 
     protected override Task OnParametersSetAsync()

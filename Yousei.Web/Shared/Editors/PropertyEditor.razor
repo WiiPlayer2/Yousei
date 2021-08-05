@@ -17,7 +17,7 @@
                 break;
 
             case ValueType.Raw:
-                <RawEditor @ref="editor" />
+                <RawEditor @ref="editor" TypeKind="@TypeKind" Type="@Type" />
                 break;
         }
     </div>
@@ -36,12 +36,6 @@
     private ValueType selectedValueType;
 
     private EditorBase? editor;
-
-    [Parameter]
-    public TypeKind TypeKind { get; set; }
-
-    [Parameter]
-    public string Type { get; set; } = default!;
 
     [Parameter]
     public ValueType[] AvailableTypes { get; set; } = Enum.GetValues<ValueType>();

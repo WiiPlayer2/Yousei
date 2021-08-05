@@ -22,9 +22,6 @@ namespace Yousei.Web.Shared.Editors
 
         public override bool IsValid => editor?.IsValid ?? false;
 
-        [Parameter]
-        public string Type { get; set; } = default!;
-
         public override JToken BuildToken()
             => (editor ?? throw new InvalidOperationException()).BuildToken();
 
@@ -38,15 +35,9 @@ namespace Yousei.Web.Shared.Editors
             else
             {
                 builder.OpenComponent(0, editorType);
-
-                var nextSequence = 1;
-                if (editorType == typeof(ObjectTypeEditor))
-                {
-                    builder.AddAttribute(1, nameof(ObjectTypeEditor.Type), Type);
-                    nextSequence = 2;
-                }
-
-                builder.AddComponentReferenceCapture(nextSequence, obj => editor = (EditorBase)obj);
+                builder.AddAttribute(1, nameof(TypeKind), TypeKind);
+                builder.AddAttribute(2, nameof(Type), Type);
+                builder.AddComponentReferenceCapture(3, obj => editor = (EditorBase)obj);
                 builder.CloseComponent();
             }
 
@@ -62,10 +53,10 @@ namespace Yousei.Web.Shared.Editors
             => Add<TEditor>(typeof(TType).FullName!);
 
         private Type? GetEditorType(string type)
-        {
-            if (!editorCreators.TryGetValue(type, out var editorType))
-                return typeof(ObjectTypeEditor);
-            return editorType;
-        }
+            => !editorCreators.TryGetValue(type, out var editorType)
+                ? TypeKind == Api.TypeKind.Object
+                    ? typeof(ObjectTypeEditor)
+                    : null
+                : editorType;
     }
 }
