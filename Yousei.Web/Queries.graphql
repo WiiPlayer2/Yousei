@@ -15,6 +15,7 @@
     name
     configurationType {
       kind
+      fullName
     }
   }
 }

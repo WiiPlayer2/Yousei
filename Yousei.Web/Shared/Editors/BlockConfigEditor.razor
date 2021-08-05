@@ -6,6 +6,19 @@
         Loading...
     </Loading>
     <Content>
+        @{
+            var dict = context.Connectors.ToDictionary(
+                o => o.Name,
+                o => new
+                {
+                    Actions = o.Actions.ToDictionary(
+                        o => o.Name,
+                        o => o.ArgumentsType),
+                    Triggers = o.Triggers.ToDictionary(
+                        o => o.Name,
+                        o => o.ArgumentsType),
+                });
+        }
         @if (selectedConnector is null)
         {
             ConnectorChanged(context.Connectors.Select(o => o.Name).OrderBy(o => o).FirstOrDefault());
@@ -100,13 +113,24 @@
             </div>
             <div class="editor-value col-span-2">
                 @if (selectedConnector is not null
-                    && (
-                        selectedConnection is not null
-                        || context.Connectors.Single(o => o.Name == selectedConnector).ConfigurationType.Kind == TypeKind.Unit
-                    )
-                    && selectedType is not null)
+               && (
+                   selectedConnection is not null
+                   || context.Connectors.Single(o => o.Name == selectedConnector).ConfigurationType.Kind == TypeKind.Unit
+               )
+               && selectedType is not null)
                 {
-                    <ValueEditor Type="System.String" />
+                    if (dict[selectedConnector].Triggers.TryGetValue(selectedType, out var triggerTypeInfo))
+                    {
+                        <ValueKindEditor @ref="argumentsEditor" TypeKind="triggerTypeInfo.Kind" Type="@triggerTypeInfo.FullName" />
+                    }
+                    else if (dict[selectedConnector].Actions.TryGetValue(selectedType, out var actionTypeInfo))
+                    {
+                        <ValueKindEditor @ref="argumentsEditor" TypeKind="actionTypeInfo.Kind" Type="@actionTypeInfo.FullName" />
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException();
+                    }
                 }
                 else
                 {
@@ -127,6 +151,8 @@
         Actions,
     }
 
+    private ValueKindEditor? argumentsEditor;
+
     private string? selectedConnector;
 
     private string? selectedConnection;
@@ -138,7 +164,8 @@
 
     public override bool IsValid
         => selectedConnector is not null
-            && selectedType is not null;
+            && selectedType is not null
+            && (argumentsEditor?.IsValid ?? false);
 
     protected override Task OnInitializedAsync()
         => Operation.ExecuteAsync();
@@ -155,7 +182,7 @@
         {
             Type = $"{selectedConnector}.{selectedType}",
             Configuration = selectedConnection ?? "default",
-            Arguments = null,
+            Arguments = argumentsEditor!.BuildToken(),
         };
 
     public override JToken BuildToken()

@@ -3,15 +3,24 @@
     name
     configurationType {
       kind
+      fullName
     }
     connections {
       name
     }
     triggers {
       name
+      argumentsType {
+        kind
+        fullName
+      }
     }
     actions {
       name
+      argumentsType {
+        kind
+        fullName
+      }
     }
   }
 }

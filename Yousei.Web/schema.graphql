@@ -23,35 +23,35 @@ scalar JsonString
 type ObjectTypeInfo implements TypeInfo {
   properties: [PropertyInfo!]!
   kind: TypeKind!
-  fullName: String
+  fullName: String!
 }
 
 type ListTypeInfo implements TypeInfo {
   itemType: TypeInfo!
   kind: TypeKind!
-  fullName: String
+  fullName: String!
 }
 
 type AnyTypeInfo implements TypeInfo {
   kind: TypeKind!
-  fullName: String
+  fullName: String!
 }
 
 type DictionaryTypeInfo implements TypeInfo {
   keyType: TypeInfo!
   valueType: TypeInfo!
   kind: TypeKind!
-  fullName: String
+  fullName: String!
 }
 
 type ScalarTypeInfo implements TypeInfo {
   kind: TypeKind!
-  fullName: String
+  fullName: String!
 }
 
 type UnitTypeInfo implements TypeInfo {
   kind: TypeKind!
-  fullName: String
+  fullName: String!
 }
 
 type PropertyInfo {
@@ -83,7 +83,7 @@ type FlowTriggerInfo {
 
 interface TypeInfo {
   kind: TypeKind!
-  fullName: String
+  fullName: String!
 }
 
 type Query {
