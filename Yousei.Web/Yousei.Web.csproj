@@ -8,6 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="site.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="site.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazorise.Bulma" Version="0.9.4.2" />
     <PackageReference Include="Blazorise.Icons.Material" Version="0.9.4.2" />
     <PackageReference Include="BlazorMonaco" Version="2.1.0" />

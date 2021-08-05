@@ -1,0 +1,64 @@
+﻿@inherits EditorBase
+
+<div class="flex flex-col w-full">
+    <div>
+        <Select TValue="ValueType" @bind-SelectedValue="selectedValueType">
+            @foreach (var valueType in AvailableTypes)
+            {
+                <SelectItem Value="@valueType">@valueType</SelectItem>
+            }
+        </Select>
+    </div>
+    <div>
+        @switch (selectedValueType)
+        {
+            case ValueType.Constant:
+                <ValueKindEditor @ref="editor" TypeKind="@TypeKind" Type="@Type" />
+                break;
+
+            case ValueType.Raw:
+                <RawEditor @ref="editor" />
+                break;
+        }
+    </div>
+</div>
+
+@code {
+    public enum ValueType
+    {
+        Null,
+        Constant,
+        Variable,
+        Expression,
+        Raw,
+    }
+
+    private ValueType selectedValueType;
+
+    private EditorBase? editor;
+
+    [Parameter]
+    public TypeKind TypeKind { get; set; }
+
+    [Parameter]
+    public string Type { get; set; } = default!;
+
+    [Parameter]
+    public ValueType[] AvailableTypes { get; set; } = Enum.GetValues<ValueType>();
+
+    public override bool IsValid
+        => selectedValueType == ValueType.Null || (editor?.IsValid ?? false);
+
+    protected override void OnParametersSet()
+    {
+        if (!AvailableTypes.Contains(selectedValueType))
+        {
+            selectedValueType = AvailableTypes.FirstOrDefault();
+        }
+    }
+
+    public override JToken BuildToken()
+        => selectedValueType == ValueType.Null || editor is null
+            ? JValue.CreateNull()
+            : editor.BuildToken();
+}

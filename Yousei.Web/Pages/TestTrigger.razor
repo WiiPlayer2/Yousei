@@ -2,7 +2,7 @@
 
 <div class="flex flex-col w-3\/4">
     <BlockConfigEditor @ref="editor" ActiveFilter="BlockConfigEditor.Filter.Triggers" />
-    <button @onclick="Do">Do</button>
+    <button @onclick="Do" class="border-4 @(result is null ? "border-red-500" : "border-green-500")">Do</button>
     <div>
         <textarea class="w-full h-96" readonly>
             @result?.ToString(Newtonsoft.Json.Formatting.Indented)
@@ -19,5 +19,7 @@
     {
         if (editor is not null && editor.IsValid)
             result = editor.BuildToken();
+        else
+            result = null;
     }
 }
