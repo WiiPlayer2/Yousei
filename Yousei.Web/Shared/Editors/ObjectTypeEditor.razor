@@ -1,4 +1,5 @@
 ﻿@inherits EditorBase
+@inject ObjectTypeEditor_GetDataQuery Operation
 
 <ObjectTypeEditor_GetDataRenderer TypeName="@Type">
     <Content>
@@ -28,6 +29,9 @@
     public string Type { get; set; } = default!;
 
     public override bool IsValid => propertyEditors.All(e => e.Value?.IsValid ?? false);
+
+    protected override Task OnParametersSetAsync()
+        => Operation.ExecuteAsync(Type);
 
     public override JToken BuildToken()
         => new JObject(propertyEditors.Select(pe => new JProperty(pe.Key, pe.Value.BuildToken())));

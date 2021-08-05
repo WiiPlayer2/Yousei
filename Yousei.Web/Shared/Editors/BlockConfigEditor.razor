@@ -92,7 +92,7 @@
 
                     if (filteredTypes.Any())
                     {
-                        <Select TValue="string" @bind-SelectedValue="selectedType">
+                        <Select TValue="string" SelectedValue="selectedType" SelectedValueChanged="TypeChanged">
                             @foreach (var type in filteredTypes)
                             {
                                 <SelectItem Value="@type">@type</SelectItem>
@@ -167,7 +167,7 @@
             && selectedType is not null
             && (argumentsEditor?.IsValid ?? false);
 
-    protected override Task OnInitializedAsync()
+    protected override Task OnParametersSetAsync()
         => Operation.ExecuteAsync();
 
     private void ConnectorChanged(string? connector)
@@ -175,6 +175,13 @@
         selectedConnector = connector;
         selectedConnection = null;
         selectedType = null;
+    }
+
+    private void TypeChanged(string? type)
+    {
+        selectedType = type;
+
+        StateHasChanged();
     }
 
     public BlockConfig BuildConfig()
