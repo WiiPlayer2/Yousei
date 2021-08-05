@@ -101,6 +101,11 @@ a > .material-icons {
     grid-template-columns: max-content minmax(10rem, 1fr);
 }
 
+.editor-objecttype {
+    @apply grid bg-blue-50 border-4 border-blue-200;
+    grid-template-columns: max-content minmax(10rem, 1fr);
+}
+
 .editor-jtoken {
     min-width: 20rem;
     height: 10rem;

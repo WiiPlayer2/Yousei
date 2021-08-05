@@ -8,21 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <GraphQL Remove="Pages\TestTrigger.graphql" />
-    <GraphQL Remove="Queries.graphql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Queries.graphql" />
-    <None Remove="Shared\Editors\BlockConfigEditor.graphql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Include="Queries.graphql" />
-    <AdditionalFiles Include="site.css" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Blazorise.Bulma" Version="0.9.4.2" />
     <PackageReference Include="Blazorise.Icons.Material" Version="0.9.4.2" />
     <PackageReference Include="BlazorMonaco" Version="2.1.0" />

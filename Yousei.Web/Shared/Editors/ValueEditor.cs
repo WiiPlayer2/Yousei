@@ -38,7 +38,15 @@ namespace Yousei.Web.Shared.Editors
             else
             {
                 builder.OpenComponent(0, editorType);
-                builder.AddComponentReferenceCapture(1, obj => editor = (EditorBase)obj);
+
+                var nextSequence = 1;
+                if (editorType == typeof(ObjectTypeEditor))
+                {
+                    builder.AddAttribute(1, nameof(ObjectTypeEditor.Type), Type);
+                    nextSequence = 2;
+                }
+
+                builder.AddComponentReferenceCapture(nextSequence, obj => editor = (EditorBase)obj);
                 builder.CloseComponent();
             }
 
@@ -56,7 +64,7 @@ namespace Yousei.Web.Shared.Editors
         private Type? GetEditorType(string type)
         {
             if (!editorCreators.TryGetValue(type, out var editorType))
-                return typeof(RawEditor);
+                return typeof(ObjectTypeEditor);
             return editorType;
         }
     }

@@ -41,9 +41,10 @@ namespace Yousei.Web.Shared.Editors
             switch (TypeKind)
             {
                 case TypeKind.Scalar:
+                case TypeKind.Object:
                     builder.OpenComponent<ValueEditor>(0);
-                    builder.AddComponentReferenceCapture(1, obj => editor = (EditorBase)obj);
-                    builder.AddAttribute(2, nameof(ValueEditor.Type), Type);
+                    builder.AddAttribute(1, nameof(ValueEditor.Type), Type);
+                    builder.AddComponentReferenceCapture(2, obj => editor = (EditorBase)obj);
                     builder.CloseComponent();
                     break;
 

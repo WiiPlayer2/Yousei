@@ -72,4 +72,22 @@ namespace Yousei.Web.Api.Components
             Subscribe(Operation.Watch(strategy: Strategy));
         }
     }
+
+    [global::System.CodeDom.Compiler.GeneratedCode("StrawberryShake", "12.0.0.0")]
+    public partial class ObjectTypeEditor_GetDataRenderer : global::StrawberryShake.Razor.QueryBase<global::Yousei.Web.Api.IObjectTypeEditor_GetDataResult>
+    {
+        [global::Microsoft.AspNetCore.Components.InjectAttribute]
+        internal global::Yousei.Web.Api.ObjectTypeEditor_GetDataQuery Operation { get; set; } = default !;
+        [global::Microsoft.AspNetCore.Components.ParameterAttribute]
+        public global::System.String TypeName { get; set; } = default !;
+        protected override void OnInitialized()
+        {
+            Subscribe(Operation.Watch(TypeName, strategy: Strategy));
+        }
+
+        protected override void OnParametersSet()
+        {
+            Subscribe(Operation.Watch(TypeName, strategy: Strategy));
+        }
+    }
 }

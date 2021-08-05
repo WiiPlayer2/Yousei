@@ -89,6 +89,7 @@ interface TypeInfo {
 type Query {
   connector(name: String!): ConnectorInfo
   connectors: [ConnectorInfo!]!
+  type(name: String!): TypeInfo
   database: Database!
 }
 

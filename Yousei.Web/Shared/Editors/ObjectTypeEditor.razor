@@ -1,0 +1,34 @@
+﻿@inherits EditorBase
+
+<ObjectTypeEditor_GetDataRenderer TypeName="@Type">
+    <Content>
+        @if (context.Type is not ObjectTypeEditor_GetData_Type_ObjectTypeInfo objectType)
+        {
+            return;
+        }
+
+        <div class="editor-objecttype">
+            @foreach (var property in objectType.Properties)
+            {
+                <div class="editor-label">
+                    @property.Name
+                </div>
+                <div class="editor-value">
+                    <ValueKindEditor @ref="propertyEditors[property.Name]" TypeKind="@property.PropertyType.Kind" Type="@property.PropertyType.FullName" />
+                </div>
+            }
+        </div>
+    </Content>
+</ObjectTypeEditor_GetDataRenderer>
+
+@code {
+    private Dictionary<string, EditorBase> propertyEditors = new();
+
+    [Parameter]
+    public string Type { get; set; } = default!;
+
+    public override bool IsValid => propertyEditors.All(e => e.Value?.IsValid ?? false);
+
+    public override JToken BuildToken()
+        => new JObject(propertyEditors.Select(pe => new JProperty(pe.Key, pe.Value.BuildToken())));
+}
