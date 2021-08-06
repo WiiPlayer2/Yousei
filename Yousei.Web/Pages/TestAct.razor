@@ -1,0 +1,64 @@
+﻿@page "/act"
+@inject ActMutation Operation
+
+<div class="page-act">
+    <ListTypeEditor @ref="editor" TypeKind="TypeKind.List" Type="@(typeof(List<BlockConfig>).FullName)" />
+
+    <div class="grid w-full" style="grid-template-rows: auto 1fr">
+        <button @onclick="Execute" class="border-4 @(result is null ? "border-red-500" : "border-green-500")">Go</button>
+        <MonacoEditor @ref="monacoEditor" CssClass="w-full" ConstructionOptions="Construct" />
+    </div>
+</div>
+
+@code {
+    private ListTypeEditor? editor;
+
+    private MonacoEditor? monacoEditor;
+
+    private JToken? result;
+
+    private StandaloneEditorConstructionOptions Construct(MonacoEditor editor)
+         => new()
+         {
+             AutomaticLayout = true,
+             Language = "json",
+             Theme = "vs-dark",
+             TabIndex = 2,
+             ReadOnly = true,
+         };
+
+    private async Task Execute()
+    {
+        var config = editor is not null && editor.IsValid
+            ? editor.BuildToken().Map<List<BlockConfig>>()
+            : null;
+
+        result = null;
+
+        if (config is null)
+            return;
+
+        var operationResult = await Operation.ExecuteAsync(config.Select(c =>
+        {
+            var mappedToken = c.Arguments.Map<JToken>();
+            var args = mappedToken is not null
+                ? new JsonInput
+                {
+                    String = mappedToken,
+                }
+                : null;
+            return new BlockConfigInput
+            {
+                Type = c.Type,
+                Configuration = c.Configuration,
+                Arguments = args,
+            };
+        }).ToList());
+        result = operationResult.Data?.Act.String;
+
+        if (result is not null && monacoEditor is not null)
+        {
+            await monacoEditor.SetValue(result.ToString(Newtonsoft.Json.Formatting.Indented));
+        }
+    }
+}

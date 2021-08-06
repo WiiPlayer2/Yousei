@@ -1,0 +1,54 @@
+﻿@inherits EditorBase
+@inject ListTypeEditor_GetDataQuery Operation
+
+<ListTypeEditor_GetDataRenderer TypeName="@Type">
+    <Content>
+        @if (context.Type is not ListTypeEditor_GetData_Type_ListTypeInfo listType)
+        {
+            return;
+        }
+
+        <div class="editor-listtype">
+            @for (var i = 0; i < editors.Count; i++)
+            {
+                var index = i;
+                <div class="editor-value">
+                    <ValueKindEditor @ref="editors[index]" TypeKind="@listType.ItemType.Kind" Type="@listType.ItemType.FullName" />
+                </div>
+                <div class="flex items-center justify-center">
+                    <a @onclick="() => Remove(index)">
+                        <Icon Name="IconName.Remove" />
+                    </a>
+                </div>
+            }
+
+            <div class="col-span-2 flex justify-center">
+                <a @onclick="Add">
+                    <Icon Name="IconName.Add" />
+                </a>
+            </div>
+        </div>
+    </Content>
+</ListTypeEditor_GetDataRenderer>
+
+@code {
+    private List<EditorBase?> editors = new();
+
+    public override bool IsValid => editors.All(o => o?.IsValid ?? false);
+
+    public override JToken BuildToken()
+        => new JArray(editors.Select(o => o!.BuildToken()).ToArray());
+
+    protected override Task OnParametersSetAsync()
+        => Operation.ExecuteAsync(Type);
+
+    private void Add()
+    {
+        editors.Add(null);
+    }
+
+    private void Remove(int index)
+    {
+        editors.RemoveAt(index);
+    }
+}

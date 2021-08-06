@@ -4,7 +4,7 @@ using YamlDotNet.Core;
 using Yousei.Core;
 using YamlDotNet.Core.Events;
 
-namespace Yousei.Serialization.Yaml
+namespace Yousei.Core.Serialization.Yaml
 {
     internal class ParameterDeserializer : INodeDeserializer
     {

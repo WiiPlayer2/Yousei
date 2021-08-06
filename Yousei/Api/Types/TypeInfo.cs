@@ -19,7 +19,7 @@ namespace Yousei.Api.Types
         {
         }
 
-        public string? FullName => Wrapped.FullName;
+        public string FullName => Wrapped.FullName ?? throw new InvalidOperationException();
 
         public abstract TypeKind Kind { get; }
 

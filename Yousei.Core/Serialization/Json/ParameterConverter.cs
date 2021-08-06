@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using System;
 using Yousei.Core;
 using Yousei.Shared;
 
-namespace Yousei.Serialization.Json
+namespace Yousei.Core.Serialization.Json
 {
     internal class ParameterConverter : JsonConverter
     {
@@ -18,7 +19,7 @@ namespace Yousei.Serialization.Json
         }
 
         private record Dto(
-            [JsonProperty("___ParameterType")] ParameterType? Type,
+            ParameterType? ___ParameterType,
             JToken Config);
 
         public override bool CanConvert(Type objectType)
@@ -28,12 +29,12 @@ namespace Yousei.Serialization.Json
         {
             var valueType = objectType.GetValueType();
             var jtoken = JToken.ReadFrom(reader);
-            if (!jtoken.TryToObject<Dto>(out var dto) || dto is null || dto.Type is null)
+            if (!jtoken.TryToObject<Dto>(out var dto) || dto is null || dto.___ParameterType is null)
             {
                 return new ConstantParameter(jtoken).Map(valueType);
             }
 
-            var parameter = dto.Type.Value.Match<IParameter>(
+            var parameter = dto.___ParameterType.Value.Match<IParameter>(
                 () => new ConstantParameter(dto.Config).Map(valueType),
                 () => new VariableParameter(dto.Config.ToObject<string>() ?? string.Empty).Map(valueType),
                 () => new ExpressionParameter(dto.Config.ToObject<string>() ?? string.Empty).Map(valueType));

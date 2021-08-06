@@ -1,16 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Yousei.Shared;
-using Yousei.Internal;
-using Yousei.Internal.Connectors.Internal;
-using Yousei.Serialization.Json;
-using Yousei.Serialization.Yaml;
-using Microsoft.AspNetCore.Hosting;
-using System;
-using Microsoft.AspNetCore.Builder;
 using System.Threading.Tasks;
+using Yousei.Core.Serialization.Json;
 
 namespace Yousei
 {
@@ -18,14 +10,7 @@ namespace Yousei
     {
         public static async Task Main(string[] args)
         {
-            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
-            {
-                Converters = new[]
-                {
-                    new ParameterConverter(),
-                }
-            };
-
+            JsonUtil.Initialize();
             await CreateHostBuilder(args).Build().RunAsync();
         }
 

@@ -1,0 +1,17 @@
+﻿@inherits EditorBase
+
+<TextEdit class="w-full p-1" Text="@path" TextChanged="OnChanged" />
+
+@code {
+    private string path = string.Empty;
+
+    private void OnChanged(string newPath)
+    {
+        path = newPath;
+    }
+
+    public override bool IsValid => true;
+
+    public override JToken BuildToken()
+        => ((object)new VariableParameter(path)).Map<JToken>() ?? throw new InvalidOperationException();
+} 

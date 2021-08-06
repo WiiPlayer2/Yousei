@@ -1,0 +1,61 @@
+﻿@inherits EditorBase
+@inject ObjectTypeEditor_GetDataQuery Operation
+
+<ObjectTypeEditor_GetDataRenderer TypeName="@Type">
+    <Content>
+        @if (context.Type is not ObjectTypeEditor_GetData_Type_ObjectTypeInfo objectType)
+        {
+            return;
+        }
+
+        <div class="editor-objecttype">
+            @for (var i = 0; i < objectType.Properties.Count; i++)
+            {
+                if (properties.Count <= i)
+                {
+                    properties.Add(new());
+                }
+                var index = i;
+                var property = objectType.Properties[i];
+                properties[index].Name = property.Name;
+
+                <div class="editor-label">
+                    @property.Name
+                </div>
+                <div class="editor-value">
+                    <PropertyEditor @ref="properties[index].Editor" TypeKind="@property.PropertyType.Kind" Type="@property.PropertyType.FullName" />
+                </div>
+            }
+        </div>
+    </Content>
+</ObjectTypeEditor_GetDataRenderer>
+
+@code {
+    private class Pair
+    {
+        public string? Name { get; set; }
+
+        public EditorBase? Editor { get; set; }
+    }
+
+    private List<Pair> properties = new();
+
+    public override bool IsValid => properties.All(e => e.Editor?.IsValid ?? false);
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var result = await Operation.ExecuteAsync(Type);
+        if (result.IsErrorResult())
+            return;
+
+        var objectType = result.Data!.Type as ObjectTypeEditor_GetData_Type_ObjectTypeInfo;
+        if (objectType is null)
+            return;
+
+        while (properties.Count > objectType.Properties.Count)
+            properties.RemoveAt(properties.Count - 1);
+    }
+
+    public override JToken BuildToken()
+        => new JObject(properties.Select(pe => new JProperty(pe.Name!, pe.Editor!.BuildToken())));
+}

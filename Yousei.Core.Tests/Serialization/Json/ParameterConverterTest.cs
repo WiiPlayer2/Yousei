@@ -4,11 +4,10 @@ using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IO;
-using Yousei.Core;
-using Yousei.Serialization.Json;
+using Yousei.Core.Serialization.Json;
 using Yousei.Shared;
 
-namespace Yousei.Tests.Serialization.Json
+namespace Yousei.Core.Tests.Serialization.Json
 {
     [TestClass]
     public class ParameterConverterTest

@@ -1,23 +1,25 @@
 ﻿@page "/"
 
-<div class="sidebar">
-    <Sidebar Selected="SetConfig" />
-</div>
-
-<div class="main">
-    <div class="flex items-center">
-        <a @onclick="Save" class="flex items-center">
-            <Icon Name="IconName.Save" />
-        </a>
-        <span class="font-bold text-xl ml-2">
-            @currentConfig?.Title
-        </span>
-        @if (isDirty)
-        {
-            <span class="font-bold text-xl ml-2">
-                *
-            </span>
-        }
+<div class="page-config">
+    <div class="sidebar">
+        <Sidebar Selected="SetConfig" />
     </div>
-    <MonacoEditor @ref="editor" ConstructionOptions="Construct" CssClass="editor" OnDidChangeModelContent="EditorContentChanged" />
+
+    <div class="main">
+        <div class="flex items-center">
+            <a @onclick="Save" class="flex items-center">
+                <Icon Name="IconName.Save" />
+            </a>
+            <span class="font-bold text-xl ml-2">
+                @currentConfig?.Title
+            </span>
+            @if (isDirty)
+            {
+                <span class="font-bold text-xl ml-2">
+                    *
+                </span>
+            }
+        </div>
+        <MonacoEditor @ref="editor" ConstructionOptions="Construct" CssClass="editor" OnDidChangeModelContent="EditorContentChanged" />
+    </div>
 </div>

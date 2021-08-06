@@ -1,0 +1,12 @@
+﻿@inherits EditorBase
+
+<Check TValue="bool" @bind-Checked="isChecked" Class="p-1" />
+
+@code {
+    private bool isChecked;
+
+    public override bool IsValid => true;
+
+    public override JToken BuildToken()
+        => new JValue(isChecked);
+}

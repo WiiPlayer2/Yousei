@@ -6,9 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Yousei.Shared\Yousei.Shared.csproj" />
+    <PackageReference Include="DarkLink.Generators" Version="0.0.1-pre20210714184145" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.10.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="YamlDotNet" Version="11.2.1" />
+    <ProjectReference Include="..\Yousei.Shared\Yousei.Shared.csproj" />
   </ItemGroup>
 
 </Project>

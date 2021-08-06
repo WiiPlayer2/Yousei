@@ -1,0 +1,62 @@
+﻿@page "/trigger"
+@inject OnTrigger_SubscribeSubscription Operation
+
+<div class="page-trigger">
+    <BlockConfigEditor @ref="editor" ActiveFilter="BlockConfigEditor.Filter.Triggers" />
+
+    <div class="grid w-full" style="grid-template-rows: auto 1fr">
+        <button @onclick="Execute" class="border-4 @(subscription is null ? "border-red-500" : "border-green-500")">Go</button>
+        <MonacoEditor @ref="monacoEditor" CssClass="w-full" ConstructionOptions="Construct" />
+    </div>
+</div>
+
+@code {
+    private BlockConfigEditor? editor;
+
+    private MonacoEditor? monacoEditor;
+
+    private JToken? result;
+
+    private IDisposable? subscription;
+
+    private StandaloneEditorConstructionOptions Construct(MonacoEditor editor)
+         => new()
+         {
+             AutomaticLayout = true,
+             Language = "json",
+             Theme = "vs-dark",
+             TabIndex = 2,
+             ReadOnly = true,
+         };
+
+    private void Execute()
+    {
+        var config = editor is not null && editor.IsValid
+            ? editor.BuildConfig()
+            : null;
+
+        subscription?.Dispose();
+        subscription = null;
+
+        if (config is null)
+            return;
+
+        subscription = Operation
+            .Watch(new()
+            {
+                Type = config.Type,
+                Configuration = config.Configuration,
+                Arguments = config.Arguments is not null
+                    ? new JsonInput()
+                    {
+                        String = config.Arguments.Map<JToken>(),
+                    }
+                    : null,
+            })
+            .Subscribe(async o =>
+            {
+                result = o.Data?.OnTrigger.String;
+                await InvokeAsync(() => monacoEditor?.SetValue(result?.ToString(Newtonsoft.Json.Formatting.Indented) ?? string.Empty) ?? Task.CompletedTask);
+            });
+    }
+}

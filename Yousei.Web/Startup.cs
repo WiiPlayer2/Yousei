@@ -67,15 +67,28 @@ namespace Yousei.Web
                 .AddBulmaProviders()
                 .AddMaterialIcons();
 
+            services
+                .AddSingleton(Core.Serialization.Yaml.YamlUtil.BuildDeserializer());
+
             // Api
             services
                 .Configure<ApiOptions>(Configuration.GetSection("Api"))
                 .AddSingleton<ISerializer, UnitSerializer>()
-                .AddYouseiApi(ExecutionStrategy.CacheAndNetwork)
+                .AddSingleton<ISerializer, JsonStringSerializer>()
+                .AddYouseiApi(ExecutionStrategy.CacheFirst)
                 .ConfigureHttpClient((sp, client) =>
                 {
                     var apiOptions = sp.GetService<IOptions<ApiOptions>>();
                     client.BaseAddress = apiOptions?.Value.Url;
+                })
+                .ConfigureWebSocketClient((sp, client) =>
+                {
+                    var apiOptions = sp.GetService<IOptions<ApiOptions>>();
+                    var baseUrl = apiOptions?.Value.Url?.ToString();
+                    var websocketUrl = baseUrl is not null
+                        ? new Uri(baseUrl.Replace("http", "ws"))
+                        : null;
+                    client.Uri = websocketUrl;
                 });
         }
     }

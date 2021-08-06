@@ -8,15 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <GraphQL Remove="Queries.graphql" />
+    <None Remove="site.css" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Queries.graphql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Include="Queries.graphql" />
     <AdditionalFiles Include="site.css" />
   </ItemGroup>
 
@@ -28,6 +23,7 @@
     <PackageReference Include="StrawberryShake.CodeGeneration.CSharp.Analyzers" Version="12.0.0-preview.27" />
     <PackageReference Include="StrawberryShake.Razor" Version="12.0.0-preview.27" />
     <PackageReference Include="StrawberryShake.Transport.Http" Version="12.0.0-preview.27" />
+    <PackageReference Include="StrawberryShake.Transport.WebSockets" Version="12.0.0-preview.28" />
     <PackageReference Include="Yarn.MSBuild" Version="*" />
   </ItemGroup>
 
@@ -44,5 +40,9 @@
     <Compile Update="Pages\Index.cs">
       <DependentUpon>Index.razor</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Shared\Components\" />
   </ItemGroup>
 </Project>

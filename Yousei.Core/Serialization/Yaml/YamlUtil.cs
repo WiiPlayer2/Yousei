@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using Yousei.Core;
-using Yousei.Serialization.Yaml;
 
-namespace Yousei.Serialization.Yaml
+namespace Yousei.Core.Serialization.Yaml
 {
     public static class YamlUtil
     {

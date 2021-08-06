@@ -1,0 +1,206 @@
+﻿@inherits EditorBase
+@inject BlockConfigEditor_GetDataQuery Operation
+
+<BlockConfigEditor_GetDataRenderer>
+    <Loading>
+        Loading...
+    </Loading>
+    <Content>
+        @{
+            var dict = context.Connectors.ToDictionary(
+                o => o.Name,
+                o => new
+                {
+                    Actions = o.Actions.ToDictionary(
+                        o => o.Name,
+                        o => o.ArgumentsType),
+                    Triggers = o.Triggers.ToDictionary(
+                        o => o.Name,
+                        o => o.ArgumentsType),
+                });
+        }
+        @if (selectedConnector is null)
+        {
+            ConnectorChanged(context.Connectors.Select(o => o.Name).OrderBy(o => o).FirstOrDefault());
+        }
+
+        <div class="editor-blockconfig">
+            <div class="editor-label">
+                Connector
+            </div>
+            <div class="editor-value">
+                <Select TValue="string" SelectedValue="selectedConnector" SelectedValueChanged="ConnectorChanged">
+                    @foreach (var connector in context.Connectors.OrderBy(o => o.Name))
+                    {
+                        <SelectItem Value="@connector.Name">@connector.Name</SelectItem>
+                    }
+                </Select>
+            </div>
+
+            <div class="editor-label">
+                Connection
+            </div>
+            <div class="editor-value">
+                @if (selectedConnector is not null)
+                {
+                    var connector = context.Connectors.Single(o => o.Name == selectedConnector);
+                    var connections = connector.Connections.Select(o => o.Name).OrderBy(o => o).ToList();
+
+                    if (selectedConnection is null && connector.ConfigurationType.Kind != TypeKind.Unit)
+                    {
+                        selectedConnection = connections.Contains("default")
+                            ? "default"
+                            : connections.FirstOrDefault();
+                    }
+
+                    @if (connector.ConfigurationType.Kind == TypeKind.Unit)
+                    {
+                        <Select TValue="string" Disabled="true">
+                            <SelectItem Value="default(string)">&lt;N/A&gt;</SelectItem>
+                        </Select>
+                    }
+                    else if (connections.Any())
+                    {
+                        <Select TValue="string" @bind-SelectedValue="selectedConnection">
+                            @foreach (var connection in connections)
+                            {
+                                <SelectItem Value="@connection">@connection</SelectItem>
+                            }
+                        </Select>
+                    }
+                    else
+                    {
+                        <Select TValue="string" Disabled="true">
+                            <SelectItem Value="default(string)" Class="text-red-600">&lt;none available&gt;</SelectItem>
+                        </Select>
+                    }
+                }
+            </div>
+
+            <div class="editor-label">
+                Type
+            </div>
+            <div class="editor-value">
+                @if (selectedConnector is not null)
+                {
+                    var filteredTypes = FilterTypes(context.Connectors.Single(o => o.Name == selectedConnector)).OrderBy(o => o).ToList();
+
+                    if (selectedType is null)
+                    {
+                        selectedType = filteredTypes.FirstOrDefault();
+                    }
+
+                    if (filteredTypes.Any())
+                    {
+                        <Select TValue="string" SelectedValue="selectedType" SelectedValueChanged="TypeChanged">
+                            @foreach (var type in filteredTypes)
+                            {
+                                <SelectItem Value="@type">@type</SelectItem>
+                            }
+                        </Select>
+                    }
+                    else
+                    {
+                        <Select TValue="string" Disabled="true">
+                            <SelectItem Value="default(string)" Class="text-red-600">&lt;none available&gt;</SelectItem>
+                        </Select>
+                    }
+                }
+            </div>
+
+            <div class="editor-label col-span-2 justify-center">
+                Arguments
+            </div>
+            <div class="editor-value col-span-2">
+                @if (selectedConnector is not null
+               && (
+                   selectedConnection is not null
+                   || context.Connectors.Single(o => o.Name == selectedConnector).ConfigurationType.Kind == TypeKind.Unit
+               )
+               && selectedType is not null)
+                {
+                    if (dict[selectedConnector].Triggers.TryGetValue(selectedType, out var triggerTypeInfo))
+                    {
+                        <ValueKindEditor @ref="argumentsEditor" TypeKind="triggerTypeInfo.Kind" Type="@triggerTypeInfo.FullName" />
+                    }
+                    else if (dict[selectedConnector].Actions.TryGetValue(selectedType, out var actionTypeInfo))
+                    {
+                        <ValueKindEditor @ref="argumentsEditor" TypeKind="actionTypeInfo.Kind" Type="@actionTypeInfo.FullName" />
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException();
+                    }
+                }
+                else
+                {
+                    <span class="text-red-600 font-bold">
+                        Connector and type has to be selected.
+                    </span>
+                }
+            </div>
+        </div>
+    </Content>
+</BlockConfigEditor_GetDataRenderer>
+
+@code {
+    public enum Filter
+    {
+        All,
+        Triggers,
+        Actions,
+    }
+
+    private ValueKindEditor? argumentsEditor;
+
+    private string? selectedConnector;
+
+    private string? selectedConnection;
+
+    private string? selectedType;
+
+    [Parameter]
+    public Filter ActiveFilter { get; set; } = Filter.All;
+
+    public override bool IsValid
+        => selectedConnector is not null
+            && selectedType is not null
+            && (argumentsEditor?.IsValid ?? false);
+
+    protected override Task OnParametersSetAsync()
+        => Operation.ExecuteAsync();
+
+    private void ConnectorChanged(string? connector)
+    {
+        selectedConnector = connector;
+        selectedConnection = null;
+        selectedType = null;
+    }
+
+    private void TypeChanged(string? type)
+    {
+        selectedType = type;
+
+        StateHasChanged();
+    }
+
+    public BlockConfig BuildConfig()
+        => new BlockConfig
+        {
+            Type = $"{selectedConnector}.{selectedType}",
+            Configuration = selectedConnection ?? "default",
+            Arguments = argumentsEditor!.BuildToken(),
+        };
+
+    public override JToken BuildToken()
+        => JToken.FromObject(BuildConfig());
+
+    private IEnumerable<string> FilterTypes(IBlockConfigEditor_GetData_Connectors connector)
+        => ActiveFilter switch
+        {
+            Filter.All => connector.Actions.Select(o => o.Name).Concat(connector.Triggers.Select(o => o.Name)),
+            Filter.Triggers => connector.Triggers.Select(o => o.Name),
+            Filter.Actions => connector.Actions.Select(o => o.Name),
+            _ => throw new NotImplementedException(),
+        };
+}

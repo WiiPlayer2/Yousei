@@ -1,12 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Yousei.Core.Serialization.Json;
 
 namespace Yousei.Web
 {
@@ -19,7 +14,10 @@ namespace Yousei.Web
                     webBuilder.UseStartup<Startup>();
                 });
 
-        public static Task Main(string[] args)
-            => CreateHostBuilder(args).Build().RunAsync();
+        public static async Task Main(string[] args)
+        {
+            JsonUtil.Initialize();
+            await CreateHostBuilder(args).Build().RunAsync();
+        }
     }
 }

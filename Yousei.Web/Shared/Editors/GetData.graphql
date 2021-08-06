@@ -1,0 +1,25 @@
+﻿query ListTypeEditor_GetData($typeName: String!) {
+  type(name: $typeName) {
+    ... on ListTypeInfo {
+      itemType {
+        kind
+        fullName
+      }
+    }
+  }
+}
+
+query DictionaryTypeEditor_GetData($typeName: String!) {
+  type(name: $typeName) {
+    ... on DictionaryTypeInfo {
+      keyType {
+        kind
+        fullName
+      }
+      valueType {
+        kind
+        fullName
+      }
+    }
+  }
+}

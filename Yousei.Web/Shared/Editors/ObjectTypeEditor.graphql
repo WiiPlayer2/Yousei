@@ -1,0 +1,13 @@
+﻿query ObjectTypeEditor_GetData($typeName: String!) {
+  type(name: $typeName) {
+    ... on ObjectTypeInfo {
+      properties {
+        name
+        propertyType {
+          kind
+          fullName
+        }
+      }
+    }
+  }
+}

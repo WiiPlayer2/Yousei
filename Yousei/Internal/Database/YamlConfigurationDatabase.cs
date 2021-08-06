@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using YamlDotNet.Serialization;
+using Yousei.Core.Serialization.Yaml;
 using Yousei.Serialization.Yaml;
 using Yousei.Shared;
 

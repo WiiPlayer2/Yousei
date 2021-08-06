@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using YamlDotNet.Serialization;
+using Yousei.Core.Serialization.Yaml;
 using Yousei.Serialization.Yaml;
 using Yousei.Shared;
 
