@@ -1,0 +1,31 @@
+﻿@inherits EditorBase
+
+<MonacoEditor @ref="editor"
+              CssClass="editor-expression"
+              ConstructionOptions="Construct"
+              OnDidChangeModelContent="ContentChanged" />
+
+@code {
+    private MonacoEditor? editor;
+
+    private string content = string.Empty;
+
+    public override bool IsValid => editor is not null;
+
+    public override JToken BuildToken()
+        => ((object)new ExpressionParameter(content)).Map<JToken>() ?? throw new InvalidOperationException();
+
+    private StandaloneEditorConstructionOptions Construct(MonacoEditor editor)
+        => new()
+        {
+            AutomaticLayout = true,
+            Language = "csharp",
+            Theme = "vs-dark",
+            TabIndex = 4,
+        };
+
+    private async Task ContentChanged(ModelContentChangedEvent e)
+    {
+        content = await editor!.GetValue();
+    }
+}

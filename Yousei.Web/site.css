@@ -135,6 +135,10 @@ a > .material-icons {
     height: 10rem;
 }
 
+.editor-expression {
+    @apply editor-jtoken;
+}
+
 .editor-label {
     @apply flex items-center p-2 bg-black bg-opacity-25;
 }

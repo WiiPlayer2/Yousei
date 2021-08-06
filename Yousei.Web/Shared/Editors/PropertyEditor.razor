@@ -21,6 +21,10 @@
                 <VariableParameterEditor @ref="editor" TypeKind="@TypeKind" Type="@Type" />
                 break;
 
+            case ValueType.Expression:
+                <ExpressionParameterEditor @ref="editor" TypeKind="@TypeKind" Type="@Type" />
+                break;
+
             case ValueType.Raw:
                 <RawEditor @ref="editor" TypeKind="@TypeKind" Type="@Type" />
                 break;
