@@ -1,7 +1,7 @@
 ﻿@page "/act"
 @inject ActMutation Operation
 
-<div class="page-act w-screen">
+<div class="page-act">
     <ListTypeEditor @ref="editor" TypeKind="TypeKind.List" Type="@(typeof(List<BlockConfig>).FullName)" />
 
     <div class="grid w-full" style="grid-template-rows: auto 1fr">

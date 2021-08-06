@@ -21,24 +21,20 @@
     }
 
 .editor {
-    height: 100vh;
+    @apply h-full;
 }
 
 .sidebar {
-    width: 250px;
-    height: 100vh;
-    position: sticky;
-    top: 0;
-    /*background-color: lightgray;*/
+    @apply h-full sticky top-0 bg-gray-100;
 }
 
 .nav-sidebar {
     @apply h-full sticky top-0 bg-gray-50;
 }
 
-.nav-sidebar .material-icons {
-    @apply text-5xl;
-}
+    .nav-sidebar .material-icons {
+        @apply text-5xl;
+    }
 
 app {
     flex-direction: row;
@@ -47,7 +43,8 @@ app {
 }
 
 .main {
-    flex: 1;
+    @apply grid h-full w-full;
+    grid-template-rows: auto 1fr;
 }
 
 button {
@@ -102,6 +99,11 @@ a > .material-icons {
 
 .sidebar-clickable {
     @apply sidebar-item ring-inset hover:bg-blue-50 cursor-pointer;
+}
+
+.page-config {
+    @apply grid w-full h-full;
+    grid-template-columns: 20% 80%;
 }
 
 .page-trigger {
