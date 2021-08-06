@@ -8,3 +8,18 @@
     }
   }
 }
+
+query DictionaryTypeEditor_GetData($typeName: String!) {
+  type(name: $typeName) {
+    ... on DictionaryTypeInfo {
+      keyType {
+        kind
+        fullName
+      }
+      valueType {
+        kind
+        fullName
+      }
+    }
+  }
+}
