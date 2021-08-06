@@ -23,6 +23,7 @@
     <PackageReference Include="StrawberryShake.CodeGeneration.CSharp.Analyzers" Version="12.0.0-preview.27" />
     <PackageReference Include="StrawberryShake.Razor" Version="12.0.0-preview.27" />
     <PackageReference Include="StrawberryShake.Transport.Http" Version="12.0.0-preview.27" />
+    <PackageReference Include="StrawberryShake.Transport.WebSockets" Version="12.0.0-preview.28" />
     <PackageReference Include="Yarn.MSBuild" Version="*" />
   </ItemGroup>
 
