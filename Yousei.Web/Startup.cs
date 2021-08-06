@@ -74,6 +74,7 @@ namespace Yousei.Web
             services
                 .Configure<ApiOptions>(Configuration.GetSection("Api"))
                 .AddSingleton<ISerializer, UnitSerializer>()
+                .AddSingleton<ISerializer, JsonStringSerializer>()
                 .AddYouseiApi(ExecutionStrategy.CacheFirst)
                 .ConfigureHttpClient((sp, client) =>
                 {

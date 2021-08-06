@@ -1,12 +1,16 @@
 ﻿@page "/trigger"
+@inject OnTrigger_SubscribeSubscription Operation
 
-<div class="flex flex-col w-3\/4">
+<div class="page-trigger h-full">
     <BlockConfigEditor @ref="editor" ActiveFilter="BlockConfigEditor.Filter.Triggers" />
-    <button @onclick="Do" class="border-4 @(result is null ? "border-red-500" : "border-green-500")">Do</button>
-    <div>
-        <textarea class="w-full h-96" readonly>
-            @result?.ToString(Newtonsoft.Json.Formatting.Indented)
-        </textarea>
+
+    <div class="grid" style="grid-template-rows: auto 1fr">
+        <button @onclick="Execute" class="border-4 @(subscription is null ? "border-red-500" : "border-green-500")">Go</button>
+        <div>
+            <textarea class="w-full h-full" readonly>
+                @result?.ToString(Newtonsoft.Json.Formatting.Indented)
+            </textarea>
+        </div>
     </div>
 </div>
 
@@ -15,11 +19,36 @@
 
     private JToken? result;
 
-    private void Do()
+    private IDisposable? subscription;
+
+    private void Execute()
     {
-        if (editor is not null && editor.IsValid)
-            result = editor.BuildToken();
-        else
-            result = null;
+        var config = editor is not null && editor.IsValid
+            ? editor.BuildConfig()
+            : null;
+
+        subscription?.Dispose();
+        subscription = null;
+
+        if (config is null)
+            return;
+
+        subscription = Operation
+            .Watch(new()
+            {
+                Type = config.Type,
+                Configuration = config.Configuration,
+                Arguments = config.Arguments is not null
+                    ? new JsonInput()
+                    {
+                        String = config.Arguments.Map<JToken>(),
+                    }
+                    : null,
+            })
+            .Subscribe(async o =>
+            {
+                result = o.Data?.OnTrigger.String;
+                await InvokeAsync(StateHasChanged);
+            });
     }
 }
