@@ -1,25 +1,33 @@
 ﻿@page "/trigger"
 @inject OnTrigger_SubscribeSubscription Operation
 
-<div class="page-trigger h-full">
+<div class="page-trigger w-screen">
     <BlockConfigEditor @ref="editor" ActiveFilter="BlockConfigEditor.Filter.Triggers" />
 
-    <div class="grid" style="grid-template-rows: auto 1fr">
+    <div class="grid w-full" style="grid-template-rows: auto 1fr">
         <button @onclick="Execute" class="border-4 @(subscription is null ? "border-red-500" : "border-green-500")">Go</button>
-        <div>
-            <textarea class="w-full h-full" readonly>
-                @result?.ToString(Newtonsoft.Json.Formatting.Indented)
-            </textarea>
-        </div>
+        <MonacoEditor @ref="monacoEditor" CssClass="w-full" ConstructionOptions="Construct" />
     </div>
 </div>
 
 @code {
     private BlockConfigEditor? editor;
 
+    private MonacoEditor? monacoEditor;
+
     private JToken? result;
 
     private IDisposable? subscription;
+
+    private StandaloneEditorConstructionOptions Construct(MonacoEditor editor)
+         => new()
+         {
+             AutomaticLayout = true,
+             Language = "json",
+             Theme = "vs-dark",
+             TabIndex = 2,
+             ReadOnly = true,
+         };
 
     private void Execute()
     {
@@ -48,7 +56,7 @@
             .Subscribe(async o =>
             {
                 result = o.Data?.OnTrigger.String;
-                await InvokeAsync(StateHasChanged);
+                await InvokeAsync(() => monacoEditor?.SetValue(result?.ToString(Newtonsoft.Json.Formatting.Indented) ?? string.Empty) ?? Task.CompletedTask);
             });
     }
 }
