@@ -43,6 +43,14 @@ namespace Yousei.Web.Shared.Editors
                     builder.CloseComponent();
                     break;
 
+                case TypeKind.List:
+                    builder.OpenComponent<ListTypeEditor>(0);
+                    builder.AddAttribute(1, nameof(TypeKind), TypeKind);
+                    builder.AddAttribute(2, nameof(Type), Type);
+                    builder.AddComponentReferenceCapture(3, obj => editor = (EditorBase)obj);
+                    builder.CloseComponent();
+                    break;
+
                 case TypeKind.Any:
                     builder.OpenComponent<RawEditor>(0);
                     builder.AddAttribute(1, nameof(TypeKind), TypeKind);

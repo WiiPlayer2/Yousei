@@ -68,7 +68,7 @@ ul {
 }
 
 a > .material-icons {
-    @apply hover:text-blue-500;
+    @apply hover:text-blue-500 cursor-pointer;
 }
 
 .sidebar-row {
@@ -104,6 +104,11 @@ a > .material-icons {
 .editor-objecttype {
     @apply grid bg-blue-50 border-4 border-blue-200 w-full;
     grid-template-columns: max-content minmax(10rem, 1fr);
+}
+
+.editor-listtype {
+    @apply grid bg-red-50 border-4 border-red-200 w-full gap-2;
+    grid-template-columns: 1fr max-content;
 }
 
 .editor-jtoken {
