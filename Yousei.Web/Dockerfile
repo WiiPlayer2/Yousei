@@ -14,7 +14,7 @@ WORKDIR /src
 COPY . .
 WORKDIR "/src/Yousei.Web"
 RUN dotnet restore "Yousei.Web.csproj" \
-    && dotnet build "Yousei.Web.csproj" -nologo -c Release -o /app/build -warnaserror -nowarn:CS0436;CS8604
+    && dotnet build "Yousei.Web.csproj" -nologo -c Release -o /app/build -warnaserror -nowarn:CS0436,CS8604
 
 FROM build AS publish
 RUN dotnet publish "Yousei.Web.csproj" --nologo -c Release -o /app/publish
