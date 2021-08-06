@@ -4,7 +4,7 @@ using System;
 using Yousei.Core;
 using Yousei.Shared;
 
-namespace Yousei.Serialization.Json
+namespace Yousei.Core.Serialization.Json
 {
     internal class ParameterConverter : JsonConverter
     {
