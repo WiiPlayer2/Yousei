@@ -3,3 +3,9 @@
     string
   }
 }
+
+mutation Act($configs: [BlockConfigInput!]!) {
+  act(config: $configs) {
+    string
+  }
+}
