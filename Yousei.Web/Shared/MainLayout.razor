@@ -1,3 +1,27 @@
 ﻿@inherits LayoutComponentBase
 
-@Body
+<div class="flex flex-row w-screen h-screen">
+    <div class="nav-sidebar">
+        <div class="sidebar-item">
+            <NavLink href="/" title="Flows & Configuration">
+                <Icon Name="IconName.Edit" />
+            </NavLink>
+        </div>
+
+        <div class="sidebar-item">
+            <NavLink href="/trigger" title="Trigger Test">
+                <Icon Name="IconName.CloudDownloadAlt" />
+            </NavLink>
+        </div>
+
+        <div class="sidebar-item">
+            <NavLink href="/act" title="Action Test">
+                <Icon Name="IconName.CloudUploadAlt" />
+            </NavLink>
+        </div>
+    </div>
+
+    <div class="w-full h-full">
+        @Body
+    </div>
+</div>
